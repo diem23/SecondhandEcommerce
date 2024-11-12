@@ -12,7 +12,7 @@ async function bootstrap() {
     .setTitle('Ecommerce services')
     .setDescription('The ecommerce services API description')
     .setVersion('0.1')
-    // .addBearerAuth()
+    .addBearerAuth()
     .addTag('Ecommerce')
     .build()
 
