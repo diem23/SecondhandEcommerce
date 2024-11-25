@@ -1,11 +1,12 @@
 import { Module } from '@nestjs/common';
-import { AppController } from './app.controller';
-import { AppService } from './app.service';
-import { MongooseModule } from '@nestjs/mongoose';
 import { ConfigModule, ConfigService } from '@nestjs/config';
-import { UserModule } from './users';
+import { MongooseModule } from '@nestjs/mongoose';
+import { AppService } from './app.service';
 import { AuthModule } from './auth/auth.module';
+import { CloudinaryModule } from './cloudinary/cloudinary.module';
 import { envConfig } from './config';
+import { UserModule } from './users';
+import { ProductModule } from './product/product.module';
 
 @Module({
   imports: [
@@ -23,7 +24,9 @@ import { envConfig } from './config';
     }),
 
     UserModule,
-    AuthModule
+    AuthModule,
+    CloudinaryModule,
+    ProductModule
   ],
   providers: [AppService],
 })

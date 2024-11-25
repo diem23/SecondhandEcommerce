@@ -16,3 +16,13 @@ export const userMess = {
   CREATED: 'Create user successful',
   FORBIDDEN: 'Permission denined',
 };
+
+export const productMess = {
+  UPDATED: 'Updated product successful',
+  FOUNED_ONE: 'Founded this product successful',
+  FOUNDED_MANY: 'Founded products successful',
+  DELETED: 'Deleted product successful',
+  NOT_FOUND: 'Not found this product',
+  CREATED: 'Create product successful',
+  FORBIDDEN: 'Permission denined',
+}
