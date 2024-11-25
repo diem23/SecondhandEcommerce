@@ -8,6 +8,14 @@ async function bootstrap() {
   const app = await NestFactory.create(AppModule);
   const config = app.get(ConfigService)
 
+  app.enableCors({
+    origin: '*',
+    methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
+    allowedHeaders: 'Content-Type, Accept, Authorization',
+  });
+  
+  app.setGlobalPrefix('api');
+
   const configSwagger = new DocumentBuilder()
     .setTitle('Ecommerce services')
     .setDescription('The ecommerce services API description')
@@ -17,7 +25,17 @@ async function bootstrap() {
     .build()
 
   const documentFactory = SwaggerModule.createDocument(app, configSwagger);
-  SwaggerModule.setup('api', app, documentFactory);
+  SwaggerModule.setup('api', app, documentFactory, {
+    customJs: [
+      'https://cdnjs.cloudflare.com/ajax/libs/swagger-ui/4.15.5/swagger-ui-bundle.min.js',
+      'https://cdnjs.cloudflare.com/ajax/libs/swagger-ui/4.15.5/swagger-ui-standalone-preset.min.js',
+    ],
+    customCssUrl: [
+      'https://cdnjs.cloudflare.com/ajax/libs/swagger-ui/4.15.5/swagger-ui.min.css',
+      'https://cdnjs.cloudflare.com/ajax/libs/swagger-ui/4.15.5/swagger-ui-standalone-preset.min.css',
+      'https://cdnjs.cloudflare.com/ajax/libs/swagger-ui/4.15.5/swagger-ui.css',
+    ],
+  });
 
   app.useGlobalPipes(new ValidationPipe({ whitelist: true }))
 
