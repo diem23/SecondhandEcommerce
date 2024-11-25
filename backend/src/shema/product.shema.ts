@@ -71,14 +71,6 @@ export class Product {
     soldQuantity: number;
 
     @ApiProperty({
-        description: 'The discount applied to the product in cents',
-        example: 200,
-        required: false,
-    })
-    @Prop()
-    discount: number;
-
-    @ApiProperty({
         description: 'The color of the product',
         example: 'Red',
         required: false,
