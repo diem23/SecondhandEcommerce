@@ -1,9 +1,9 @@
-import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose'
-import { ApiProperty } from '@nestjs/swagger'
-import { Exclude } from 'class-transformer'
-import { Document } from 'mongoose'
+import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
+import { ApiProperty } from '@nestjs/swagger';
+import { Exclude } from 'class-transformer';
+import { Document } from 'mongoose';
 
-export type UserDocument = User & Document
+export type UserDocument = User & Document;
 
 export enum Role {
   USER = 'user',
@@ -19,43 +19,55 @@ export enum Role {
 })
 export class User {
   @Prop({ required: true, unique: true })
-  email: string
+  email: string;
 
   @Prop()
-  fullname: string
+  fullname: string;
 
   @Prop({ index: true })
-  username?: string
+  username?: string;
 
   @Exclude()
   @Prop()
-  password?: string
+  password?: string;
 
   @Prop({ default: Role.USER })
-  role?: Role
+  role?: Role;
 
   @Prop()
-  date_of_birth?: Date
+  dateOfBirth?: Date;
 
   @Prop()
-  avatar?: string
+  avatar?: string;
 
   @Prop()
-  location?: string
+  location?: string;
 
   @ApiProperty({
     description: 'State of document',
     example: true,
-    default: false
+    default: false,
   })
   @Prop()
-  isDeleted: boolean
-  
-  @Exclude()
-  updatedAt: Date
+  isDeleted: boolean;
+
+  @Prop()
+  phoneNumber?: string;
+
+  @Prop()
+  school?: string;
+
+  @Prop()
+  faculty?: string;
+
+  @Prop({ unique: true })
+  studentCode?: string;
 
   @Exclude()
-  __v: number
+  updatedAt: Date;
+
+  @Exclude()
+  __v: number;
 }
 
-export const UserSchema = SchemaFactory.createForClass(User)
+export const UserSchema = SchemaFactory.createForClass(User);

@@ -1,24 +1,43 @@
-import { IsISO8601, IsOptional, IsString, MaxLength } from 'class-validator'
+import { IsEmail, IsISO8601, IsOptional, IsPhoneNumber, IsString } from 'class-validator';
 
 export class UpdateProfileDto {
   @IsOptional()
   @IsString()
-  username: string
+  username?: string;
 
   @IsOptional()
-  @IsString()
   @IsISO8601()
-  date_of_birth: Date
+  dateOfBirth?: Date;
 
   @IsOptional()
   @IsString()
-  fullName: string
+  fullName?: string;
 
   @IsOptional()
   @IsString()
-  location: string
+  location?: string;
 
   @IsOptional()
   @IsString()
-  avatar: string
+  avatar?: string;
+
+  @IsOptional()
+  @IsPhoneNumber('VN', { message: 'Invalid phone number' })
+  phoneNumber?: string;
+
+  @IsOptional()
+  @IsString()
+  school?: string;
+
+  @IsOptional()
+  @IsString()
+  faculty?: string;
+
+  @IsOptional()
+  @IsString()
+  studentCode?: string;
+
+  @IsOptional()
+  @IsEmail({}, { message: 'Invalid email address' })
+  email?: string;
 }
