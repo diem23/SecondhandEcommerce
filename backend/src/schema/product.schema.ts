@@ -5,7 +5,20 @@ import { Type } from 'class-transformer';
 import { User } from './users.schema';
 
 export type ProductDocument = Product & Document;
-
+export enum ProductType{
+    FASHION = 'Fashion',
+    ELECTRONIC = 'Electronic',
+    GROCERY = 'Grocery',
+    PET = 'Pet',
+    HELPING_TOOL = 'Helping Tool',
+    IN_HOUSE_DEVICE = 'In-house Device',
+    BEAUTY = 'Beauty',
+    HEALTH = 'Health',
+    SPORT = 'Sport',
+    MOBILE = 'Mobile',
+    COMPUTER = 'Computer',
+    TOY = 'Toy',
+}
 @Schema({ timestamps: true })
 export class Product {
     @ApiProperty({
@@ -24,10 +37,11 @@ export class Product {
 
     @ApiProperty({
         description: 'The type/category of the product',
-        example: 'Shampoo',
+        example: ProductType.BEAUTY,
+        default: ProductType.BEAUTY,
     })
     @Prop()
-    type: string;
+    type: ProductType;
 
     @ApiProperty({
         description: 'Whether the product applies to standout selling',
