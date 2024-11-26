@@ -1,5 +1,5 @@
 import { Types } from 'mongoose'
-import { Role } from './shema'
+import { Role } from './schema'
 
 //** Global types */
 export interface TCurrentUser {

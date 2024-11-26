@@ -5,7 +5,7 @@ import {
     mixin,
     Type,
   } from '@nestjs/common'
-import { Role } from 'src/shema'
+import { Role } from 'src/schema'
   
   const RoleGuard = (role: Role): Type<CanActivate> => {
     class RoleGuardMixin implements CanActivate {

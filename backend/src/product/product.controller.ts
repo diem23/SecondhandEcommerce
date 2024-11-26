@@ -24,7 +24,7 @@ import {
 } from '@nestjs/swagger';
 import { JwtGuard } from 'src/auth/guard';
 import { ApiPaginatedQuery } from 'src/common/decorator/query-swagger.decorator';
-import { Product } from 'src/shema/product.shema';
+import { Product } from 'src/schema/product.schema';
 import { TCurrentUser } from 'src/types';
 import { CurrentUser } from 'src/users/decorator';
 import { CreateProductDto } from './dto/create.dto';

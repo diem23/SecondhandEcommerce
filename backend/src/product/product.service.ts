@@ -6,7 +6,7 @@ import {
 import { InjectModel } from '@nestjs/mongoose';
 import { Model, Types } from 'mongoose';
 import { CloudinaryService } from 'src/cloudinary';
-import { Product, ProductDocument } from 'src/shema/product.shema';
+import { Product, ProductDocument } from 'src/schema/product.schema';
 import { CreateProductDto } from './dto/create.dto';
 import { productMess } from 'src/contants';
 import { ProductQuery } from './dto/query.dto';

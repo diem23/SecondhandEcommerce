@@ -10,7 +10,7 @@ import { UsersService } from 'src/users';
 import { RegisterDto } from './dto/register.dto';
 import { compareContent, hashedContent } from 'src/utils';
 import { authMess, userMess } from 'src/contants';
-import { Role } from 'src/shema/users.shema';
+import { Role } from 'src/schema/users.schema';
 import { LoginDto } from './dto';
 
 @Injectable()
