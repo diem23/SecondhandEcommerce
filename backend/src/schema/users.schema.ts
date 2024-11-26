@@ -1,4 +1,5 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose'
+import { ApiProperty } from '@nestjs/swagger'
 import { Exclude } from 'class-transformer'
 import { Document } from 'mongoose'
 
@@ -42,6 +43,13 @@ export class User {
   @Prop()
   location?: string
 
+  @ApiProperty({
+    description: 'State of document',
+    example: true,
+    default: false
+  })
+  @Prop()
+  isDeleted: boolean
   
   @Exclude()
   updatedAt: Date

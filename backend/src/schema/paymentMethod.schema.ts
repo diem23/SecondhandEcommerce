@@ -21,6 +21,14 @@ export class PaymentMethod {
     cardNumber: string;
 
     @ApiProperty({
+        description: 'State of document',
+        example: true,
+        default: false
+    })
+    @Prop()
+    isDeleted: boolean
+    
+    @ApiProperty({
         description: 'The expiration month of the card',
         example: 12,
     })
