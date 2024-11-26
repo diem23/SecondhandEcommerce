@@ -1,9 +1,9 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Document, Types } from 'mongoose';
 import { ApiProperty } from '@nestjs/swagger';
-import { User } from './users.shema';
+import { User } from './users.schema';
 import { Type } from 'class-transformer';
-import { Product } from './product.shema';
+import { Product } from './product.schema';
 
 export type SingleOrderDocument = SingleOrder & Document;
 @Schema({ timestamps: true })

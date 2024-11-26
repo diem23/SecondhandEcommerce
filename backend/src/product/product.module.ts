@@ -1,6 +1,6 @@
 import { Module } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
-import { Product, ProductSchema } from 'src/shema/product.shema';
+import { Product, ProductSchema } from 'src/schema/product.schema';
 import { ProductService } from './product.service';
 import { ProductController } from './product.controller';
 import { CloudinaryModule, CloudinaryService } from 'src/cloudinary';

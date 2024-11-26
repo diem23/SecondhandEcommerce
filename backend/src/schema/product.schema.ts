@@ -2,7 +2,7 @@ import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Document, Types } from 'mongoose';
 import { ApiProperty } from '@nestjs/swagger';
 import { Type } from 'class-transformer';
-import { User } from './users.shema';
+import { User } from './users.schema';
 
 export type ProductDocument = Product & Document;
 

@@ -8,7 +8,7 @@ import {
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { UsersService } from './users.service';
 import RoleGuard, { JwtGuard } from 'src/auth/guard';
-import { Role } from 'src/shema';
+import { Role } from 'src/schema';
 @Controller('users')
 @ApiTags('users')
 export class UsersController {

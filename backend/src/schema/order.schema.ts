@@ -1,7 +1,7 @@
 import { Prop, Schema } from "@nestjs/mongoose";
 import { ApiProperty } from "@nestjs/swagger";
 import { Types } from "mongoose";
-import { Product } from "./product.shema";
+import { Product } from "./product.schema";
 import { SingleOrder } from "./singleOrder.schema";
 import { Type } from "class-transformer";
 export enum OrderState {
