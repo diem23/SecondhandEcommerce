@@ -108,7 +108,7 @@ export class Product {
         default: false,
     })
     @Prop({ default: false })
-    isDel: boolean;
+    isDeleted: boolean;
 
     @Prop({ type: Types.ObjectId, ref: User.name })
     @Type(() => User)

@@ -5,10 +5,10 @@ import { Product } from "./product.schema";
 import { SingleOrder } from "./singleOrder.schema";
 import { Type } from "class-transformer";
 export enum OrderState {
-    ORDERED = 'user',
-    PACKED = 'admin',
-    DELIVERING = 'delivering',
-    DELIVERED = 'delivered',
+    ORDERED = 'Đơn hàng đã được đặt',
+    PACKED = 'Đóng gói sản phẩm',
+    DELIVERING = 'Đang trên đường giao',
+    DELIVERED = 'Đã giao thành công',
   }
 export type OrderDocument = Order & Document;
 @Schema({ timestamps: true })
@@ -27,6 +27,14 @@ export class Order {
     })
     @Prop()
     payment: boolean
+
+    @ApiProperty({
+        description: 'State of document',
+        example: true,
+        default: false
+    })
+    @Prop()
+    isDeleted: boolean
 
     @ApiProperty({
         description: 'Payment method',

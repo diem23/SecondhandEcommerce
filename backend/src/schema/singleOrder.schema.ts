@@ -17,6 +17,14 @@ export class SingleOrder{
     quantity: number;
 
     @ApiProperty({
+        description: 'State of document',
+        example: true,
+        default: false
+    })
+    @Prop()
+    isDeleted: boolean
+    
+    @ApiProperty({
         description: 'Does the order use insurance',
         example: true,
         default: false
