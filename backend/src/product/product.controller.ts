@@ -46,7 +46,7 @@ export class ProductController {
         @Query('sort') sort = 'createdAt',
     ) {
         const query: ProductQuery = {
-            matches: { isDel: false },
+            matches: { isDeleted: false },
             page,
             limit,
             sort: { [sort]: 1 },
