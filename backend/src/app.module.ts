@@ -7,6 +7,7 @@ import { CloudinaryModule } from './cloudinary/cloudinary.module';
 import { envConfig } from './config';
 import { UserModule } from './users';
 import { ProductModule } from './product/product.module';
+import { ReviewModule } from './review/review.module';
 
 @Module({
   imports: [
@@ -26,7 +27,8 @@ import { ProductModule } from './product/product.module';
     UserModule,
     AuthModule,
     CloudinaryModule,
-    ProductModule
+    ProductModule,
+    ReviewModule
   ],
   providers: [AppService],
 })

@@ -26,3 +26,13 @@ export const productMess = {
   CREATED: 'Create product successful',
   FORBIDDEN: 'Permission denined',
 }
+
+export const reviewMess = {
+  UPDATED: 'Updated review successful',
+  FOUNED_ONE: 'Founded this review successful',
+  FOUNDED_MANY: 'Founded reviews successful',
+  DELETED: 'Deleted review successful',
+  NOT_FOUND: 'Not found this review',
+  CREATED: 'Create review successful',
+  FORBIDDEN: 'Permission denined',
+}
