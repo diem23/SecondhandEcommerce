@@ -11,7 +11,7 @@ import { CreateProductDto } from './dto/create.dto';
 import { productMess } from 'src/contants';
 import { ProductQuery } from './dto/query.dto';
 import { UpdateProductDto } from './dto/update.dto';
-import { CurrentUser } from 'src/users/decorator';
+import { unSelectedFields } from 'src/types';
 
 @Injectable()
 export class ProductService {
@@ -28,11 +28,12 @@ export class ProductService {
                 const result = await this.cloudinaryService.uploadImage(image);
                 productImages.push(result.secure_url);
             });
-            
+
             const product = new this.productModel({
                 ...productData,
                 images: productImages,
                 userId: new Types.ObjectId(productData.userId),
+                isDeleted: false,
             });
             await product.save();
 
@@ -63,7 +64,13 @@ export class ProductService {
                                 foreignField: '_id',
                                 as: 'user',
                                 pipeline: [
-                                    { $project: { password: 0, email: 0 } },
+                                    {
+                                        $project: {
+                                            ...unSelectedFields,
+                                            password: 0,
+                                            email: 0,
+                                        },
+                                    },
                                 ],
                             },
                         },
@@ -72,7 +79,7 @@ export class ProductService {
                                 path: '$user',
                                 preserveNullAndEmptyArrays: true,
                             },
-                        }
+                        },
                     ])
                     .exec(),
                 this.productModel.countDocuments(matches).exec(),
@@ -102,7 +109,7 @@ export class ProductService {
         id: string,
         productData: UpdateProductDto,
         images: Express.Multer.File[],
-        user: any
+        user: any,
     ) {
         try {
             const existingProduct = await this.findOne(id);
@@ -146,7 +153,7 @@ export class ProductService {
     async remove(id: string) {
         try {
             const result = await this.productModel
-                .updateOne({ _id: id, isDel: false }, { isDel: true })
+                .updateOne({ _id: id, isDeleted: false }, { isDeleted: true })
                 .exec();
 
             if (result.matchedCount === 0) {
