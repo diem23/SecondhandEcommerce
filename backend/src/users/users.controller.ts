@@ -63,6 +63,7 @@ export class UsersController {
 
     @UseGuards(JwtGuard)
     @Patch('avatar')
+    @ApiBearerAuth()
     @UseInterceptors(FileFieldsInterceptor([{ name: 'image', maxCount: 1 }]))
     async updateAvatar(
         @CurrentUser() user: TCurrentUser,
