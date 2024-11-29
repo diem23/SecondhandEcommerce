@@ -7,9 +7,9 @@ export interface TCurrentUser {
     role: Role;
 }
 
-export const unSelectedFields =  {
+export const unSelectedFields = {
     createdAt: 0,
     updatedAt: 0,
     isDeleted: 0,
     __v: 0,
-}
+};
