@@ -6,12 +6,13 @@ import {
 import { InjectModel } from '@nestjs/mongoose';
 import { Model, Types } from 'mongoose';
 import { CloudinaryService } from 'src/cloudinary';
-import { Product, ProductDocument } from 'src/schema/product.schema';
-import { CreateProductDto } from './dto/create.dto';
 import { productMess } from 'src/contants';
+import { Product, ProductDocument } from 'src/schema/product.schema';
+import { unSelectedFields } from 'src/types';
+import { transactionCost } from 'src/utils';
+import { CreateProductDto } from './dto/create.dto';
 import { ProductQuery } from './dto/query.dto';
 import { UpdateProductDto } from './dto/update.dto';
-import { unSelectedFields } from 'src/types';
 
 @Injectable()
 export class ProductService {
@@ -22,17 +23,21 @@ export class ProductService {
 
     async create(productData: CreateProductDto, images: Express.Multer.File[]) {
         try {
-            const productImages = [];
-
-            images.forEach(async (image) => {
+            const uploadPromises = images.map(async (image) => {
                 const result = await this.cloudinaryService.uploadImage(image);
-                productImages.push(result.secure_url);
+                return result.url;
             });
+            
+            const productImages = await Promise.all(uploadPromises);
+
+            const { quantity, price } = productData
 
             const product = new this.productModel({
                 ...productData,
+                soldQuantity: 0,
                 images: productImages,
                 userId: new Types.ObjectId(productData.userId),
+                postingCost: transactionCost(quantity, price),
                 isDeleted: false,
             });
             await product.save();
@@ -129,9 +134,16 @@ export class ProductService {
                 productImages = uploadedImages;
             }
 
+            let postingCost = existingProduct.postingCost;
+
+            if (productData.price && productData.quantity) {
+                postingCost = transactionCost(productData.quantity, productData.price);
+            }
+
             const updateData = {
                 ...productData,
                 images: productImages,
+                postingCost,
                 userId: user._id,
             };
             const updatedProduct = await this.productModel

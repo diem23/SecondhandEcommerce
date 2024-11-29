@@ -11,7 +11,7 @@ import {
     Query,
     UploadedFiles,
     UseGuards,
-    UseInterceptors
+    UseInterceptors,
 } from '@nestjs/common';
 import { PartialType } from '@nestjs/mapped-types';
 import { FileFieldsInterceptor } from '@nestjs/platform-express';
@@ -77,6 +77,54 @@ export class ProductController {
             ? files.images
             : [files.images];
         return this.productService.create(productData, images);
+    }
+
+    @Post('search')
+    @ApiOperation({ summary: 'Search for products' })
+    @ApiPaginatedQuery()
+    async search(
+        @Query('page', new DefaultValuePipe(1), ParseIntPipe) page: number,
+        @Query('limit', new DefaultValuePipe(10), ParseIntPipe) limit: number,
+        @Query('sort') sort = 'createdAt',
+        @Query('search') search?: string,
+        @Query('filters') filters?: string,
+    ) {
+        const query: ProductQuery = {
+            matches: {
+                isDeleted: false,
+                $or: [
+                    { name: { $regex: search, $options: 'i' } },
+                    { description: { $regex: search, $options: 'i' } },
+                ],
+            },
+            page,
+            limit,
+            sort: { [sort]: 1 },
+        };
+
+        return this.productService.findAll(query);
+    }
+
+    @Post('filter')
+    @ApiOperation({ summary: 'Filter products with advanced conditions' })
+    @ApiPaginatedQuery()
+    async filterProducts(
+        @Query('page', new DefaultValuePipe(1), ParseIntPipe) page: number,
+        @Query('limit', new DefaultValuePipe(10), ParseIntPipe) limit: number,
+        @Query('sort') sort = 'createdAt',
+        @Body() filters: Record<string, any>,
+    ) {
+        const query: ProductQuery = {
+            matches: {
+                isDeleted: false,
+                ...filters,
+            },
+            page,
+            limit,
+            sort: { [sort]: 1 },
+        };
+
+        return this.productService.findAll(query);
     }
 
     @Get(':id')

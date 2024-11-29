@@ -12,9 +12,9 @@ export class CloudinaryService {
       const upload = v2.uploader.upload_stream((error, result) => {
         if (error) return reject(error);
         resolve(result);
-      });
+      }).end(file.buffer);
     
-      toStream(file.buffer).pipe(upload);
+      // toStream(file.buffer).pipe(upload);
     });
   }
 }
