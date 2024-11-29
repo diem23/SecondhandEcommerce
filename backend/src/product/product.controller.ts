@@ -57,6 +57,7 @@ export class ProductController {
 
     @Post()
     @UseGuards(JwtGuard)
+    @ApiBearerAuth()
     @ApiOperation({ summary: 'Create a new product' })
     @ApiBody({ description: 'Data for creating a new product', type: Product })
     @UseInterceptors(FileFieldsInterceptor([{ name: 'images', maxCount: 10 }]))
@@ -136,6 +137,7 @@ export class ProductController {
     }
 
     @Put(':id')
+    @ApiBearerAuth()
     @ApiOperation({ summary: 'Update a product by ID' })
     @ApiBody({
         description: 'Updated data for the product',
@@ -162,6 +164,7 @@ export class ProductController {
     }
 
     @Delete(':id')
+    @ApiBearerAuth()
     @ApiOperation({ summary: 'Delete a product by ID' })
     @ApiResponse({
         status: 200,

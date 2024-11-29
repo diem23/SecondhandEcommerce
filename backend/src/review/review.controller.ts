@@ -8,7 +8,13 @@ import {
     Body,
     UseGuards,
 } from '@nestjs/common';
-import { ApiTags, ApiOperation, ApiParam, ApiBody } from '@nestjs/swagger';
+import {
+    ApiTags,
+    ApiOperation,
+    ApiParam,
+    ApiBody,
+    ApiBearerAuth,
+} from '@nestjs/swagger';
 import { Review, Role } from 'src/schema';
 import { ReviewService } from './review.service';
 import { CreateReviewDto } from './dto/create.dto';
@@ -25,6 +31,7 @@ export class ReviewController {
     @Post()
     @UseGuards(JwtGuard)
     @ApiOperation({ summary: 'Create a review' })
+    @ApiBearerAuth()
     @ApiBody({ type: CreateReviewDto })
     async createReview(
         @Body() createReviewDto: CreateReviewDto,
@@ -52,6 +59,7 @@ export class ReviewController {
 
     @Patch(':id')
     @UseGuards(JwtGuard)
+    @ApiBearerAuth()
     @ApiOperation({ summary: 'Update a review' })
     async updateReview(
         @Param('id') id: string,
@@ -67,6 +75,7 @@ export class ReviewController {
     @Delete(':id')
     @UseGuards(JwtGuard)
     // @UseGuards(RoleGuard(Role.ADMIN))
+    @ApiBearerAuth()
     @ApiParam({ name: 'id', required: true })
     @ApiOperation({ summary: 'Delete a review' })
     async deleteReview(@Param('id') id: string) {
