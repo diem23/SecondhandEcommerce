@@ -45,6 +45,21 @@ export class Order {
     paymentMethod: PaymentMethod;
 
     @ApiProperty({
+        description: 'Order code',
+        example: '123456',
+    })
+    @Prop({ required: true })
+    orderCode: string;
+
+    @ApiProperty({
+        description: 'Payment state',
+        example: false,
+        default: false,
+    })
+    @Prop({ default: false })
+    paymentState: boolean;
+
+    @ApiProperty({
         description: 'Total price of the order',
         example: 20000,
     })
