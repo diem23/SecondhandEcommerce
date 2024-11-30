@@ -14,6 +14,13 @@ export class OrderService {
         private readonly productService: ProductService,
     ) {}
 
+    // Generate a random order code for PayOS
+    generateOrderCode(length: number) {
+        const array = new Uint8Array(length);
+        crypto.getRandomValues(array);
+        return Array.from(array, byte => byte % 10).join('');
+    }
+
     // Create an order
     async createOrder(orderData: OrderDto, userId: string) {
         const listOfSingleOrder = orderData.items.map((item) => {
@@ -22,6 +29,7 @@ export class OrderService {
             }
             return {
                 ...item,
+                orderCode: this.generateOrderCode(10),
                 productId: new Types.ObjectId(item.productId),
             };
         });
@@ -230,6 +238,17 @@ export class OrderService {
         }
 
         order.state = status;
+        return await order.save();
+    }
+
+    async updatePaymentStateByOrderCode(orderCode: string, paymentState: boolean) {
+        const order = await this.orderModel.findOne({ orderCode: orderCode });
+
+        if (!order) {
+            throw new NotFoundException(`Order with order code: ${orderCode} not found`);
+        }
+
+        order.paymentState = paymentState;
         return await order.save();
     }
 

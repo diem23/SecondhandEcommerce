@@ -10,6 +10,7 @@ import { ProductModule } from './product/product.module';
 import { ReviewModule } from './review/review.module';
 import { OrderModule } from './order/order.module';
 import { CartModule } from './cart/cart.module';
+import { PaymentModule } from './payment/payment.module';
 
 @Module({
   imports: [
@@ -32,7 +33,8 @@ import { CartModule } from './cart/cart.module';
     ProductModule,
     ReviewModule,
     OrderModule,
-    CartModule
+    CartModule,
+    PaymentModule
   ],
   providers: [AppService],
 })
