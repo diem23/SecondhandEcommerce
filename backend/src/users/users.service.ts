@@ -38,9 +38,7 @@ export class UsersService {
             const result = await newUser.save();
             return result;
         } catch (error) {
-            throw new BadRequestException(
-                'Error when created record, check app log',
-            );
+            throw new BadRequestException(error.message);
         }
     }
 
