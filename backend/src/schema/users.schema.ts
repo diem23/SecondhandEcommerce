@@ -60,7 +60,7 @@ export class User {
   @Prop()
   faculty?: string;
 
-  @Prop({ unique: true })
+  @Prop()
   studentCode?: string;
 
   @Exclude()
