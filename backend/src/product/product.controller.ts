@@ -31,29 +31,30 @@ import { CreateProductDto } from './dto/create.dto';
 import { ProductQuery } from './dto/query.dto';
 import { UpdateProductDto } from './dto/update.dto';
 import { ProductService } from './product.service';
+import { match } from 'assert';
 
 @ApiTags('Product')
 @Controller('products')
 export class ProductController {
     constructor(private readonly productService: ProductService) {}
 
-    @Get('/')
-    @ApiBearerAuth()
-    @ApiPaginatedQuery()
-    async findAll(
-        @Query('page', new DefaultValuePipe(1), ParseIntPipe) page: number,
-        @Query('limit', new DefaultValuePipe(10), ParseIntPipe) limit: number,
-        @Query('sort') sort = 'createdAt',
-    ) {
-        const query: ProductQuery = {
-            matches: { isDeleted: false },
-            page,
-            limit,
-            sort: { [sort]: 1 },
-        };
+    // @Get('/')
+    // @ApiBearerAuth()
+    // @ApiPaginatedQuery()
+    // async findAll(
+    //     @Query('page', new DefaultValuePipe(1), ParseIntPipe) page: number,
+    //     @Query('limit', new DefaultValuePipe(10), ParseIntPipe) limit: number,
+    //     @Query('sort') sort = 'createdAt',
+    // ) {
+    //     const query: ProductQuery = {
+    //         matches: { isDeleted: false },
+    //         page,
+    //         limit,
+    //         sort: { [sort]: 1 },
+    //     };
 
-        return this.productService.findAll(query);
-    }
+    //     return this.productService.findAll(query);
+    // }
 
     @Post()
     @UseGuards(JwtGuard)
@@ -80,7 +81,26 @@ export class ProductController {
         return this.productService.create(productData, images);
     }
 
-    @Post('search')
+    @Post('/products')
+    @ApiOperation({ summary: 'Filter, or retrieve products' })
+    @ApiBody({
+        description: 'Filter, or retrieve products',
+        type: ProductQuery,
+    })
+    async getProducts(@Body() body: ProductQuery) {
+        const { matches = {}, page, limit, sort } = body;
+
+        matches.isDeleted = false;
+
+        return this.productService.findAll({
+            matches,
+            page,
+            limit,
+            sort,
+        });
+    }
+
+    @Get('search')
     @ApiOperation({ summary: 'Search for products' })
     @ApiPaginatedQuery()
     async search(
@@ -88,37 +108,11 @@ export class ProductController {
         @Query('limit', new DefaultValuePipe(10), ParseIntPipe) limit: number,
         @Query('sort') sort = 'createdAt',
         @Query('search') search?: string,
-        @Query('filters') filters?: string,
     ) {
         const query: ProductQuery = {
             matches: {
                 isDeleted: false,
-                $or: [
-                    { name: { $regex: search, $options: 'i' } },
-                    { description: { $regex: search, $options: 'i' } },
-                ],
-            },
-            page,
-            limit,
-            sort: { [sort]: 1 },
-        };
-
-        return this.productService.findAll(query);
-    }
-
-    @Post('filter')
-    @ApiOperation({ summary: 'Filter products with advanced conditions' })
-    @ApiPaginatedQuery()
-    async filterProducts(
-        @Query('page', new DefaultValuePipe(1), ParseIntPipe) page: number,
-        @Query('limit', new DefaultValuePipe(10), ParseIntPipe) limit: number,
-        @Query('sort') sort = 'createdAt',
-        @Body() filters: Record<string, any>,
-    ) {
-        const query: ProductQuery = {
-            matches: {
-                isDeleted: false,
-                ...filters,
+                $or: [{ productName: { $regex: search, $options: 'i' } }],
             },
             page,
             limit,

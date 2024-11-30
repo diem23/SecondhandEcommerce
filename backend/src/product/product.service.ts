@@ -27,10 +27,10 @@ export class ProductService {
                 const result = await this.cloudinaryService.uploadImage(image);
                 return result.url;
             });
-            
+
             const productImages = await Promise.all(uploadPromises);
 
-            const { quantity, price } = productData
+            const { quantity, price } = productData;
 
             const product = new this.productModel({
                 ...productData,
@@ -58,10 +58,10 @@ export class ProductService {
             const [products, totalDocs] = await Promise.all([
                 this.productModel
                     .aggregate<ProductDocument>([
-                        { $match: matches },
+                        { $match: matches || {} },
                         { $skip: offset },
                         { $limit: limit },
-                        { $sort: sort },
+                        { $sort: sort || { createdAt: 1 } },
                         {
                             $lookup: {
                                 from: 'users',
@@ -137,7 +137,10 @@ export class ProductService {
             let postingCost = existingProduct.postingCost;
 
             if (productData.price && productData.quantity) {
-                postingCost = transactionCost(productData.quantity, productData.price);
+                postingCost = transactionCost(
+                    productData.quantity,
+                    productData.price,
+                );
             }
 
             const updateData = {
