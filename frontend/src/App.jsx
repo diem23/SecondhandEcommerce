@@ -1,5 +1,5 @@
 import Header from "./components/Header";
-import HomePage from "./customerPages/Homepage";
+import HomePage from "./Pages/Homepage";
 import Footer from "./components/footer";
 export default function App() {
   return (
