@@ -22,8 +22,8 @@ export default function Footer() {
     <footer className="relative w-full bg-[#191C1F] p-10">
       <div className="mx-auto w-full max-w-7xl px-8">
         <div className="grid grid-cols-1 justify-between gap-4 md:grid-cols-2 ">
-          <div className="pl-36">
-            <div className="my-6 flex flex-row items-center gap-3">
+          <div className="pl-56 flex flex-col">
+            <div className="my-4 flex flex-row items-center gap-3">
               <img src="/logo.png" alt="VNU2Hand" className="h-12" />
               <div className="text-2xl text-white font-bold">VNU2HAND</div>
             </div>

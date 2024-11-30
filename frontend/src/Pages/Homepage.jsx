@@ -1,11 +1,93 @@
-import { Package, Trophy, CreditCard, Headphones } from "@phosphor-icons/react";
-import { Button } from "@material-tailwind/react";
+import {
+  Package,
+  Trophy,
+  CreditCard,
+  Headphones,
+  ArrowLeft,
+  ArrowRight,
+} from "@phosphor-icons/react";
+import { Typography, Carousel } from "@material-tailwind/react";
+import ProductViewDialog from "../components/ProductViewDialog";
+import React from "react";
+const tempItem = [
+  {
+    name: "Máy tính & Laptop",
+    image: "https://via.placeholder.com/150",
+  },
+  { name: "Điện thoại", image: "https://via.placeholder.com/150" },
+  { name: "Tai nghe", image: "https://via.placeholder.com/150" },
+  { name: "Phụ kiện", image: "https://via.placeholder.com/150" },
+  { name: "Camera", image: "https://via.placeholder.com/150" },
+  { name: "TV", image: "https://via.placeholder.com/150" },
+];
+
+const listItem = () => {
+  return (
+    <div className="relative mx-auto w-[90vw] p-8">
+      <Typography
+        variant="h1"
+        className="text-2xl text-[#1B6392] font-semibold text-center mb-6"
+      >
+        Mua sắm theo thể loại
+      </Typography>
+      <Carousel
+        loop
+        className="overflow-hidden h-[220px]"
+        transition={{ duration: 1 }}
+        navigation={false}
+        prevArrow={({ handlePrev }) => (
+          <button
+            className="absolute -left-0 top-1/2 -translate-y-1/2 transform rounded-full bg-[#FA8232] p-3 text-white  transition-colors duration-300 hover:bg-gray-300 hover:text-gray-800"
+            onClick={handlePrev}
+          >
+            <ArrowLeft weight="fill" />
+          </button>
+        )}
+        nextArrow={({ handleNext }) => (
+          <button
+            className="absolute -right-0 top-1/2 -translate-y-1/2 transform rounded-full bg-[#FA8232] p-3 text-white transition-colors duration-300 hover:bg-gray-300 hover:text-gray-800"
+            onClick={handleNext}
+          >
+            <ArrowRight weight="fill" />
+          </button>
+        )}
+      >
+        {tempItem.map((_, index) => {
+          if (index % 6 === 0) {
+            return (
+              <div key={index} className="flex justify-center gap-10">
+                {tempItem.slice(index, index + 6).map((item, subIndex) => (
+                  <div
+                    key={subIndex}
+                    className="flex flex-col items-center rounded-lg bg-white p-4 px-4 border transition-shadow duration-300 hover:shadow-lg  hover:scale-105"
+                  >
+                    <img
+                      src={item.image}
+                      alt={item.name}
+                      className="h-32 w-36 rounded-md object-cover transition-transform duration-200 hover:scale-105"
+                    />
+                    <p className="mt-4 text-center text-sm font-semibold text-gray-700">
+                      {item.name}
+                    </p>
+                  </div>
+                ))}
+              </div>
+            );
+          }
+          return null;
+        })}
+      </Carousel>
+    </div>
+  );
+};
 
 const HomePage = () => {
+  const [open, setOpen] = React.useState(false);
+  const handleOpen = () => setOpen(!open);
   return (
     <div className="font-sans bg-white ">
       {/* Header Section */}
-      <div className="bg-white shadow p-4 flex justify-around items-center">
+      <div className="bg-white p-4 flex justify-around items-center">
         <div className="flex border p-4 items-center ">
           <div className="flex flex-row items-left gap-3 border-r-2 pr-10">
             <Package size={36} />
@@ -40,43 +122,14 @@ const HomePage = () => {
       </div>
 
       {/* Categories Section */}
-      <div className="p-8 bg-white">
-        <h1 className="text-2xl text-[#1B6392] font-semibold text-center mb-6">
-          Mua sắm theo thể loại
-        </h1>
-        <div className="grid grid-cols-3 md:grid-cols-6 gap-4">
-          {[
-            {
-              name: "Máy tính & Laptop",
-              image: "https://via.placeholder.com/150",
-            },
-            { name: "Điện thoại", image: "https://via.placeholder.com/150" },
-            { name: "Tai nghe", image: "https://via.placeholder.com/150" },
-            { name: "Phụ kiện", image: "https://via.placeholder.com/150" },
-            { name: "Camera", image: "https://via.placeholder.com/150" },
-            { name: "TV", image: "https://via.placeholder.com/150" },
-          ].map((category) => (
-            <div
-              key={category.name}
-              className="flex flex-col items-center bg-white shadow p-4 rounded"
-            >
-              <img
-                src={category.image}
-                alt={category.name}
-                className="w-16 h-16"
-              />
-              <p className="mt-4 text-sm font-medium">{category.name}</p>
-            </div>
-          ))}
-        </div>
-      </div>
+      {listItem()}
 
       {/* Products Section */}
       <div className=" flex justify-center p-8 bg-white shadow ">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div>
             <h3 className="text-lg font-semibold mb-4">🔥 BÁN CHẠY NHẤT</h3>
-            <ul className="space-y-4">
+            <ul className="space-y-4 max-w-72">
               {[
                 {
                   name: "Samsung Galaxy S21 5G",
@@ -97,6 +150,7 @@ const HomePage = () => {
                 <li
                   key={product.name}
                   className="flex items-center space-x-4 border p-3"
+                  onClick={handleOpen}
                 >
                   <img
                     src={product.image}
@@ -104,7 +158,9 @@ const HomePage = () => {
                     className="w-16 h-16 rounded"
                   />
                   <div>
-                    <p className="text-sm font-medium">{product.name}</p>
+                    <p className="text-sm font-medium break-words">
+                      {product.name}
+                    </p>
                     <p className="text-sm text-blue-600">{product.price}</p>
                   </div>
                 </li>
@@ -113,7 +169,7 @@ const HomePage = () => {
           </div>
           <div>
             <h3 className="text-lg font-semibold mb-4">🌟 SẢN PHẨM MỚI</h3>
-            <ul className="space-y-4">
+            <ul className="space-y-4 max-w-72">
               {[
                 {
                   name: "TOZO T6 Wireless Earbuds",
@@ -141,7 +197,9 @@ const HomePage = () => {
                     className="w-16 h-16 rounded"
                   />
                   <div>
-                    <p className="text-sm font-medium">{product.name}</p>
+                    <p className="text-sm font-medium break-words">
+                      {product.name}
+                    </p>
                     <p className="text-sm text-blue-600">{product.price}</p>
                   </div>
                 </li>
@@ -150,6 +208,7 @@ const HomePage = () => {
           </div>
         </div>
       </div>
+      <ProductViewDialog open={open} handleOpen={handleOpen} />
     </div>
   );
 };
