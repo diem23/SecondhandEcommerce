@@ -19,7 +19,7 @@ export class ProductService {
     constructor(
         @InjectModel(Product.name) private productModel: Model<ProductDocument>,
         private cloudinaryService: CloudinaryService,
-    ) {}
+    ) { }
 
     async create(productData: CreateProductDto, images: Express.Multer.File[]) {
         try {
@@ -182,6 +182,31 @@ export class ProductService {
             };
         } catch (error) {
             throw new BadRequestException(error.message);
+        }
+    }
+
+    async getallbrand() {
+        try {
+            const products = await this.productModel.aggregate([
+                {
+                    $group: {
+                        _id: '$type',
+                        type: { $first: '$type' },
+                        image: { $first: '$image' },
+                        brand: { $addToSet: '$brand' },
+                    },
+                },
+                { $sort: { type: 1 } },
+            ]);
+
+            return products.map((group) => ({
+                type: group.type,
+                image: group.image,
+                brand: group.brand,
+            }));
+        } catch (error) {
+            console.error('Error in getallbrand:', error);
+            throw new Error('Error retrieving brands');
         }
     }
 }

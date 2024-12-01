@@ -36,7 +36,7 @@ import { match } from 'assert';
 @ApiTags('Product')
 @Controller('products')
 export class ProductController {
-    constructor(private readonly productService: ProductService) {}
+    constructor(private readonly productService: ProductService) { }
 
     // @Get('/')
     // @ApiBearerAuth()
@@ -120,6 +120,32 @@ export class ProductController {
         };
 
         return this.productService.findAll(query);
+    }
+
+    @Get('/getallbrand')
+    @ApiBearerAuth()
+    @ApiOperation({ summary: 'Get all product types, images, and associated brands' })
+    @ApiResponse({
+        status: 200,
+        description: 'Successfully fetched product metadata.',
+        schema: {
+            example: [
+                {
+                    type: 'Beauty',
+                    image: 'https://example.com/images/beauty.jpg',
+                    brand: ['Dove', 'Sunsilk'],
+                },
+                {
+                    type: 'Electronics',
+                    image: 'https://example.com/images/electronics.jpg',
+                    brand: ['Toshiba', 'Panasonic'],
+                },
+            ],
+        },
+    })
+    @ApiResponse({ status: 404, description: 'Could not get all associated brands for all types.' })
+    async getAllbrand() {
+        return this.productService.getallbrand();
     }
 
     @Get(':id')
