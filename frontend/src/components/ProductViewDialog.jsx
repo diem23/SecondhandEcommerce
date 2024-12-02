@@ -30,7 +30,11 @@ export default function ProductViewDialog({ open, handleOpen }) {
       weight: 500,
       description: "A sulfate-free shampoo for dry and damaged hair",
       isDeleted: false,
-      images: ["http://example.com/image1.jpg"],
+      images: [
+        "https://via.placeholder.com/150",
+        "https://via.placeholder.com/50",
+        "https://via.placeholder.com/100",
+      ],
     },
   ];
   const product = datatest[0]; // Using the first product in the array
@@ -49,32 +53,26 @@ export default function ProductViewDialog({ open, handleOpen }) {
   };
 
   return (
-    <Dialog open={open} handler={handleOpen}>
-      <div className="max-w-6xl mx-auto p-6 grid grid-cols-1 md:grid-cols-2 gap-8">
+    <Dialog open={open} handler={handleOpen} size="xl">
+      <div className="p-6 grid grid-cols-2 gap-20 items-center justify-center">
         {/* Image Slider */}
         <div>
-          <Card className="relative">
+          <Card className="relative h-auto w-auto">
             <img
               src={product.images[selectedImage]}
               alt="Product"
               className="w-full rounded-lg"
             />
+          </Card>
+
+          <div className="flex justify-center mt-4 space-x-2">
             <IconButton
               variant="text"
               onClick={handlePrevImage}
-              className="absolute top-1/2 left-2 transform -translate-y-1/2 bg-white"
+              className="relative -left-10 transform -translate-y-1/2 bg-orange-500 text-white rounded-full"
             >
               <ArrowLeft className="w-5 h-5" />
             </IconButton>
-            <IconButton
-              variant="text"
-              onClick={handleNextImage}
-              className="absolute top-1/2 right-2 transform -translate-y-1/2 bg-white"
-            >
-              <ArrowRight className="w-5 h-5" />
-            </IconButton>
-          </Card>
-          <div className="flex justify-center mt-4 space-x-2">
             {product.images.map((img, index) => (
               <img
                 key={index}
@@ -88,6 +86,13 @@ export default function ProductViewDialog({ open, handleOpen }) {
                 }`}
               />
             ))}
+            <IconButton
+              variant="text"
+              onClick={handleNextImage}
+              className="relative-right-10 transform -translate-y-1/2 bg-orange-500 text-white rounded-full"
+            >
+              <ArrowRight className="w-5 h-5" />
+            </IconButton>
           </div>
         </div>
 

@@ -243,15 +243,24 @@ const Header = () => {
           <FlyoutMenu />
 
           <div className="flex space-x-6">
-            <button className="flex flex-row space-x-2 justify-between items-center px-4 py-2 text-black ">
+            <button
+              className="flex flex-row space-x-2 justify-between items-center px-4 py-2 text-black "
+              onClick={() => navigate("/dashboard")}
+            >
               <Stack size={21} />
               <span>Dashboard</span>
             </button>
-            <button className="flex flex-row space-x-2 justify-between items-center px-4 py-2 text-black ">
+            <button
+              className="flex flex-row space-x-2 justify-between items-center px-4 py-2 text-black "
+              onClick={() => navigate("/trackingdelivery")}
+            >
               <MapPinLine size={21} />
               <span> Theo dõi đơn hàng</span>
             </button>
-            <button className="flex flex-row space-x-2 justify-between items-center px-4 py-2 text-black ">
+            <button
+              className="flex flex-row space-x-2 justify-between items-center px-4 py-2 text-black "
+              onClick={() => navigate("/accountdetail")}
+            >
               <User size={21} />
               <span> Thông tin tài khoản</span>
             </button>

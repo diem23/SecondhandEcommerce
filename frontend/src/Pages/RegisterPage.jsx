@@ -12,7 +12,7 @@ import {
   Breadcrumbs,
 } from "@material-tailwind/react";
 import Header from "../components/Header";
-import Footer from "../components/footer";
+import Footer from "../components/Footer";
 import React from "react";
 import { register } from "../services/authService";
 

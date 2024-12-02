@@ -4,8 +4,10 @@ import HomePageBody from "./HomepageBody";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import HeaderUser from "../components/HeaderUser";
-import ShopPage from "./ShopPage";
+import Dashboard from "./Dashboard";
 import { getUserMe } from "../services/authService";
+import OrderTracking from "./OrderTracking";
+import AccountDetail from "./AccountDetail";
 const HomePage = ({ type }) => {
   const [role, setRole] = useState("");
   const navigate = useNavigate();
@@ -39,7 +41,11 @@ const HomePage = ({ type }) => {
       {type === "homepage" ? (
         <HomePageBody />
       ) : type === "dashboard" ? (
-        <ShopPage />
+        <Dashboard />
+      ) : type === "trackingdelivery" ? (
+        <OrderTracking />
+      ) : type === "accountdetail" ? (
+        <AccountDetail />
       ) : (
         <div>
           <h1>Not found</h1>

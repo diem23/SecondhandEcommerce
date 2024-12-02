@@ -1,8 +1,14 @@
-import React from "react";
-import { Package, Trophy, CreditCard, Headphones } from "@phosphor-icons/react";
-import { ArrowLeft, ArrowRight } from "@phosphor-icons/react";
+import {
+  Package,
+  Trophy,
+  CreditCard,
+  Headphones,
+  ArrowLeft,
+  ArrowRight,
+} from "@phosphor-icons/react";
 import { Typography, Carousel } from "@material-tailwind/react";
-// import { ProductViewDialog } from "../components/ProductViewDialog";
+import ProductViewDialog from "../components/ProductViewDialog";
+import React from "react";
 const tempItem = [
   {
     name: "Máy tính & Laptop",
@@ -14,6 +20,7 @@ const tempItem = [
   { name: "Camera", image: "https://via.placeholder.com/150" },
   { name: "TV", image: "https://via.placeholder.com/150" },
 ];
+
 const listItem = () => {
   return (
     <div className="relative mx-auto w-[90vw] p-8">
@@ -201,6 +208,7 @@ const HomePageBody = () => {
           </div>
         </div>
       </div>
+      <ProductViewDialog open={open} handleOpen={handleOpen} />
     </div>
   );
 };

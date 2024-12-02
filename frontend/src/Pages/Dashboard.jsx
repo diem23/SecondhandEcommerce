@@ -7,7 +7,7 @@ import { useState } from "react";
 import ProductCard from "../components/ProductCard";
 import { getProducts } from "../services/productService";
 
-const BreadcrumbsShopPage = () => {
+const BreadcrumbsDashboard = () => {
   return (
     <Breadcrumbs className="bg-white ml-36">
       <a href="#" className="opacity-60 flex gap-1">
@@ -118,6 +118,7 @@ const ProductGrid = () => {
     const getProductsByPage = async () => {
       try {
         const data = {
+          page: 1,
           limit: 10,
           sort: { price: -1 },
           matches: {},
@@ -141,10 +142,10 @@ const ProductGrid = () => {
   );
 };
 
-const ShopPage = () => {
+const Dashboard = () => {
   return (
     <>
-      <BreadcrumbsShopPage />
+      <BreadcrumbsDashboard />
       <div className="font-sans bg-white min-h-screen flex  flex-col items-center ">
         <div className="container mx-auto flex py-6">
           <Sidebar />
@@ -157,4 +158,4 @@ const ShopPage = () => {
   );
 };
 
-export default ShopPage;
+export default Dashboard;
