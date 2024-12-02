@@ -11,7 +11,7 @@ import {
     Query,
     UploadedFiles,
     UseGuards,
-    UseInterceptors
+    UseInterceptors,
 } from '@nestjs/common';
 import { PartialType } from '@nestjs/mapped-types';
 import { FileFieldsInterceptor } from '@nestjs/platform-express';
@@ -31,32 +31,34 @@ import { CreateProductDto } from './dto/create.dto';
 import { ProductQuery } from './dto/query.dto';
 import { UpdateProductDto } from './dto/update.dto';
 import { ProductService } from './product.service';
+import { match } from 'assert';
 
 @ApiTags('Product')
 @Controller('products')
 export class ProductController {
-    constructor(private readonly productService: ProductService) {}
+    constructor(private readonly productService: ProductService) { }
 
-    @Get('/')
-    @ApiBearerAuth()
-    @ApiPaginatedQuery()
-    async findAll(
-        @Query('page', new DefaultValuePipe(1), ParseIntPipe) page: number,
-        @Query('limit', new DefaultValuePipe(10), ParseIntPipe) limit: number,
-        @Query('sort') sort = 'createdAt',
-    ) {
-        const query: ProductQuery = {
-            matches: { isDel: false },
-            page,
-            limit,
-            sort: { [sort]: 1 },
-        };
+    // @Get('/')
+    // @ApiBearerAuth()
+    // @ApiPaginatedQuery()
+    // async findAll(
+    //     @Query('page', new DefaultValuePipe(1), ParseIntPipe) page: number,
+    //     @Query('limit', new DefaultValuePipe(10), ParseIntPipe) limit: number,
+    //     @Query('sort') sort = 'createdAt',
+    // ) {
+    //     const query: ProductQuery = {
+    //         matches: { isDeleted: false },
+    //         page,
+    //         limit,
+    //         sort: { [sort]: 1 },
+    //     };
 
-        return this.productService.findAll(query);
-    }
+    //     return this.productService.findAll(query);
+    // }
 
     @Post()
     @UseGuards(JwtGuard)
+    @ApiBearerAuth()
     @ApiOperation({ summary: 'Create a new product' })
     @ApiBody({ description: 'Data for creating a new product', type: Product })
     @UseInterceptors(FileFieldsInterceptor([{ name: 'images', maxCount: 10 }]))
@@ -79,6 +81,73 @@ export class ProductController {
         return this.productService.create(productData, images);
     }
 
+    @Post('/products')
+    @ApiOperation({ summary: 'Filter, or retrieve products' })
+    @ApiBody({
+        description: 'Filter, or retrieve products',
+        type: ProductQuery,
+    })
+    async getProducts(@Body() body: ProductQuery) {
+        const { matches = {}, page, limit, sort } = body;
+
+        matches.isDeleted = false;
+
+        return this.productService.findAll({
+            matches,
+            page,
+            limit,
+            sort,
+        });
+    }
+
+    @Get('search')
+    @ApiOperation({ summary: 'Search for products' })
+    @ApiPaginatedQuery()
+    async search(
+        @Query('page', new DefaultValuePipe(1), ParseIntPipe) page: number,
+        @Query('limit', new DefaultValuePipe(10), ParseIntPipe) limit: number,
+        @Query('sort') sort = 'createdAt',
+        @Query('search') search?: string,
+    ) {
+        const query: ProductQuery = {
+            matches: {
+                isDeleted: false,
+                $or: [{ productName: { $regex: search, $options: 'i' } }],
+            },
+            page,
+            limit,
+            sort: { [sort]: 1 },
+        };
+
+        return this.productService.findAll(query);
+    }
+
+    @Get('/getallbrand')
+    @ApiBearerAuth()
+    @ApiOperation({ summary: 'Get all product types, images, and associated brands' })
+    @ApiResponse({
+        status: 200,
+        description: 'Successfully fetched product metadata.',
+        schema: {
+            example: [
+                {
+                    type: 'Beauty',
+                    image: 'https://example.com/images/beauty.jpg',
+                    brand: ['Dove', 'Sunsilk'],
+                },
+                {
+                    type: 'Electronics',
+                    image: 'https://example.com/images/electronics.jpg',
+                    brand: ['Toshiba', 'Panasonic'],
+                },
+            ],
+        },
+    })
+    @ApiResponse({ status: 404, description: 'Could not get all associated brands for all types.' })
+    async getAllbrand() {
+        return this.productService.getallbrand();
+    }
+
     @Get(':id')
     @ApiOperation({ summary: 'Get a product by ID' })
     @ApiResponse({ status: 200, description: 'Product found.', type: Product })
@@ -88,6 +157,7 @@ export class ProductController {
     }
 
     @Put(':id')
+    @ApiBearerAuth()
     @ApiOperation({ summary: 'Update a product by ID' })
     @ApiBody({
         description: 'Updated data for the product',
@@ -114,6 +184,7 @@ export class ProductController {
     }
 
     @Delete(':id')
+    @ApiBearerAuth()
     @ApiOperation({ summary: 'Delete a product by ID' })
     @ApiResponse({
         status: 200,

@@ -6,7 +6,6 @@ export const register = async (data) => {
   const url = `${API_URL}/auth/register`;
   return await axios.post(url, data);
 };
-
 export const login = async (data) => {
   const url = `${API_URL}/auth/login`;
   return await axios.post(url, data);
@@ -22,3 +21,4 @@ export const getUserMe = async () => {
     },
   });
 };
+

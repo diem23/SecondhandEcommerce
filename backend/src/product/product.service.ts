@@ -6,33 +6,39 @@ import {
 import { InjectModel } from '@nestjs/mongoose';
 import { Model, Types } from 'mongoose';
 import { CloudinaryService } from 'src/cloudinary';
-import { Product, ProductDocument } from 'src/schema/product.schema';
-import { CreateProductDto } from './dto/create.dto';
 import { productMess } from 'src/contants';
+import { Product, ProductDocument } from 'src/schema/product.schema';
+import { unSelectedFields } from 'src/types';
+import { transactionCost } from 'src/utils';
+import { CreateProductDto } from './dto/create.dto';
 import { ProductQuery } from './dto/query.dto';
 import { UpdateProductDto } from './dto/update.dto';
-import { CurrentUser } from 'src/users/decorator';
 
 @Injectable()
 export class ProductService {
     constructor(
         @InjectModel(Product.name) private productModel: Model<ProductDocument>,
         private cloudinaryService: CloudinaryService,
-    ) {}
+    ) { }
 
     async create(productData: CreateProductDto, images: Express.Multer.File[]) {
         try {
-            const productImages = [];
-
-            images.forEach(async (image) => {
+            const uploadPromises = images.map(async (image) => {
                 const result = await this.cloudinaryService.uploadImage(image);
-                productImages.push(result.secure_url);
+                return result.url;
             });
-            
+
+            const productImages = await Promise.all(uploadPromises);
+
+            const { quantity, price } = productData;
+
             const product = new this.productModel({
                 ...productData,
+                soldQuantity: 0,
                 images: productImages,
                 userId: new Types.ObjectId(productData.userId),
+                postingCost: transactionCost(quantity, price),
+                isDeleted: false,
             });
             await product.save();
 
@@ -52,10 +58,10 @@ export class ProductService {
             const [products, totalDocs] = await Promise.all([
                 this.productModel
                     .aggregate<ProductDocument>([
-                        { $match: matches },
+                        { $match: matches || {} },
                         { $skip: offset },
                         { $limit: limit },
-                        { $sort: sort },
+                        { $sort: sort || { createdAt: 1 } },
                         {
                             $lookup: {
                                 from: 'users',
@@ -63,7 +69,13 @@ export class ProductService {
                                 foreignField: '_id',
                                 as: 'user',
                                 pipeline: [
-                                    { $project: { password: 0, email: 0 } },
+                                    {
+                                        $project: {
+                                            ...unSelectedFields,
+                                            password: 0,
+                                            email: 0,
+                                        },
+                                    },
                                 ],
                             },
                         },
@@ -72,7 +84,7 @@ export class ProductService {
                                 path: '$user',
                                 preserveNullAndEmptyArrays: true,
                             },
-                        }
+                        },
                     ])
                     .exec(),
                 this.productModel.countDocuments(matches).exec(),
@@ -102,7 +114,7 @@ export class ProductService {
         id: string,
         productData: UpdateProductDto,
         images: Express.Multer.File[],
-        user: any
+        user: any,
     ) {
         try {
             const existingProduct = await this.findOne(id);
@@ -122,9 +134,19 @@ export class ProductService {
                 productImages = uploadedImages;
             }
 
+            let postingCost = existingProduct.postingCost;
+
+            if (productData.price && productData.quantity) {
+                postingCost = transactionCost(
+                    productData.quantity,
+                    productData.price,
+                );
+            }
+
             const updateData = {
                 ...productData,
                 images: productImages,
+                postingCost,
                 userId: user._id,
             };
             const updatedProduct = await this.productModel
@@ -146,7 +168,7 @@ export class ProductService {
     async remove(id: string) {
         try {
             const result = await this.productModel
-                .updateOne({ _id: id, isDel: false }, { isDel: true })
+                .updateOne({ _id: id, isDeleted: false }, { isDeleted: true })
                 .exec();
 
             if (result.matchedCount === 0) {
@@ -160,6 +182,31 @@ export class ProductService {
             };
         } catch (error) {
             throw new BadRequestException(error.message);
+        }
+    }
+
+    async getallbrand() {
+        try {
+            const products = await this.productModel.aggregate([
+                {
+                    $group: {
+                        _id: '$type',
+                        type: { $first: '$type' },
+                        image: { $first: '$image' },
+                        brand: { $addToSet: '$brand' },
+                    },
+                },
+                { $sort: { type: 1 } },
+            ]);
+
+            return products.map((group) => ({
+                type: group.type,
+                image: group.image,
+                brand: group.brand,
+            }));
+        } catch (error) {
+            console.error('Error in getallbrand:', error);
+            throw new Error('Error retrieving brands');
         }
     }
 }

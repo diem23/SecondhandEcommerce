@@ -80,6 +80,13 @@ export class Product {
     @Prop()
     quantity: number;
 
+    @ApiProperty({
+        description: 'The cost of posting the product ',
+        example: 500,
+    })
+    @Prop()
+    postingCost: number;
+
     @ApiProperty({ description: 'The number of items sold', example: 20 })
     @Prop()
     soldQuantity: number;

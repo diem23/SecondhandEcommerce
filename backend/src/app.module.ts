@@ -7,6 +7,10 @@ import { CloudinaryModule } from './cloudinary/cloudinary.module';
 import { envConfig } from './config';
 import { UserModule } from './users';
 import { ProductModule } from './product/product.module';
+import { ReviewModule } from './review/review.module';
+import { OrderModule } from './order/order.module';
+import { CartModule } from './cart/cart.module';
+import { PaymentModule } from './payment/payment.module';
 
 @Module({
   imports: [
@@ -26,7 +30,11 @@ import { ProductModule } from './product/product.module';
     UserModule,
     AuthModule,
     CloudinaryModule,
-    ProductModule
+    ProductModule,
+    ReviewModule,
+    OrderModule,
+    CartModule,
+    PaymentModule
   ],
   providers: [AppService],
 })

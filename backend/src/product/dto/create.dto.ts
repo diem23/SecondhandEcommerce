@@ -11,22 +11,34 @@ import {
 } from 'class-validator';
 
 export class CreateProductDto {
-    @ApiProperty({ description: 'The ID of the user who owns the product', example: '12345' })
+    @ApiProperty({
+        description: 'The ID of the user who owns the product',
+        example: '12345',
+    })
     userId?: string;
 
-    @ApiProperty({ description: 'The name of the product', example: 'Organic Shampoo' })
+    @ApiProperty({
+        description: 'The name of the product',
+        example: 'Organic Shampoo',
+    })
     @IsNotEmpty()
     @IsString()
     @MaxLength(255)
     productName: string;
 
-    @ApiProperty({ description: 'The brand of the product', example: 'Herbal Essences' })
+    @ApiProperty({
+        description: 'The brand of the product',
+        example: 'Herbal Essences',
+    })
     @IsOptional()
     @IsString()
     @MaxLength(255)
     brand: string;
 
-    @ApiProperty({ description: 'The type/category of the product', example: 'Shampoo' })
+    @ApiProperty({
+        description: 'The type/category of the product',
+        example: 'Shampoo',
+    })
     @IsNotEmpty()
     @IsString()
     @MaxLength(100)
@@ -50,23 +62,34 @@ export class CreateProductDto {
     @IsBoolean()
     applyProfessionallySelling?: boolean;
 
-    @ApiProperty({ description: 'The state or condition of the product', example: 'New' })
+    @ApiProperty({
+        description: 'The state or condition of the product',
+        example: 'New',
+    })
     @IsOptional()
     @IsString()
     @MaxLength(255)
     state?: string;
 
-    @ApiProperty({ description: 'The price of the product in cents', example: 1999 })
+    @ApiProperty({
+        description: 'The price of the product in cents',
+        example: 1999,
+    })
     @IsNotEmpty()
-    // @IsNumber()
-    // @Min(0)
     price: number;
 
-    @ApiProperty({ description: 'The available quantity of the product', example: 100 })
+    @ApiProperty({
+        description: 'The available quantity of the product',
+        example: 100,
+    })
     @IsNotEmpty()
-    // @IsInt()
-    // @Min(0)
     quantity: number;
+
+    @ApiProperty({
+        description: 'The cost of posting the product ',
+        example: 500,
+    })
+    postingCost: number;
 
     @ApiProperty({ description: 'The number of items sold', example: 20 })
     @IsOptional()
