@@ -1,0 +1,27 @@
+import React from "react";
+import { Card, CardBody, Typography, Chip } from "@material-tailwind/react";
+
+const ProductCard = ({ product }) => {
+  return (
+    <Card className="shadow-md hover:scale-105">
+      <img
+        src={product.images}
+        alt={product.productName}
+        className="h-40 w-full object-cover rounded-t-md"
+      />
+      <CardBody>
+        <Typography variant="h6" className="font-semibold">
+          {product.productName}
+        </Typography>
+        <Typography className="text-gray-600">{product.price} VNĐ</Typography>
+        <div className="flex justify-between items-center mt-4">
+          <Typography variant="small" className="text-yellow-500">
+            {"⭐".repeat(product.rating)}
+          </Typography>
+        </div>
+      </CardBody>
+    </Card>
+  );
+};
+
+export default ProductCard;

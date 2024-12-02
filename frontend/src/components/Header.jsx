@@ -28,8 +28,33 @@ import {
   Typography,
 } from "@material-tailwind/react";
 import CartDetail from "./CartDetail";
+import { useNavigate } from "react-router-dom";
+import { useState, useEffect } from "react";
+import { login } from "../services/authService";
 
 const LoginButton = () => {
+  const [stateValue, setStateValue] = useState({});
+  const navigate = useNavigate();
+
+  const handleLogin = async () => {
+    try {
+      const response = await login(stateValue);
+      const accessToken = response.data.access_token;
+      localStorage.setItem("accessToken", accessToken);
+      window.location.reload();
+    } catch (error) {
+      console.log(error);
+    }
+  };
+  const handleLogout = async () => {
+    try {
+      localStorage.removeItem("accessToken");
+      localStorage.removeItem("user");
+      window.location.reload();
+    } catch (error) {
+      console.log(error);
+    }
+  };
   return (
     <Popover placement="bottom-start">
       <PopoverHandler>
@@ -49,6 +74,10 @@ const LoginButton = () => {
               </Typography>
               <Input
                 size="lg"
+                value={stateValue.email}
+                onChange={(e) =>
+                  setStateValue({ ...stateValue, email: e.target.value })
+                }
                 placeholder="name@mail.com"
                 className=" !border-t-blue-gray-200 focus:!border-t-gray-900"
                 labelProps={{
@@ -66,6 +95,10 @@ const LoginButton = () => {
               <Input
                 type="password"
                 size="lg"
+                value={stateValue.password}
+                onChange={(e) =>
+                  setStateValue({ ...stateValue, password: e.target.value })
+                }
                 placeholder="********"
                 className=" !border-t-blue-gray-200 focus:!border-t-gray-900"
                 labelProps={{
@@ -77,6 +110,7 @@ const LoginButton = () => {
             <Button
               className="mt-6 flex items-center justify-center gap-3 bg-[#FA8232]"
               fullWidth
+              onClick={handleLogin}
             >
               Đăng nhập
               <ArrowRight size={17} />
@@ -91,6 +125,7 @@ const LoginButton = () => {
               fullWidth
               variant="outlined"
               style={{ borderColor: "#FA8232", color: "#FA8232" }}
+              onClick={() => navigate("/register")}
             >
               Tạo tài khoản
             </Button>
@@ -101,31 +136,42 @@ const LoginButton = () => {
   );
 };
 
-const ShoppingCartButton = ({ itemCount }) => {
+const ShoppingCartButton = () => {
+  const navigate = useNavigate();
   return (
     <Popover placement="bottom-end">
       <PopoverHandler>
         <div className="hover:text-gray-300">
           <div className="relative">
             <ShoppingCartSimple size={30} />
-
-            {/* Badge for the number */}
-            {itemCount > 0 && (
-              <span className="absolute top-0 right-0 bg-white text-[#1B6392] text-xs font-bold rounded-full w-5 h-5 flex items-center justify-center">
-                {itemCount}
-              </span>
-            )}
           </div>
         </div>
       </PopoverHandler>
       <PopoverContent>
-        <CartDetail />
+        <Card color="transparent" shadow={false} className="items-center">
+          <div className="flex items-center mt-6">
+            <div className="flex-grow border-t border-gray-300"></div>
+            <span className="mx-4 text-gray-500">
+              Hãy đăng nhập để thêm sản phẩm vào giỏ hàng!
+            </span>
+            <div className="flex-grow border-t border-gray-300"></div>
+          </div>
+          <Button
+            className="mt-6 flex items-center justify-center gap-3 bg-[#FA8232]"
+            fullWidth
+            onClick={() => navigate("/register")}
+          >
+            Đăng nhập
+            <ArrowRight size={17} />
+          </Button>
+        </Card>
       </PopoverContent>
     </Popover>
   );
 };
 
 const Header = () => {
+  const navigate = useNavigate();
   return (
     <header className="bg-[#1B6392] text-white">
       {/* Top Bar */}
@@ -159,7 +205,10 @@ const Header = () => {
       {/* Main Header */}
       <div className="container mx-auto px-16 py-4 flex justify-between items-center">
         {/* Logo */}
-        <div className="flex flex-row justify-between items-center space-x-2">
+        <div
+          className="flex flex-row justify-between items-center space-x-2"
+          onClick={() => navigate("/")}
+        >
           <img src="/logo.png" alt="VNU2Hand" className="h-12" />
           <div className="text-2xl font-bold">VNU2HAND</div>
         </div>
@@ -180,7 +229,7 @@ const Header = () => {
 
         {/* Action Icons */}
         <div className="flex space-x-6 items-center">
-          <ShoppingCartButton itemCount={3} />
+          <ShoppingCartButton itemCount={0} />
           <a href="#" className="hover:text-gray-300">
             <Heart size={30} />
           </a>
