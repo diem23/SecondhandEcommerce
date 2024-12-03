@@ -4,10 +4,13 @@ import HomePageBody from "./HomepageBody";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import HeaderUser from "../components/HeaderUser";
-import Dashboard from "./Dashboard";
+import ShopPage from "./ShopPage";
 import { getUserMe } from "../services/authService";
 import OrderTracking from "./OrderTracking";
 import AccountDetail from "./AccountDetail";
+import ProductDetail from "./ProductDetail";
+import Dashboard from "./Dashboard";
+import CreateOrder from "./CreateOrder";
 const HomePage = ({ type }) => {
   const [role, setRole] = useState("");
   const navigate = useNavigate();
@@ -40,12 +43,18 @@ const HomePage = ({ type }) => {
       )}
       {type === "homepage" ? (
         <HomePageBody />
-      ) : type === "dashboard" ? (
-        <Dashboard />
+      ) : type === "ShopPage" ? (
+        <ShopPage />
       ) : type === "trackingdelivery" ? (
         <OrderTracking />
       ) : type === "accountdetail" ? (
         <AccountDetail />
+      ) : type === "productdetail" ? (
+        <ProductDetail />
+      ) : type === "dashboard" ? (
+        <Dashboard />
+      ) : type === "createorder" ? (
+        <CreateOrder />
       ) : (
         <div>
           <h1>Not found</h1>

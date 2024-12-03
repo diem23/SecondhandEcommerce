@@ -1,9 +1,14 @@
 import React from "react";
 import { Card, CardBody, Typography, Chip } from "@material-tailwind/react";
+import { useNavigate } from "react-router-dom";
 
 const ProductCard = ({ product }) => {
+  const navigate = useNavigate();
   return (
-    <Card className="shadow-md hover:scale-105">
+    <Card
+      className="shadow-md hover:scale-105"
+      onClick={() => navigate(`/productdetail/${product._id}`)}
+    >
       <img
         src={product.images}
         alt={product.productName}

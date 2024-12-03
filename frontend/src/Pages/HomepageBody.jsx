@@ -8,20 +8,10 @@ import {
 } from "@phosphor-icons/react";
 import { Typography, Carousel } from "@material-tailwind/react";
 import ProductViewDialog from "../components/ProductViewDialog";
-import React from "react";
-const tempItem = [
-  {
-    name: "Máy tính & Laptop",
-    image: "https://via.placeholder.com/150",
-  },
-  { name: "Điện thoại", image: "https://via.placeholder.com/150" },
-  { name: "Tai nghe", image: "https://via.placeholder.com/150" },
-  { name: "Phụ kiện", image: "https://via.placeholder.com/150" },
-  { name: "Camera", image: "https://via.placeholder.com/150" },
-  { name: "TV", image: "https://via.placeholder.com/150" },
-];
+import React, { useEffect } from "react";
+import { getAllBrand } from "../services/productService";
 
-const listItem = () => {
+const listItem = (brands) => {
   return (
     <div className="relative mx-auto w-[90vw] p-8">
       <Typography
@@ -52,22 +42,22 @@ const listItem = () => {
           </button>
         )}
       >
-        {tempItem.map((_, index) => {
+        {brands.map((_, index) => {
           if (index % 6 === 0) {
             return (
               <div key={index} className="flex justify-center gap-10">
-                {tempItem.slice(index, index + 6).map((item, subIndex) => (
+                {brands.slice(index, index + 6).map((item, subIndex) => (
                   <div
                     key={subIndex}
                     className="flex flex-col items-center rounded-lg bg-white p-4 px-4 border transition-shadow duration-300 hover:shadow-lg  hover:scale-105"
                   >
                     <img
-                      src={item.image}
-                      alt={item.name}
+                      src={item.image || "https://via.placeholder.com/150"}
+                      alt={item.type}
                       className="h-32 w-36 rounded-md object-cover transition-transform duration-200 hover:scale-105"
                     />
                     <p className="mt-4 text-center text-sm font-semibold text-gray-700">
-                      {item.name}
+                      {item.type}
                     </p>
                   </div>
                 ))}
@@ -84,6 +74,19 @@ const listItem = () => {
 const HomePageBody = () => {
   const [open, setOpen] = React.useState(false);
   const handleOpen = () => setOpen(!open);
+  const [brands, setBrands] = React.useState([]);
+  useEffect(() => {
+    const getAllBrands = async () => {
+      try {
+        const response = await getAllBrand();
+        setBrands(response);
+      } catch (error) {
+        console.error("Error fetching brands:", error);
+      }
+    };
+    getAllBrands();
+  }, []);
+
   return (
     <div className="font-sans bg-white ">
       {/* Header Section */}
@@ -122,7 +125,7 @@ const HomePageBody = () => {
       </div>
 
       {/* Categories Section */}
-      {listItem()}
+      {listItem(brands)}
 
       {/* Products Section */}
       <div className=" flex justify-center p-8 bg-white shadow ">

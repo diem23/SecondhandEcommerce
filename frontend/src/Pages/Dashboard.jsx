@@ -1,161 +1,132 @@
-import { ArrowRight } from "@phosphor-icons/react";
-import { Checkbox, Radio, Breadcrumbs, Slider } from "@material-tailwind/react";
-import Header from "../components/Header";
-import Footer from "../components/Footer";
-import React, { useEffect } from "react";
-import { useState } from "react";
-import ProductCard from "../components/ProductCard";
-import { getProducts } from "../services/productService";
+import React from "react";
+import {
+  Tabs,
+  TabsHeader,
+  TabsBody,
+  Tab,
+  TabPanel,
+  Typography,
+} from "@material-tailwind/react";
+import {
+  Stack,
+  Storefront,
+  MapPinLine,
+  ShoppingCartSimple,
+  Heart,
+  Notebook,
+  ClockClockwise,
+  Gear,
+  SignOut,
+} from "@phosphor-icons/react";
 
-const BreadcrumbsDashboard = () => {
+const Dashboard = () => {
+  const data = [
+    {
+      label: "Dashboard",
+      value: "dashboard",
+      icon: Stack,
+      desc: `It really matters and then like it really doesn't matter.
+          What matters is the people who are sparked by it. And the people 
+          who are like offended by it, it doesn't matter.`,
+    },
+    {
+      label: "Lịch sử giao dịch",
+      value: "billhistory",
+      icon: Storefront,
+      desc: `Because it's about motivating the doers. Because I'm here
+          to follow my dreams and inspire other people to follow their dreams, too.`,
+    },
+    {
+      label: "Theo dõi đơn hàng",
+      value: "trackingdelivery",
+      icon: MapPinLine,
+      desc: `We're not always in the position that we want to be at.
+          We're constantly growing. We're constantly making mistakes. We're
+          constantly trying to express ourselves and actualize our dreams.`,
+    },
+    {
+      label: "Giỏ hàng",
+      value: "cart",
+      icon: ShoppingCartSimple,
+      desc: `We're not always in the position that we want to be at.
+          We're constantly growing. We're constantly making mistakes. We're
+          constantly trying to express ourselves and actualize our dreams.`,
+    },
+    {
+      label: "Sản phẩm ưa thích",
+      value: "favorite",
+      icon: Heart,
+      desc: `We're not always in the position that we want to be at.
+          We're constantly growing. We're constantly making mistakes. We're
+          constantly trying to express ourselves and actualize our dreams.`,
+    },
+    {
+      label: "Thông tin cá nhân",
+      value: "profile",
+      icon: Notebook,
+      desc: `We're not always in the position that we want to be at.
+          We're constantly growing. We're constantly making mistakes. We're
+          constantly trying to express ourselves and actualize our dreams.`,
+    },
+    {
+      label: "Lịch sử tìm kiếm",
+      value: "searchhistory",
+      icon: ClockClockwise,
+      desc: `We're not always in the position that we want to be at.
+          We're constantly growing. We're constantly making mistakes. We're
+          constantly trying to express ourselves and actualize our dreams.`,
+    },
+    {
+      label: "Settings",
+      value: "settings",
+      icon: Gear,
+      desc: `We're not always in the position that we want to be at.
+          We're constantly growing. We're constantly making mistakes. We're
+          constantly trying to express ourselves and actualize our dreams.`,
+    },
+    {
+      label: "Đăng xuất",
+      value: "logout",
+      icon: SignOut,
+      desc: `We're not always in the position that we want to be at.
+          We're constantly growing. We're constantly making mistakes. We're
+          constantly trying to express ourselves and actualize our dreams.`,
+    },
+  ];
   return (
-    <Breadcrumbs className="bg-white ml-36">
-      <a href="#" className="opacity-60 flex gap-1">
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          className="h-4 w-4"
-          viewBox="0 0 20 20"
-          fill="currentColor"
+    <div className="p-6">
+      <Tabs value="dashboard" orientation="vertical">
+        <TabsHeader
+          className="rounded-none border-b border-blue-gray-50 bg-transparent p-0 w-56 place-items-start"
+          indicatorProps={{
+            className: "bg-orange text-white shadow-none rounded-none",
+          }}
         >
-          <path d="M10.707 2.293a1 1 0 00-1.414 0l-7 7a1 1 0 001.414 1.414L4 10.414V17a1 1 0 001 1h2a1 1 0 001-1v-2a1 1 0 011-1h2a1 1 0 011 1v2a1 1 0 001 1h2a1 1 0 001-1v-6.586l.293.293a1 1 0 001.414-1.414l-7-7z" />
-        </svg>
-        Trang chủ
-      </a>
-      <a href="#" className="opacity-60">
-        <span>Thể loại</span>
-      </a>
-      <a href="#" style={{ color: "#2DA5F3" }}>
-        Thiết bị điện tử
-      </a>
-    </Breadcrumbs>
-  );
-};
-
-const Sidebar = () => {
-  const categoriesData = [
-    "Thiết bị điện tử",
-    "Máy tính & Laptop",
-    "Phụ kiện máy tính",
-    "Điện thoại",
-    "Tai nghe",
-    "Phụ kiện điện thoại",
-    "Tay cầm gaming",
-    "Camera",
-    "TV & Đồ dùng gia đình",
-    "Đồng hồ",
-    "GPS & Định vị",
-  ];
-
-  const priceRangesData = [
-    "Tất cả",
-    "Dưới 1,000,000",
-    "1,000,000 tới 2,000,000",
-    "2,000,000 tới 5,000,000",
-    "5,000,000 tới 10,000,000",
-    "10,000,000 tới 20,000,000",
-    "20,000,000 trở lên",
-  ];
-
-  const [sliderValue, setSliderValue] = useState([2000000, 10000000]); // Default slider range
-
-  const handleSliderChange = (value) => {
-    setSliderValue(value);
-  };
-
-  return (
-    <aside className="w-1/4 bg-white p-6 rounded-md ">
-      {/* Category Section */}
-      <div className="mb-8">
-        <h3 className="font-semibold text-lg mb-4">CATEGORY</h3>
-        <div className="flex flex-col space-y-2">
-          {categoriesData.map((category, index) => (
-            <Radio
-              key={index}
-              name="category"
-              label={category}
-              defaultChecked={index === 0}
-            />
+          {data.map(({ label, value, icon }) => (
+            <Tab key={value} value={value} className="place-items-start flex ">
+              <div className="flex flex-row items-start gap-2 ">
+                <Typography
+                  className="text-black flex items-center gap-2"
+                  indicatorProps={{
+                    className: "bg-orange text-black shadow-none rounded-none",
+                  }}
+                >
+                  {React.createElement(icon, { className: "w-5 h-5" })}
+                  {label}
+                </Typography>
+              </div>
+            </Tab>
           ))}
-        </div>
-      </div>
-
-      {/* Price Range Section */}
-      {/*  NOT DONE YET */}
-      <div className="mb-8">
-        <h3 className="font-semibold text-lg mb-4">TẦM GIÁ</h3>
-        <Slider
-          color="orange"
-          min={0}
-          max={20000000}
-          step={1000000}
-          value={sliderValue}
-          onChange={handleSliderChange}
-          className="mb-4"
-        />
-        <div className="flex justify-between text-sm">
-          <span>0 VND</span>
-          <span>{sliderValue.toLocaleString()} VND</span>
-        </div>
-        <div className="flex flex-col mt-4 space-y-2">
-          {priceRangesData.map((range, index) => (
-            <Radio
-              key={index}
-              name="price"
-              label={range}
-              defaultChecked={range === "5,000,000 tới 10,000,000"}
-            />
+        </TabsHeader>
+        <TabsBody className="h-screen">
+          {data.map(({ value, desc }) => (
+            <TabPanel key={value} value={value} className="py-0">
+              {desc}
+            </TabPanel>
           ))}
-        </div>
-      </div>
-    </aside>
-  );
-};
-
-const ProductGrid = () => {
-  const [products, setProducts] = useState([]);
-
-  useEffect(() => {
-    const getProductsByPage = async () => {
-      try {
-        const data = {
-          page: 1,
-          limit: 10,
-          sort: { price: -1 },
-          matches: {},
-        };
-        const response = await getProducts(data);
-        console.log(response);
-        setProducts(response.products);
-      } catch (error) {
-        console.error("Error fetching products:", error);
-      }
-    };
-    getProductsByPage();
-  }, []);
-
-  return (
-    <div className="grid grid-cols-4 gap-6">
-      {products.map((product, index) => (
-        <ProductCard key={index} product={product} />
-      ))}
+        </TabsBody>
+      </Tabs>
     </div>
   );
 };
-
-const Dashboard = () => {
-  return (
-    <>
-      <BreadcrumbsDashboard />
-      <div className="font-sans bg-white min-h-screen flex  flex-col items-center ">
-        <div className="container mx-auto flex py-6">
-          <Sidebar />
-          <div className="flex-1">
-            <ProductGrid />
-          </div>
-        </div>
-      </div>
-    </>
-  );
-};
-
 export default Dashboard;

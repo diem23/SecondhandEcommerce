@@ -95,3 +95,14 @@ export const deleteProduct = async (id, token) => {
     throw error;
   }
 };
+
+export const getAllBrand = async () => {
+  const url = `${backendURL}/products/getallbrand`;
+  try {
+    const response = await axios.get(url);
+    return response.data;
+  } catch (error) {
+    console.error(`Error fetching all brand`, error);
+    throw error;
+  }
+};

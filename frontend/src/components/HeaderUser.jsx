@@ -35,6 +35,8 @@ import CartDetail from "./CartDetail";
 import { useNavigate } from "react-router-dom";
 import { useState, useEffect } from "react";
 import { login } from "../services/authService";
+import BottomHeader from "./BottomHeader";
+import { getCarts } from "../services/cartService";
 
 const UserButton = () => {
   const handleLogout = async () => {
@@ -158,7 +160,7 @@ const UserButton = () => {
   );
 };
 
-const ShoppingCartButton = ({ itemCount }) => {
+const ShoppingCartButton = ({ itemCount, productData }) => {
   return (
     <Popover placement="bottom-end">
       <PopoverHandler>
@@ -176,14 +178,24 @@ const ShoppingCartButton = ({ itemCount }) => {
         </div>
       </PopoverHandler>
       <PopoverContent>
-        <CartDetail />
+        <CartDetail products={productData} />
       </PopoverContent>
     </Popover>
   );
 };
 
-const HeaderUser = ({ role }) => {
+const HeaderUser = () => {
   const navigate = useNavigate();
+  const [products, setProducts] = useState([]);
+  useEffect(() => {
+    const fetchCarts = async () => {
+      const accessToken = localStorage.getItem("accessToken");
+      getCarts(accessToken).then((data) => {
+        setProducts(data);
+      });
+    };
+    fetchCarts();
+  }, []);
   return (
     <header className="bg-[#1B6392] text-white">
       {/* Top Bar */}
@@ -241,7 +253,10 @@ const HeaderUser = ({ role }) => {
 
         {/* Action Icons */}
         <div className="flex space-x-6 items-center">
-          <ShoppingCartButton itemCount={3} />
+          <ShoppingCartButton
+            itemCount={products.length || 0}
+            productData={products}
+          />
           <a href="#" className="hover:text-gray-300">
             <Heart size={30} />
           </a>
@@ -250,50 +265,7 @@ const HeaderUser = ({ role }) => {
       </div>
 
       {/* Bottom Navigation */}
-      <div className="bg-white text-gray-600">
-        <div className="container mx-auto px-16 py-2 flex justify-between items-center text-base">
-          <FlyoutMenu />
-
-          <div className="flex space-x-6">
-            <button
-              className="flex flex-row space-x-2 justify-between items-center px-4 py-2 text-black "
-              onClick={() => navigate("/dashboard")}
-            >
-              <Stack size={21} />
-              <span>Dashboard</span>
-            </button>
-            <button
-              className="flex flex-row space-x-2 justify-between items-center px-4 py-2 text-black "
-              onClick={() => navigate("/trackingdelivery")}
-            >
-              <MapPinLine size={21} />
-              <span> Theo dõi đơn hàng</span>
-            </button>
-            <button
-              className="flex flex-row space-x-2 justify-between items-center px-4 py-2 text-black "
-              onClick={() => navigate("/accountdetail")}
-            >
-              <User size={21} />
-              <span> Thông tin tài khoản</span>
-            </button>
-            <button className="flex flex-row space-x-2 justify-between items-center px-4 py-2 text-black ">
-              <Headphones size={21} />
-              <span> CSKH</span>
-            </button>
-            <button className="flex flex-row space-x-2 justify-between items-center px-4 py-2 text-black ">
-              <Info size={21} />
-              <span> Về chúng tôi</span>
-            </button>
-          </div>
-
-          <div className="flex space-x-6">
-            <button className="flex flex-row space-x-2 justify-between items-center px-4 py-2 text-black ">
-              <PhoneCall size={21} />
-              <span> 01234567890</span>
-            </button>
-          </div>
-        </div>
-      </div>
+      <BottomHeader />
     </header>
   );
 };

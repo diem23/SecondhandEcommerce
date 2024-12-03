@@ -11,7 +11,6 @@ import {
   RouterProvider,
 } from "react-router-dom";
 import RegisterPage from "./Pages/RegisterPage.jsx";
-import Dashboard from "./Pages/Dashboard.jsx";
 
 const router = createBrowserRouter(
   createRoutesFromElements(
@@ -19,7 +18,7 @@ const router = createBrowserRouter(
       <Route path="/register" element={<RegisterPage />} />
       <Route path="/" element={<App />}>
         <Route index={true} element={<HomePage type={"homepage"} />} />
-        <Route path="/dashboard" element={<HomePage type={"dashboard"} />} />
+        <Route path="/ShopPage" element={<HomePage type={"ShopPage"} />} />
         <Route
           path="/trackingdelivery"
           element={<HomePage type={"trackingdelivery"} />}
@@ -27,6 +26,15 @@ const router = createBrowserRouter(
         <Route
           path="/accountdetail"
           element={<HomePage type={"accountdetail"} />}
+        />
+        <Route
+          path="/productdetail/:productId"
+          element={<HomePage type={"productdetail"} />}
+        />
+        <Route path="/dashboard" element={<HomePage type={"dashboard"} />} />
+        <Route
+          path="/createorder"
+          element={<HomePage type={"createorder"} />}
         />
       </Route>
     </>
