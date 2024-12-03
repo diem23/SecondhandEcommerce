@@ -63,3 +63,21 @@ export const getCartById = async (id, token) => {
         throw error;
     }
 };
+
+// ***** With delete method, we need to pass the data with in {data} not data
+export const deleteCart = async (data, token) => {
+    const url = `${backendURL}/carts/item`;
+    try {
+        const response = await axios.delete(url, {
+            headers: {
+                Authorization: `Bearer ${token}`,
+                "Content-Type": "application/json",
+            },
+            data,
+        });
+        return response.data;
+    } catch (error) {
+        console.error(`Error deleting cart`, error);
+        throw error;
+    }
+};
