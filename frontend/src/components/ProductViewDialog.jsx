@@ -69,7 +69,7 @@ export default function ProductViewDialog({ open, handleOpen }) {
             <IconButton
               variant="text"
               onClick={handlePrevImage}
-              className="relative -left-10 transform -translate-y-1/2 bg-orange-500 text-white rounded-full"
+              className="relative -left-10 transform -translate-y-1/2 bg-orange text-white rounded-full"
             >
               <ArrowLeft className="w-5 h-5" />
             </IconButton>
@@ -80,16 +80,14 @@ export default function ProductViewDialog({ open, handleOpen }) {
                 alt={`Thumbnail ${index + 1}`}
                 onClick={() => setSelectedImage(index)}
                 className={`w-16 h-16 rounded-lg cursor-pointer border ${
-                  selectedImage === index
-                    ? "border-orange-500"
-                    : "border-gray-300"
+                  selectedImage === index ? "border-orange" : "border-gray-300"
                 }`}
               />
             ))}
             <IconButton
               variant="text"
               onClick={handleNextImage}
-              className="relative-right-10 transform -translate-y-1/2 bg-orange-500 text-white rounded-full"
+              className="relative-right-10 transform -translate-y-1/2 bg-orange text-white rounded-full"
             >
               <ArrowRight className="w-5 h-5" />
             </IconButton>
@@ -104,7 +102,7 @@ export default function ProductViewDialog({ open, handleOpen }) {
           <p className="text-gray-500">State: {product.state}</p>
 
           <div className="flex items-center mt-2">
-            <span className="text-orange-500 text-lg font-bold">
+            <span className="text-orange text-lg font-bold">
               ${product.price / 100}
             </span>
             <span className="ml-4 bg-green-100 text-green-600 px-2 py-1 rounded-md text-sm">

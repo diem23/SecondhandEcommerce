@@ -1,14 +1,19 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { Button } from "@material-tailwind/react";
 import { ArrowRight } from "@phosphor-icons/react";
-const CartItem = ({ product, quantity, price, onRemove }) => {
+import { getCarts } from "../services/cartService";
+const CartItem = ({ product, quantity, price, image, onRemove }) => {
   const formatCurrency = (value) =>
     new Intl.NumberFormat("vi-VN").format(value);
 
   return (
     <div className="flex items-center justify-between py-2">
       <div className="flex items-center space-x-4">
-        <div className="h-16 w-16 bg-gray-200 rounded-md" />
+        <img
+          src={image}
+          alt={product}
+          className="h-16 w-16 object-cover rounded-md"
+        />
         <div>
           <h3 className="font-medium">{product}</h3>
           <p className="text-sm text-gray-500">
@@ -26,24 +31,11 @@ const CartItem = ({ product, quantity, price, onRemove }) => {
   );
 };
 
-export default function CartDetail() {
-  const cartItems = [
-    {
-      id: 1,
-      product: "Canon EOS 1500D DSLR Camera Body+ 18-55 mm",
-      quantity: 1,
-      price: "1500000",
-    },
-    {
-      id: 2,
-      product: "Simple Mobile 5G LTE Galaxy 12 Mini 512GB Gaming Phone",
-      quantity: 2,
-      price: "1500000",
-    },
-  ];
-
-  const total = cartItems.reduce(
-    (acc, item) => acc + item.quantity * parseInt(item.price),
+export default function CartDetail({ products }) {
+  const total = products.reduce(
+    (acc, item) =>
+      acc +
+      item.productItems[0].quantity * parseInt(item.productItems[0].price),
     0
   );
 
@@ -54,20 +46,21 @@ export default function CartDetail() {
   return (
     <div className="p-4 bg-white rounded-md w-96">
       <h2 className="text-lg font-semibold mb-2">
-        Giỏ hàng ({cartItems.length})
+        Giỏ hàng ({products.length})
       </h2>
       <div className="flex items-center my-2">
         <div className="flex-grow border-t border-gray-300"></div>
         <div className="flex-grow border-t border-gray-300"></div>
       </div>
       <div className="space-y-4">
-        {cartItems.map((item) => (
+        {products.map((item) => (
           <CartItem
-            key={item.id}
-            product={item.product}
-            quantity={item.quantity}
-            price={item.price}
-            onRemove={() => handleRemove(item.id)}
+            key={item._id}
+            product={item.productItems[0].product.productName}
+            image={item.productItems[0].product.images[0]}
+            quantity={item.productItems[0].quantity}
+            price={item.productItems[0].price}
+            onRemove={() => handleRemove(item._id)}
           />
         ))}
       </div>
