@@ -190,8 +190,10 @@ const HeaderUser = () => {
   useEffect(() => {
     const fetchCarts = async () => {
       const accessToken = localStorage.getItem("accessToken");
+      console.log("Access token: " + accessToken);
       getCarts(accessToken).then((data) => {
-        setProducts(data);
+        console.log(data[data.length - 1].productItems);
+        setProducts(data[data.length - 1]);
       });
     };
     fetchCarts();

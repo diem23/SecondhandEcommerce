@@ -1,7 +1,7 @@
-import React, { useState, useEffect } from "react";
 import { Button } from "@material-tailwind/react";
 import { ArrowRight } from "@phosphor-icons/react";
-import { getCarts } from "../services/cartService";
+import React, { useMemo, useState } from "react";
+import { deleteCart } from "../services/cartService";
 const CartItem = ({ product, quantity, price, image, onRemove }) => {
   const formatCurrency = (value) =>
     new Intl.NumberFormat("vi-VN").format(value);
@@ -32,15 +32,26 @@ const CartItem = ({ product, quantity, price, image, onRemove }) => {
 };
 
 export default function CartDetail({ products }) {
-  const total = products.reduce(
+
+  const { productItems, _id } = products;
+  
+  const total = useMemo(() => productItems.reduce(
     (acc, item) =>
       acc +
-      item.productItems[0].quantity * parseInt(item.productItems[0].price),
+    item.quantity * parseInt(item.price),
     0
-  );
+  ), [productItems]);
 
-  const handleRemove = (id) => {
-    console.log("Remove item with id:", id);
+  const [items, setItems] = useState(productItems);
+  
+  const handleRemove = async (itemId) => {
+    const token = localStorage.getItem("accessToken");
+    const cart = await deleteCart({
+      itemId,
+      cartId: _id
+    }, token)
+
+    setItems(cart.productItems);
   };
 
   return (
@@ -53,16 +64,19 @@ export default function CartDetail({ products }) {
         <div className="flex-grow border-t border-gray-300"></div>
       </div>
       <div className="space-y-4">
-        {products.map((item) => (
-          <CartItem
-            key={item._id}
-            product={item.productItems[0].product.productName}
-            image={item.productItems[0].product.images[0]}
-            quantity={item.productItems[0].quantity}
-            price={item.productItems[0].price}
-            onRemove={() => handleRemove(item._id)}
-          />
-        ))}
+        {items.map((item) => {
+          const { product } = item;
+          return (
+            <CartItem
+              key={item.productId}
+              product={product.productName}
+              quantity={item.quantity}
+              price={item.price}
+              image={product.images[0]}
+              onRemove={() => handleRemove(item.productId)}
+            />
+          );
+        })}
       </div>
       <div className="mt-4 border-t pt-4">
         <div className="flex justify-between mb-4">

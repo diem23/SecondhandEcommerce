@@ -1,6 +1,7 @@
 import {
     Body,
     Controller,
+    Delete,
     Get,
     Param,
     Patch,
@@ -19,6 +20,7 @@ import { JwtGuard } from 'src/auth/guard';
 import { CreateCartDto } from './dto/create.dto';
 import { CurrentUser } from 'src/users/decorator';
 import { TCurrentUser } from 'src/types';
+import { RemoveItemDto } from './dto/remove.dto';
 
 @ApiTags('carts')
 @UseGuards(JwtGuard)
@@ -63,5 +65,14 @@ export class CartController {
         @Body() cartData: CreateCartDto,
     ) {
         return this.cartService.updateCart(id, cartData);
+    }
+
+    @ApiOperation({ summary: 'Delete an cart' })
+    @ApiBody({ description: 'Cart status', type: RemoveItemDto })
+    @ApiResponse({ status: 200, description: 'Cart successfully deleted.' })
+    @Delete('item')
+    async removeItem(@Body() removeItemDto: RemoveItemDto) {
+        const { cartId, itemId } = removeItemDto;
+        return this.cartService.removeItemFromCart(cartId, itemId);
     }
 }
