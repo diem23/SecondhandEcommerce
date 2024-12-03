@@ -35,7 +35,7 @@ const ProductDetail = () => {
   const HandleDirectBuy = () => {
     window.scrollTo(0, 0);
     navigate("/createorder", {
-      state: { productData, previousUrl: window.location.pathname },
+      state: { productData, previousUrl: window.location.pathname, useInsurance: useInsurance, ammountItem: ammountItem },
     });
   };
 

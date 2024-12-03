@@ -36,6 +36,11 @@ const router = createBrowserRouter(
           path="/createorder"
           element={<HomePage type={"createorder"} />}
         />
+        <Route
+          path="/shoppingcart"
+          element={<HomePage type={"shoppingcart"} />}
+        />
+        <Route path="/checkout" element={<HomePage type={"checkout"} />} />
       </Route>
     </>
   )
