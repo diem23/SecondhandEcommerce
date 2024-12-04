@@ -1,82 +1,145 @@
-import React from "react";
+import React, { useState, useMemo } from "react";
 import {
+  Button,
   Card,
   CardBody,
-  Input,
-  Select,
-  Option,
   Checkbox,
-  Button,
+  Input,
   Radio,
 } from "@material-tailwind/react";
-import { ShoppingCart, ArrowRight } from "@phosphor-icons/react";
+import { ShoppingCart } from "@phosphor-icons/react";
 import { useLocation } from "react-router-dom";
+import { placeOrder } from "../services/orderService";
+import { createQRCodePayment } from "../services/paymentService";
+
+const PaymentMethod =  {
+  BANK_TRANSFER: 'Chuyển khoản ngân hàng',
+  CASH: 'Thanh toán tiền mặt khi nhận hàng',
+}
 
 const Checkout = () => {
   const location = useLocation();
   const { cartItems } = location.state;
-  const subTotal = cartItems.reduce(
-    (sum, item) => sum + item.price * item.quantity,
-    0
+  const currentUser = JSON.parse(localStorage.getItem('user'))
+
+  const [formData, setFormData] = useState({
+    name: "",
+    address: "",
+    phone: "",
+    sendToDifferentAddress: false,
+    paymentMethod: PaymentMethod.BANK_TRANSFER,
+    additionalNotes: "",
+  });
+
+  const subTotal = useMemo(
+    () => cartItems.reduce((sum, item) => sum + item.price * item.quantity, 0),
+    [cartItems]
   );
-  const totalDiscount = cartItems.reduce((sum, item) => sum + item.discount, 0);
-  const totalTax = cartItems.reduce((sum, item) => sum + item.tax, 0);
+  const totalDiscount = useMemo(
+    () => cartItems.reduce((sum, item) => sum + item.discount, 0),
+    [cartItems]
+  );
+  const totalTax = useMemo(
+    () => cartItems.reduce((sum, item) => sum + item.tax, 0),
+    [cartItems]
+  );
   const total = subTotal - totalDiscount + totalTax;
 
+  const handleChange = (e) => {
+    const { name, value, type, checked } = e.target;
+    setFormData((prev) => ({
+      ...prev,
+      [name]: type === "checkbox" ? checked : value,
+    }));
+  };
+
+  const handleSubmit = async () => {
+    const orderData ={
+      items: cartItems,
+      paymentMethod: formData.paymentMethod,
+      receivingAddress: formData.address || currentUser.location,
+      receivingPhone: formData.phone || currentUser.phoneNumber,
+      receiver: formData.name || currentUser.fullname,
+      deliveryDate: (() => {
+        const date = new Date();
+        date.setDate(date.getDate() + 7);
+        return date.toISOString();
+      })(),
+    };
+    const token = localStorage.getItem('accessToken');
+
+    const order = await placeOrder(orderData, token)
+
+    const paymentLink = await createQRCodePayment(order._id.toString())
+    console.log(paymentLink);
+    window.open(paymentLink);
+
+  };
+
   return (
-    <div className="bg-gray-100 min-h-screen flex justify-center items-center p-4">
+    <div className="bg-gray-100 flex justify-center p-4">
       <div className="w-full max-w-6xl grid grid-cols-1 md:grid-cols-3 gap-6">
         <Card className="col-span-2 shadow-lg">
           <CardBody>
             <h2 className="text-lg font-semibold mb-4">Thông tin thanh toán</h2>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
-              <Input label="Họ" />
-              <Input label="Tên" />
+            <div className="mb-6">
+              <Input
+                name="name"
+                label="Họ tên người nhận"
+                value={formData.name}
+                onChange={handleChange}
+              />
             </div>
-            <Input label="Địa chỉ" className="mb-6" />
-            <div className="grid grid-cols-3 gap-4 my-6">
-              <Input label="Tỉnh"></Input>
-              <Input label="Huyện"></Input>
-              <Input label="Phường/Xã"></Input>
+            <div className="mb-6">
+              <Input
+                name="address"
+                label="Địa chỉ"
+                value={formData.address}
+                onChange={handleChange}
+              />
             </div>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
-              <Input label="Số nhà và đường" />
-              <Input label="Email" />
+            <div className="mb-6">
+              <Input
+                name="phone"
+                label="Số điện thoại"
+                value={formData.phone}
+                onChange={handleChange}
+              />
             </div>
-            <Input label="Số điện thoại" className="mb-6" />
-            <Checkbox label="Gửi hàng vào địa chỉ khác" className="mb-6" />
+            <Checkbox
+              name="sendToDifferentAddress"
+              label="Gửi hàng vào địa chỉ khác"
+              checked={formData.sendToDifferentAddress}
+              onChange={handleChange}
+            />
 
             {/* Payment Method */}
-            <h2 className="text-lg font-semibold mb-4">
-              Phương thức thanh toán
-            </h2>
-            <Radio
-              id="payos"
-              name="payment-method"
-              label="PayOS"
-              className="pb-2"
-            />
-            <Radio
-              id="credit-card"
-              name="payment-method"
-              label="Thẻ tín dụng"
-              defaultChecked
-              className="pb-4"
-            />
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
-              <Input label="Tên thẻ" />
-              <Input label="Số thẻ" />
+            <div className="mb-4">
+              <h2 className="text-lg font-semibold">Phương thức thanh toán</h2>
+              <Radio
+                id="bank-transfer"
+                name="paymentMethod"
+                label={PaymentMethod.BANK_TRANSFER}
+                value={PaymentMethod.BANK_TRANSFER}
+                checked={formData.paymentMethod === PaymentMethod.BANK_TRANSFER}
+                onChange={handleChange}
+              />
+              <Radio
+                id="cash"
+                name="paymentMethod"
+                label={PaymentMethod.CASH}
+                value={PaymentMethod.CASH}
+                checked={formData.paymentMethod === PaymentMethod.CASH}
+                onChange={handleChange}
+              />
             </div>
-            <div className="grid grid-cols-2 gap-4 mb-6">
-              <Input label="Ngày hết hạn" />
-              <Input label="CVC" />
-            </div>
-
             {/* Additional Notes */}
             <h2 className="text-lg font-semibold mb-4">Thông tin thêm</h2>
             <Input
+              name="additionalNotes"
               label="Ghi chú (tùy chọn)"
-              className="mb-6"
+              value={formData.additionalNotes}
+              onChange={handleChange}
               placeholder="Điền thêm thông tin cụ thể hơn để shipper và nhà cung cấp có thể đáp ứng nhu cầu của bạn..."
             />
           </CardBody>
@@ -95,7 +158,7 @@ const Checkout = () => {
                   <div>
                     <p className="font-medium">{item.productName}</p>
                     <div className="flex gap-2 items-center">
-                      <p className="text-sm ">{item.quantity}</p>
+                      <p className="text-sm">{item.quantity}</p>
                       <p className="text-blue-500">
                         {" "}
                         x {item.price.toFixed(2)}
@@ -111,7 +174,7 @@ const Checkout = () => {
               </div>
               <div className="flex justify-between mb-2">
                 <span>Discount</span>
-                <span>-${totalDiscount.toFixed(2)}</span>
+                <span>- ${totalDiscount.toFixed(2)}</span>
               </div>
               <div className="flex justify-between mb-2">
                 <span>Tax</span>
@@ -121,7 +184,12 @@ const Checkout = () => {
                 <span>Total</span>
                 <span>${total.toFixed(2)}</span>
               </div>
-              <Button fullWidth color="orange" className="mt-4">
+              <Button
+                fullWidth
+                color="orange"
+                className="mt-4"
+                onClick={handleSubmit}
+              >
                 PLACE ORDER
               </Button>
             </CardBody>

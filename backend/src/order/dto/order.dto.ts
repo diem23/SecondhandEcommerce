@@ -47,6 +47,21 @@ export class OrderDto {
     receivingAddress: string;
 
     @ApiProperty({
+        description: 'Phone number of the recipient',
+        example: '+1234567890',
+    })
+    @IsString()
+    @IsNotEmpty()
+    receivingPhone: string;
+
+    @ApiProperty({
+        description: 'Receiver name',
+        example: 'John Doe',
+    })
+    @IsOptional()
+    receiver: string;
+
+    @ApiProperty({
         description: 'Delivery date',
         example: '2024-11-28T01:35:02.85Z',
     })

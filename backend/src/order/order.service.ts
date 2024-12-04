@@ -29,7 +29,6 @@ export class OrderService {
             }
             return {
                 ...item,
-                orderCode: this.generateOrderCode(10),
                 productId: new Types.ObjectId(item.productId),
             };
         });
@@ -41,7 +40,10 @@ export class OrderService {
             totalPrice: 0,
             listOfSingleOrder: listOfSingleOrder,
             receivingAddress: orderData.receivingAddress,
+            receivingPhone: orderData.receivingPhone,
+        
             userId: new Types.ObjectId(userId),
+            orderCode: this.generateOrderCode(10),
             deliveryDate: orderData.deliveryDate,
         });
 

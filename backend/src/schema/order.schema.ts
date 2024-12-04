@@ -76,6 +76,20 @@ export class Order {
     @Prop({ required: true })
     receivingAddress: string;
 
+    @ApiProperty({
+        description: 'Phone number of the recipient',
+        example: '0987654321',
+    })
+    @Prop({ required: true })
+    receivingPhone: string;
+
+    @ApiProperty({
+        description: 'Receiver name',
+        example: 'John Doe',
+    })
+    @Prop()
+    receiver: string;
+
     @Prop({ type: Types.ObjectId, ref: User.name })
     @Type(() => User)
     userId: string;

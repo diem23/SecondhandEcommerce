@@ -32,7 +32,7 @@ export class PaymentController {
     @ApiResponse({ status: 404, description: 'Order not found.' })
     @ApiResponse({ status: 400, description: 'Invalid payment method.' })
     @Post(':id')
-    async pay(@Param('id') id: string, @Res() res: Response) {
+    async pay(@Param('id') id: string) {
       const order = await this.orderService.getOrderById(id);
 
       if(order.paymentMethod !== PaymentMethod.BANK_TRANSFER) {
@@ -40,6 +40,6 @@ export class PaymentController {
       }
       
       const paymentLink = await this.paymentService.createPaymentLink(Number(order.orderCode), Math.round(order.totalPrice));
-      return res.redirect(paymentLink);
+      return paymentLink;
     }
 }
