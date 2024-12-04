@@ -14,6 +14,7 @@ import CreateOrder from "./CreateOrder";
 import ShoppingCart from "./ShoppingCart";
 import Checkout from "./CheckOut";
 import { HeaderUserProvider } from "../context/HeaderContext";
+import Success from "./Success";
 
 const HomePage = ({ type }) => {
   const [role, setRole] = useState("");
@@ -34,6 +35,10 @@ const HomePage = ({ type }) => {
     };
     fetchData();
   }, [navigate, role]);
+  if(type === "success") {
+    return (<Success />);
+  }
+
   return (
     <HeaderUserProvider>
       {role === "user" ? (
