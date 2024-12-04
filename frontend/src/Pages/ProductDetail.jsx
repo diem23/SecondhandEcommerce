@@ -206,11 +206,11 @@ const ProductDetail = () => {
       <div className="w-5/6 p-6 grid grid-cols-2 gap-20 items-center justify-center">
         {/* Image Slider */}
         <div>
-          <Card className="relative h-auto w-auto">
+          <Card className="relative h-auto w-auto shadow-none justify-center items-center">
             <img
               src={productData.images ? productData.images[selectedImage] : ""}
               alt="Product"
-              className="w-full rounded-lg"
+              className="object-cover w-[500px] h-[500px] rounded-lg"
             />
           </Card>
 
@@ -290,7 +290,7 @@ const ProductDetail = () => {
           {/* Price */}
           <div className="mt-6 flex items-center space-x-4">
             <span className="text-2xl font-bold text-blue-600">
-              {productData.price} VNĐ
+              {productData?.price?.toLocaleString()} VNĐ
             </span>
             <span className="text-gray-400 line-through">40,000,000 VNĐ</span>
             <span className="px-3 py-1 bg-yellow-100 text-yellow-600 text-sm rounded-lg">
