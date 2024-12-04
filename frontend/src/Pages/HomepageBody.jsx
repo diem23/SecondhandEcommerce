@@ -10,8 +10,14 @@ import { Typography, Carousel } from "@material-tailwind/react";
 import ProductViewDialog from "../components/ProductViewDialog";
 import React, { useEffect } from "react";
 import { getAllBrand, getProducts } from "../services/productService";
+import { useNavigate } from "react-router-dom";
 
 const listItem = (brands) => {
+  const navigate = useNavigate();
+  const handleNavtoShopPage = (type) => {
+    navigate("/ShopPage", { state: { type: type } });
+  };
+
   return (
     <div className="relative mx-auto w-[90vw] p-8">
       <Typography
@@ -50,6 +56,7 @@ const listItem = (brands) => {
                   <div
                     key={subIndex}
                     className="flex flex-col items-center rounded-lg bg-white p-4 px-4 border transition-shadow duration-300 hover:shadow-lg  hover:scale-105"
+                    onClick={handleNavtoShopPage.bind(null, item.type)}
                   >
                     <img
                       src={item.image || "https://via.placeholder.com/150"}

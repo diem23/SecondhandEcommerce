@@ -32,6 +32,7 @@ import { useNavigate } from "react-router-dom";
 import { useState, useEffect } from "react";
 import { login } from "../services/authService";
 import BottomHeader from "./BottomHeader";
+import SearchBar from "./SearchBar";
 
 const LoginButton = () => {
   const [stateValue, setStateValue] = useState({});
@@ -215,18 +216,7 @@ const Header = () => {
         </div>
 
         {/* Search Bar */}
-        <div className="flex-grow mx-8">
-          <div className="relative">
-            <input
-              type="text"
-              placeholder="Tìm kiếm mặt hàng..."
-              className="w-full py-2 pl-4 pr-10  border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-400"
-            />
-            <div className="absolute right-2 top-1/2 transform -translate-y-1/2 text-black">
-              <MagnifyingGlass size={21} />
-            </div>
-          </div>
-        </div>
+        <SearchBar />
 
         {/* Action Icons */}
         <div className="flex space-x-6 items-center">

@@ -83,11 +83,8 @@ const FlyoutMenu = () => {
                     key={brand}
                     className="p-2 hover:bg-gray-100"
                     onClick={() => {
-                      navigate("/ShopPage", {
-                        state: {
-                          brand,
-                        },
-                      });
+                      navigate(`/ShopPage/${brand}`);
+                      window.location.reload();
                       setIsOpen(!isOpen);
                     }}
                   >
