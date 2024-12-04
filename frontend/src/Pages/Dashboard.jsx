@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import {
   Tabs,
   TabsHeader,
@@ -19,7 +19,26 @@ import {
   SignOut,
 } from "@phosphor-icons/react";
 
+import { getAllOrders } from "../services/orderService";
+
 const Dashboard = () => {
+  const [orders, setOrders] = useState([]);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      const token = localStorage.getItem("accessToken");
+      try {
+        const response = await getAllOrders(token);
+        const orders = response.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+        setOrders(orders);
+      } catch (error) {
+        console.error(error);
+      }
+    };
+    fetchData();
+  }, []);
+
+
   const data = [
     {
       label: "Dashboard",
@@ -40,9 +59,7 @@ const Dashboard = () => {
       label: "Theo dõi đơn hàng",
       value: "trackingdelivery",
       icon: MapPinLine,
-      desc: `We're not always in the position that we want to be at.
-          We're constantly growing. We're constantly making mistakes. We're
-          constantly trying to express ourselves and actualize our dreams.`,
+      desc: orders,
     },
     {
       label: "Giỏ hàng",
@@ -95,7 +112,7 @@ const Dashboard = () => {
   ];
   return (
     <div className="p-6">
-      <Tabs value="dashboard" orientation="vertical">
+      <Tabs value="trackingdelivery" orientation="vertical">
         <TabsHeader
           className="rounded-none border-b border-blue-gray-50 bg-transparent p-0 w-56 place-items-start"
           indicatorProps={{
@@ -121,7 +138,22 @@ const Dashboard = () => {
         <TabsBody className="h-screen">
           {data.map(({ value, desc }) => (
             <TabPanel key={value} value={value} className="py-0">
-              {desc}
+              {typeof desc === "string" ? desc : (
+                desc.map(order => {
+                  return (
+                    <div key={order._id} className="flex flex-row justify-between p-4 border-b border-gray-200">
+                      <div className="w-1/2">
+                        <p className="text-sm font-semibold">Mã đơn hàng: {order._id}</p>
+                        <p className="text-sm">Ngày đặt hàng: {new Date(order.createdAt).toLocaleString()}</p>
+                      </div>
+                      <div className="w-1/2">
+                        <p className="text-sm font-semibold">{order.paymentState ? "Đã thanh toán" : "Chưa thanh toán"}</p>
+                        <p className="text-sm">Tổng tiền: {order.totalPrice}đ</p>
+                      </div>
+                    </div>
+                  );
+                })
+              )}
             </TabPanel>
           ))}
         </TabsBody>

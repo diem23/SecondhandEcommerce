@@ -71,8 +71,7 @@ const Checkout = () => {
     const order = await placeOrder(orderData, token);
 
     const paymentLink = await createQRCodePayment(order._id.toString());
-    console.log(paymentLink);
-    window.open(paymentLink);
+    window.location.href = paymentLink;
   };
 
   return (
