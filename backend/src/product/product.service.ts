@@ -192,7 +192,7 @@ export class ProductService {
                     $group: {
                         _id: '$type',
                         type: { $first: '$type' },
-                        image: { $first: '$image' },
+                        image: { $first: '$images' },
                         brand: { $addToSet: '$brand' },
                     },
                 },
