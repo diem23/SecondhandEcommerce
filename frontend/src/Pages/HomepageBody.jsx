@@ -78,20 +78,25 @@ const HomePageBody = () => {
   };
   const [brands, setBrands] = React.useState([]);
   const [topProducts, setTopProducts] = React.useState([]);
+  const [newProducts, setNewProducts] = React.useState([]);
   useEffect(() => {
     const getAllBrands = async () => {
-      const [brands, data] = await Promise.all([
+      const [brands, topData, newData] = await Promise.all([
         getAllBrand(),
         getProducts({
             page: 1,
             limit: 10,
-            sort: { price: -1 },
+            sort: { avgStar: -1 },
+        }),
+        getProducts({
+            page: 1,
+            limit: 10,
+            sort: { createdAt: -1 },
         }),
       ]);
-      const { products } = data;
-      console.log(products);
       setBrands(brands);
-      setTopProducts(products);
+      setTopProducts(topData.products.slice(0, 4));
+      setNewProducts(newData.products.slice(0, 4));
     };
     getAllBrands();
   }, []);
@@ -144,7 +149,7 @@ const HomePageBody = () => {
                   🔥 BÁN CHẠY NHẤT
               </h3>
               <ul className="space-y-4 max-w-72">
-                {topProducts.slice(0, 1).map((product) => (
+                {topProducts.map((product) => (
                   <>
                     <li
                         key={product.productName}
@@ -174,7 +179,7 @@ const HomePageBody = () => {
                 🌟 SẢN PHẨM MỚI
             </h3>
             <ul className="space-y-4 max-w-72">
-              {topProducts.slice(1).map((product) => (
+              {newProducts.map((product) => (
                 <>
                   <li
                     key={product.productName}
