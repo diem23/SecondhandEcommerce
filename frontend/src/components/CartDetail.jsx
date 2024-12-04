@@ -32,24 +32,28 @@ const CartItem = ({ product, quantity, price, image, onRemove }) => {
 };
 
 export default function CartDetail({ products }) {
-
   const { productItems, _id } = products;
-  
-  const total = useMemo(() => productItems.reduce(
-    (acc, item) =>
-      acc +
-    item.quantity * parseInt(item.price),
-    0
-  ), [productItems]);
+
+  const total = useMemo(
+    () =>
+      productItems.reduce(
+        (acc, item) => acc + item.quantity * parseInt(item.price),
+        0
+      ),
+    [productItems]
+  );
 
   const [items, setItems] = useState(productItems);
-  
+
   const handleRemove = async (itemId) => {
     const token = localStorage.getItem("accessToken");
-    const cart = await deleteCart({
-      itemId,
-      cartId: _id
-    }, token)
+    const cart = await deleteCart(
+      {
+        itemId,
+        cartId: _id,
+      },
+      token
+    );
 
     setItems(cart.productItems);
   };
@@ -57,7 +61,7 @@ export default function CartDetail({ products }) {
   return (
     <div className="p-4 bg-white rounded-md w-96">
       <h2 className="text-lg font-semibold mb-2">
-        Giỏ hàng ({products.length})
+        Giỏ hàng ({products.productItems?.length})
       </h2>
       <div className="flex items-center my-2">
         <div className="flex-grow border-t border-gray-300"></div>

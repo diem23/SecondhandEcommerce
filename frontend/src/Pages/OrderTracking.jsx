@@ -6,7 +6,7 @@ const OrderTracking = () => {
     <div className="h-[535px] p-36 gap-5 flex flex-col justify-center">
       <h1 className="text-2xl font-bold">Theo dõi đơn hàng</h1>
       <p>
-        Để theo dõi đơn hàng của bạn, vuo lòng nhpaja ID đơn hàng của bạn vào
+        Để theo dõi đơn hàng của bạn, vuo lòng nhập ID đơn hàng của bạn vào
         trường nhập bên dưới và nhấn nút "Theo dõi". Thông tin này đã được trao
         cho bạn trên biên nhận và trong email xác nhận bạn đã nhận được.
       </p>

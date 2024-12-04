@@ -11,6 +11,8 @@ import AccountDetail from "./AccountDetail";
 import ProductDetail from "./ProductDetail";
 import Dashboard from "./Dashboard";
 import CreateOrder from "./CreateOrder";
+import ShoppingCart from "./ShoppingCart";
+import Checkout from "./CheckOut";
 const HomePage = ({ type }) => {
   const [role, setRole] = useState("");
   const navigate = useNavigate();
@@ -55,6 +57,10 @@ const HomePage = ({ type }) => {
         <Dashboard />
       ) : type === "createorder" ? (
         <CreateOrder />
+      ) : type === "shoppingcart" ? (
+        <ShoppingCart />
+      ) : type === "checkout" ? (
+        <Checkout />
       ) : (
         <div>
           <h1>Not found</h1>

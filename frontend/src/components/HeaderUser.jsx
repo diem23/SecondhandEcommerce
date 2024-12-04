@@ -192,7 +192,7 @@ const HeaderUser = () => {
       const accessToken = localStorage.getItem("accessToken");
       console.log("Access token: " + accessToken);
       getCarts(accessToken).then((data) => {
-        console.log(data[data.length - 1].productItems);
+        console.log(data[data.length - 1]);
         setProducts(data[data.length - 1]);
       });
     };
@@ -256,7 +256,7 @@ const HeaderUser = () => {
         {/* Action Icons */}
         <div className="flex space-x-6 items-center">
           <ShoppingCartButton
-            itemCount={products.length || 0}
+            itemCount={products.productItems?.length || 0}
             productData={products}
           />
           <a href="#" className="hover:text-gray-300">
