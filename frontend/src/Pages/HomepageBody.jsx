@@ -74,7 +74,7 @@ const listItem = (brands) => {
 const HomePageBody = () => {
   const [openProductId, setOpenProductId] = React.useState(null);
   const handleOpen = (productId) => {
-      setOpenProductId(openProductId === productId ? null : productId);
+    setOpenProductId(openProductId === productId ? null : productId);
   };
   const [brands, setBrands] = React.useState([]);
   const [topProducts, setTopProducts] = React.useState([]);
@@ -83,13 +83,12 @@ const HomePageBody = () => {
       const [brands, data] = await Promise.all([
         getAllBrand(),
         getProducts({
-            page: 1,
-            limit: 10,
-            sort: { price: -1 },
+          page: 1,
+          limit: 10,
+          sort: { price: -1 },
         }),
       ]);
       const { products } = data;
-      console.log(products);
       setBrands(brands);
       setTopProducts(products);
     };
@@ -140,39 +139,33 @@ const HomePageBody = () => {
       <div className=" flex justify-center p-8 bg-white shadow ">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div>
-              <h3 className="text-lg font-semibold mb-4">
-                  🔥 BÁN CHẠY NHẤT
-              </h3>
-              <ul className="space-y-4 max-w-72">
-                {topProducts.slice(0, 1).map((product) => (
-                  <>
-                    <li
-                        key={product.productName}
-                        className="flex items-center space-x-4 border p-3"
-                        onClick={() => handleOpen(product._id)}
-                    >
-                      <img
-                        src={product.images?.[0]}
-                        alt={product.productName}
-                        className="w-16 h-16 rounded"
-                      />
-                      <div>
-                        <p className="text-sm font-medium break-words">
-                            {product.productName}
-                        </p>
-                        <p className="text-sm text-blue-600">
-                            {product.price}
-                        </p>
-                      </div>
-                    </li>
-                  </>
-                ))}
-              </ul>
+            <h3 className="text-lg font-semibold mb-4">🔥 BÁN CHẠY NHẤT</h3>
+            <ul className="space-y-4 max-w-72">
+              {topProducts.slice(0, 1).map((product) => (
+                <>
+                  <li
+                    key={product.productName}
+                    className="flex items-center space-x-4 border p-3"
+                    onClick={() => handleOpen(product._id)}
+                  >
+                    <img
+                      src={product.images?.[0]}
+                      alt={product.productName}
+                      className="w-16 h-16 rounded"
+                    />
+                    <div>
+                      <p className="text-sm font-medium break-words">
+                        {product.productName}
+                      </p>
+                      <p className="text-sm text-blue-600">{product.price}</p>
+                    </div>
+                  </li>
+                </>
+              ))}
+            </ul>
           </div>
           <div>
-            <h3 className="text-lg font-semibold mb-4">
-                🌟 SẢN PHẨM MỚI
-            </h3>
+            <h3 className="text-lg font-semibold mb-4">🌟 SẢN PHẨM MỚI</h3>
             <ul className="space-y-4 max-w-72">
               {topProducts.slice(1).map((product) => (
                 <>
@@ -187,12 +180,10 @@ const HomePageBody = () => {
                       className="w-16 h-16 rounded"
                     />
                     <div>
-                        <p className="text-sm font-medium break-words">
-                            {product.productName}
-                        </p>
-                        <p className="text-sm text-blue-600">
-                            {product.price}
-                        </p>
+                      <p className="text-sm font-medium break-words">
+                        {product.productName}
+                      </p>
+                      <p className="text-sm text-blue-600">{product.price}</p>
                     </div>
                   </li>
                 </>
@@ -206,7 +197,7 @@ const HomePageBody = () => {
         open={openProductId !== null}
         handleOpen={() => handleOpen(openProductId)}
       />
-  </div>
+    </div>
   );
 };
 

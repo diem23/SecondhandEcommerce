@@ -2,6 +2,7 @@ import { Button } from "@material-tailwind/react";
 import { ArrowRight } from "@phosphor-icons/react";
 import React, { useMemo, useState } from "react";
 import { deleteCart } from "../services/cartService";
+import { useNavigate } from "react-router-dom";
 const CartItem = ({ product, quantity, price, image, onRemove }) => {
   const formatCurrency = (value) =>
     new Intl.NumberFormat("vi-VN").format(value);
@@ -33,7 +34,8 @@ const CartItem = ({ product, quantity, price, image, onRemove }) => {
 
 export default function CartDetail({ products }) {
   const { productItems, _id } = products;
-
+  const navigate = useNavigate();
+  console.log(products);
   const total = useMemo(
     () =>
       productItems.reduce(
@@ -43,7 +45,7 @@ export default function CartDetail({ products }) {
     [productItems]
   );
 
-  const [items, setItems] = useState(productItems);
+  const [items, setItems] = useState(productItems.slice(0, 3));
 
   const handleRemove = async (itemId) => {
     const token = localStorage.getItem("accessToken");
@@ -56,6 +58,10 @@ export default function CartDetail({ products }) {
     );
 
     setItems(cart.productItems);
+  };
+
+  const handleViewFullCart = () => {
+    navigate("/shoppingcart", { state: { products } });
   };
 
   return (
@@ -101,6 +107,7 @@ export default function CartDetail({ products }) {
           fullWidth
           variant="outlined"
           style={{ borderColor: "#FA8232", color: "#FA8232" }}
+          onClick={handleViewFullCart}
         >
           Xem chi tiết
         </Button>

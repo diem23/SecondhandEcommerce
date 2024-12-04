@@ -9,6 +9,7 @@ import {
   Tab,
   TabPanel,
   Checkbox,
+  Alert,
 } from "@material-tailwind/react";
 import {
   ArrowLeft,
@@ -19,7 +20,6 @@ import {
   Handshake,
   Headphones,
   CreditCard,
-  Hand,
 } from "@phosphor-icons/react";
 import { useNavigate } from "react-router-dom";
 import { createCart, updateCarts } from "../services/cartService";
@@ -27,18 +27,32 @@ import { useHeaderUserContext } from "../context/HeaderContext";
 
 const ProductDetail = () => {
   const navigate = useNavigate();
-  const { cart, setCart} = useHeaderUserContext()
+  const { cart, setCart } = useHeaderUserContext();
   const [productData, setProductData] = useState([]);
   const [selectedImage, setSelectedImage] = React.useState(0);
   const [activeTab, setActiveTab] = React.useState("description");
   const [ammountItem, setAmmountItem] = React.useState(1);
   const [useInsurance, setUseInsurance] = React.useState(false);
+  const [alert, setAlert] = useState({ message: "", type: "", visible: false });
 
   const HandleDirectBuy = () => {
     window.scrollTo(0, 0);
     navigate("/createorder", {
-      state: { productData, previousUrl: window.location.pathname, useInsurance: useInsurance, ammountItem: ammountItem },
+      state: {
+        productData,
+        previousUrl: window.location.pathname,
+        useInsurance: useInsurance,
+        ammountItem: ammountItem,
+      },
     });
+  };
+  const showAlertMessage = (message, type) => {
+    setAlert({ message, type, visible: true });
+
+    // Hide the alert after 5 seconds
+    setTimeout(() => {
+      setAlert({ ...alert, visible: false });
+    }, 5000);
   };
   const HandleAddToCart = async () => {
     const cartData = {
@@ -52,8 +66,14 @@ const ProductDetail = () => {
       ],
     };
     const { accessToken, cartId } = localStorage;
-    const cart = await updateCarts(cartId, cartData, accessToken);
-    setCart(cart)
+    await updateCarts(cartId, cartData, accessToken).then((respone) => {
+      if (respone && respone._id) {
+        showAlertMessage("Thêm vào giỏ hàng thành công", "green");
+      } else {
+        showAlertMessage("Thêm vào giỏ hàng thất bại", "red");
+      }
+      setCart(respone);
+    });
   };
 
   const tabData = [
@@ -153,6 +173,36 @@ const ProductDetail = () => {
 
   return (
     <div className="flex flex-col items-center justify-center">
+      {/* Alert */}
+      {alert.visible && (
+        <div className="fixed top-40 right-4">
+          <Alert
+            color={alert.type}
+            animate={{
+              mount: { y: 0 },
+              unmount: { y: 100 },
+            }}
+            icon={
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+                strokeWidth={2}
+                stroke="currentColor"
+                className="h-6 w-6"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  d="M11.25 11.25l.041-.02a.75.75 0 011.063.852l-.708 2.836a.75.75 0 001.063.853l.041-.021M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-9-3.75h.008v.008H12V8.25z"
+                />
+              </svg>
+            }
+          >
+            {alert.message}{" "}
+          </Alert>
+        </div>
+      )}
       <div className="w-5/6 p-6 grid grid-cols-2 gap-20 items-center justify-center">
         {/* Image Slider */}
         <div>
