@@ -131,6 +131,14 @@ export class Product {
     @Prop({ default: false })
     isDeleted: boolean;
 
+    @ApiProperty({
+        description: 'The average star rating of the product',
+        example: 4.5,
+        default: 0,
+    })
+    @Prop({ default: 0 })
+    avgStar: number;
+
     @Prop({ type: Types.ObjectId, ref: User.name })
     @Type(() => User)
     userId: string;
