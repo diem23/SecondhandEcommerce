@@ -1,42 +1,32 @@
 import {
-  TwitterLogo,
   FacebookLogo,
+  Heart,
+  InstagramLogo,
+  MagnifyingGlass,
   PinterestLogo,
   RedditLogo,
-  YoutubeLogo,
-  InstagramLogo,
   ShoppingCartSimple,
-  Heart,
+  TwitterLogo,
   User,
-  MagnifyingGlass,
-  Stack,
-  MapPinLine,
-  Headphones,
-  Info,
-  PhoneCall,
-  ArrowRight,
+  YoutubeLogo
 } from "@phosphor-icons/react";
-import FlyoutMenu from "./flyoutmenus";
 
 import {
-  Popover,
-  PopoverHandler,
-  PopoverContent,
-  Button,
-  Card,
-  Input,
-  Typography,
   Menu,
   MenuHandler,
-  MenuList,
   MenuItem,
+  MenuList,
+  Popover,
+  PopoverContent,
+  PopoverHandler,
+  Typography
 } from "@material-tailwind/react";
-import CartDetail from "./CartDetail";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { useState, useEffect } from "react";
-import { login } from "../services/authService";
-import BottomHeader from "./BottomHeader";
 import { getCarts } from "../services/cartService";
+import BottomHeader from "./BottomHeader";
+import CartDetail from "./CartDetail";
+import { useHeaderUserContext } from "../context/HeaderContext";
 
 const UserButton = () => {
   const handleLogout = async () => {
@@ -186,14 +176,15 @@ const ShoppingCartButton = ({ itemCount, productData }) => {
 
 const HeaderUser = () => {
   const navigate = useNavigate();
+  const { cart, setCart } = useHeaderUserContext();
   const [products, setProducts] = useState([]);
   useEffect(() => {
     const fetchCarts = async () => {
       const accessToken = localStorage.getItem("accessToken");
-      console.log("Access token: " + accessToken);
       getCarts(accessToken).then((data) => {
-        console.log(data[data.length - 1]);
+        localStorage.setItem("cartId", data[data.length - 1]._id);
         setProducts(data[data.length - 1]);
+        setCart(data[data.length - 1]);
       });
     };
     fetchCarts();
@@ -256,8 +247,8 @@ const HeaderUser = () => {
         {/* Action Icons */}
         <div className="flex space-x-6 items-center">
           <ShoppingCartButton
-            itemCount={products.productItems?.length || 0}
-            productData={products}
+            itemCount={cart.productItems?.length || 0}
+            productData={cart}
           />
           <a href="#" className="hover:text-gray-300">
             <Heart size={30} />

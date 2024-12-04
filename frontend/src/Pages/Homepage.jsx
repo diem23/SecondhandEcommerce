@@ -13,6 +13,7 @@ import Dashboard from "./Dashboard";
 import CreateOrder from "./CreateOrder";
 import ShoppingCart from "./ShoppingCart";
 import Checkout from "./CheckOut";
+import { HeaderUserProvider } from "../context/HeaderContext";
 const HomePage = ({ type }) => {
   const [role, setRole] = useState("");
   const navigate = useNavigate();
@@ -33,7 +34,7 @@ const HomePage = ({ type }) => {
     fetchData();
   }, [navigate, role]);
   return (
-    <>
+    <HeaderUserProvider>
       {role === "user" ? (
         <div>
           <HeaderUser />
@@ -67,7 +68,7 @@ const HomePage = ({ type }) => {
         </div>
       )}
       <Footer />
-    </>
+    </HeaderUserProvider>
   );
 };
 export default HomePage;

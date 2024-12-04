@@ -33,8 +33,8 @@ export const getCarts = async (token) => {
 };
 
 // New data including the old items to add product into cart
-export const updateCarts = async (data, token) => {
-    const url = `${backendURL}/carts`;
+export const updateCarts = async (cartid, data, token) => {
+    const url = `${backendURL}/carts/${cartid}`;
     try {
         const response = await axios.patch(url, data, {
             headers: {
