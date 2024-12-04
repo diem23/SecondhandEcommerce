@@ -9,6 +9,7 @@ const ShoppingCart = () => {
   const [cartItems, setCartItems] = React.useState([]);
   const { setCart } = useHeaderUserContext();
   const [loading, setLoading] = React.useState(false);
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchCart = async () => {
@@ -81,6 +82,30 @@ const ShoppingCart = () => {
     window.location.reload(); //cai nay do tao luoi lam context qua nen tao choi trick lo nhe
   };
 
+  const totalItemsPrice = useMemo(
+    () =>
+      cartItems
+        .reduce((total, item) => total + item.price * item.quantity, 0)
+        .toLocaleString(),
+    [cartItems]
+  );
+
+  const handleCheckOut = () => {
+    const cartData = {
+      items: cartItems.map((item) => ({
+        productId: item.productId,
+        quantity: item.quantity,
+        price: item.price,
+        useInsurance: item.useInsurance,
+        productName: item.product.productName,
+        discount: 0,
+        tax: 0,
+        postingCost: item.product.postingCost,
+      })),
+    };
+    navigate("/checkout", { state: { cartItems: cartData.items } });
+  };
+
   return (
     <div className="p-6 bg-gray-50 min-h-screen">
       <div className="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-6">
@@ -104,12 +129,36 @@ const ShoppingCart = () => {
                     <td className="py-3">
                       <img
                         src={item.product.images[0]}
-                        alt={item.productName}
+                        alt={item.product.productName}
                         className="inline-block w-12 h-12 rounded-lg mr-2"
                       />
-                      {item.productName}
+                      {item.product.productName}
                     </td>
-                    <td className="py-3">{item.price.toFixed(2)} VNĐ</td>
+
+                    <td className="py-3">
+                      {item.price.toLocaleString()} VNĐ
+                      {item.useInsurance && (
+                        <Typography
+                          variant="small"
+                          color="gray"
+                          className="mt-2 flex text-xs items-center gap-1 font-normal"
+                        >
+                          <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            viewBox="0 0 24 24"
+                            fill="currentColor"
+                            className="-mt-px h-4 w-4"
+                          >
+                            <path
+                              fillRule="evenodd"
+                              d="M2.25 12c0-5.385 4.365-9.75 9.75-9.75s9.75 4.365 9.75 9.75-4.365 9.75-9.75 9.75S2.25 17.385 2.25 12zm8.706-1.442c1.146-.573 2.437.463 2.126 1.706l-.709 2.836.042-.02a.75.75 0 01.67 1.34l-.04.022c-1.147.573-2.438-.463-2.127-1.706l.71-2.836-.042.02a.75.75 0 11-.671-1.34l.041-.022zM12 9a.75.75 0 100-1.5.75.75 0 000 1.5z"
+                              clipRule="evenodd"
+                            />
+                          </svg>
+                          Đơn hàng của bạn có sử dụng bảo hiểm
+                        </Typography>
+                      )}
+                    </td>
                     <td className="py-3">
                       <div className="flex items-center  rounded-lg">
                         <button
@@ -138,7 +187,9 @@ const ShoppingCart = () => {
                       </div>
                     </td>
                     <td className="py-3">
-                      {(item.price * item.quantity || item.price).toFixed(2)}{" "}
+                      {(
+                        item.price * item.quantity || item.price
+                      ).toLocaleString()}{" "}
                       VNĐ
                     </td>
                     <td
@@ -159,27 +210,6 @@ const ShoppingCart = () => {
                         "✖"
                       )}
                     </td>
-                    {item.useInsurance && (
-                      <Typography
-                        variant="small"
-                        color="gray"
-                        className="mt-2 flex items-center gap-1 font-normal"
-                      >
-                        <svg
-                          xmlns="http://www.w3.org/2000/svg"
-                          viewBox="0 0 24 24"
-                          fill="currentColor"
-                          className="-mt-px h-4 w-4"
-                        >
-                          <path
-                            fillRule="evenodd"
-                            d="M2.25 12c0-5.385 4.365-9.75 9.75-9.75s9.75 4.365 9.75 9.75-4.365 9.75-9.75 9.75S2.25 17.385 2.25 12zm8.706-1.442c1.146-.573 2.437.463 2.126 1.706l-.709 2.836.042-.02a.75.75 0 01.67 1.34l-.04.022c-1.147.573-2.438-.463-2.127-1.706l.71-2.836-.042.02a.75.75 0 11-.671-1.34l.041-.022zM12 9a.75.75 0 100-1.5.75.75 0 000 1.5z"
-                            clipRule="evenodd"
-                          />
-                        </svg>
-                        Đơn hàng của bạn có sử dụng bảo hiểm
-                      </Typography>
-                    )}
                   </tr>
                 ))}
               </tbody>
@@ -206,14 +236,17 @@ const ShoppingCart = () => {
             <div className="space-y-2">
               <div className="flex justify-between">
                 <span className="text-gray-600">Tổng tiền:</span>
-                {/* <span>{totalItemsPrice} VNĐ</span> */}
+                <span>{totalItemsPrice} VNĐ</span>
               </div>
               <div className="flex justify-between">
                 <span className="text-gray-600">Phí ship:</span>
                 <span>
                   {cartItems
-                    .reduce((total, item) => total + item.postingCost, 0)
-                    .toFixed(2)}{" "}
+                    .reduce(
+                      (total, item) => total + item.product.postingCost,
+                      0
+                    )
+                    .toLocaleString()}{" "}
                   VNĐ
                 </span>
               </div>
@@ -223,17 +256,19 @@ const ShoppingCart = () => {
                   {cartItems
                     .reduce(
                       (total, item) =>
-                        total + item.price * item.toBuy + item.postingCost,
+                        total +
+                        item.price * item.quantity +
+                        item.product.postingCost,
                       0
                     )
-                    .toFixed(2)}{" "}
+                    .toLocaleString()}{" "}
                   VNĐ
                 </span>
               </div>
             </div>
             <button
               className="mt-4 w-full flex items-center justify-center gap-2 bg-orange-500 text-white px-4 py-2 rounded-lg font-semibold hover:bg-orange-600"
-              // onClick={handleCheckOut}
+              onClick={handleCheckOut}
             >
               Thanh toán ngay
               <ArrowRight size={20} />

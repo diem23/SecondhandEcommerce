@@ -35,6 +35,10 @@ const Checkout = () => {
     () => cartItems.reduce((sum, item) => sum + item.price * item.quantity, 0),
     [cartItems]
   );
+  const totalPostingCost = useMemo(
+    () => cartItems.reduce((sum, item) => sum + item.postingCost, 0),
+    [cartItems]
+  );
   const totalDiscount = useMemo(
     () => cartItems.reduce((sum, item) => sum + item.discount, 0),
     [cartItems]
@@ -43,7 +47,7 @@ const Checkout = () => {
     () => cartItems.reduce((sum, item) => sum + item.tax, 0),
     [cartItems]
   );
-  const total = subTotal - totalDiscount + totalTax;
+  const total = subTotal - totalDiscount + totalTax + totalPostingCost;
 
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
@@ -160,7 +164,7 @@ const Checkout = () => {
                       <p className="text-sm">{item.quantity}</p>
                       <p className="text-blue-500">
                         {" "}
-                        x {item.price.toFixed(2)}
+                        x {item.price.toLocaleString()}
                       </p>
                     </div>
                   </div>
@@ -169,19 +173,24 @@ const Checkout = () => {
               {/* Summary Totals */}
               <div className="flex justify-between mb-2">
                 <span>Tổng tiền hàng</span>
-                <span>{subTotal.toFixed(2)} VNĐ</span>
+                <span>{subTotal.toLocaleString()} VNĐ</span>
+              </div>
+              <div className="flex justify-between mb-2">
+                <span>Phí ship</span>
+                <span>{totalPostingCost.toLocaleString()} VNĐ</span>
               </div>
               <div className="flex justify-between mb-2">
                 <span>Giảm giá</span>
-                <span>- {totalDiscount.toFixed(2)} VNĐ</span>
+                <span>- {totalDiscount.toLocaleString()} VNĐ</span>
               </div>
+
               <div className="flex justify-between mb-2">
                 <span>Thuế</span>
-                <span>{totalTax.toFixed(2)} VNĐ</span>
+                <span>{totalTax.toLocaleString()} VNĐ</span>
               </div>
               <div className="flex justify-between font-semibold text-lg">
                 <span>Thành tiền</span>
-                <span>{total.toFixed(2)} VNĐ</span>
+                <span>{total.toLocaleString()} VNĐ</span>
               </div>
               <Button
                 fullWidth
