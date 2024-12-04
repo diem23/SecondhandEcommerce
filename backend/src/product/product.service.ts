@@ -38,6 +38,7 @@ export class ProductService {
                 images: productImages,
                 userId: new Types.ObjectId(productData.userId),
                 postingCost: transactionCost(quantity, price),
+                avgStar: 0,
                 isDeleted: false,
             });
             await product.save();
@@ -113,8 +114,8 @@ export class ProductService {
     async update(
         id: string,
         productData: UpdateProductDto,
-        images: Express.Multer.File[],
-        user: any,
+        images?: Express.Multer.File[],
+        user?: any,
     ) {
         try {
             const existingProduct = await this.findOne(id);

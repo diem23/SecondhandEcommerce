@@ -136,6 +136,14 @@ export class CreateProductDto {
     weight: number;
 
     @ApiProperty({
+        description: 'The average star rating of the product',
+        example: 4.5,
+        required: false,
+    })
+    @IsOptional()
+    avgStar: number;
+
+    @ApiProperty({
         description: 'A detailed description of the product',
         example: 'A sulfate-free shampoo for dry and damaged hair',
         required: false,
