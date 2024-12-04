@@ -1,7 +1,8 @@
 import { Button } from "@material-tailwind/react";
 import { ArrowRight } from "@phosphor-icons/react";
-import React, { useMemo, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { deleteCart } from "../services/cartService";
+import { useNavigate } from "react-router-dom";
 const CartItem = ({ product, quantity, price, image, onRemove }) => {
   const formatCurrency = (value) =>
     new Intl.NumberFormat("vi-VN").format(value);
@@ -33,17 +34,18 @@ const CartItem = ({ product, quantity, price, image, onRemove }) => {
 
 export default function CartDetail({ products }) {
   const { productItems, _id } = products;
+  const navigate = useNavigate();
 
   const total = useMemo(
     () =>
-      productItems.reduce(
+      productItems?.reduce(
         (acc, item) => acc + item.quantity * parseInt(item.price),
         0
       ),
     [productItems]
   );
 
-  const [items, setItems] = useState(productItems);
+  const [items, setItems] = useState(productItems?.slice(0, 3));
 
   const handleRemove = async (itemId) => {
     const token = localStorage.getItem("accessToken");
@@ -58,6 +60,10 @@ export default function CartDetail({ products }) {
     setItems(cart.productItems);
   };
 
+  const handleViewFullCart = () => {
+    navigate("/shoppingcart");
+  };
+
   return (
     <div className="p-4 bg-white rounded-md w-96">
       <h2 className="text-lg font-semibold mb-2">
@@ -68,7 +74,7 @@ export default function CartDetail({ products }) {
         <div className="flex-grow border-t border-gray-300"></div>
       </div>
       <div className="space-y-4">
-        {items.map((item) => {
+        {items?.map((item) => {
           const { product } = item;
           return (
             <CartItem
@@ -85,7 +91,7 @@ export default function CartDetail({ products }) {
       <div className="mt-4 border-t pt-4">
         <div className="flex justify-between mb-4">
           <span className="font-medium">Tổng tiền:</span>
-          <span className="font-semibold">{total.toLocaleString()} VNĐ</span>
+          <span className="font-semibold">{total?.toLocaleString()} VNĐ</span>
         </div>
 
         <Button
@@ -101,6 +107,7 @@ export default function CartDetail({ products }) {
           fullWidth
           variant="outlined"
           style={{ borderColor: "#FA8232", color: "#FA8232" }}
+          onClick={handleViewFullCart}
         >
           Xem chi tiết
         </Button>

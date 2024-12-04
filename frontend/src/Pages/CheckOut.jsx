@@ -12,15 +12,15 @@ import { useLocation } from "react-router-dom";
 import { placeOrder } from "../services/orderService";
 import { createQRCodePayment } from "../services/paymentService";
 
-const PaymentMethod =  {
-  BANK_TRANSFER: 'Chuyển khoản ngân hàng',
-  CASH: 'Thanh toán tiền mặt khi nhận hàng',
-}
+const PaymentMethod = {
+  BANK_TRANSFER: "Chuyển khoản ngân hàng",
+  CASH: "Thanh toán tiền mặt khi nhận hàng",
+};
 
 const Checkout = () => {
   const location = useLocation();
   const { cartItems } = location.state;
-  const currentUser = JSON.parse(localStorage.getItem('user'))
+  const currentUser = JSON.parse(localStorage.getItem("user"));
 
   const [formData, setFormData] = useState({
     name: "",
@@ -54,7 +54,7 @@ const Checkout = () => {
   };
 
   const handleSubmit = async () => {
-    const orderData ={
+    const orderData = {
       items: cartItems,
       paymentMethod: formData.paymentMethod,
       receivingAddress: formData.address || currentUser.location,
@@ -66,14 +66,13 @@ const Checkout = () => {
         return date.toISOString();
       })(),
     };
-    const token = localStorage.getItem('accessToken');
+    const token = localStorage.getItem("accessToken");
 
-    const order = await placeOrder(orderData, token)
+    const order = await placeOrder(orderData, token);
 
-    const paymentLink = await createQRCodePayment(order._id.toString())
+    const paymentLink = await createQRCodePayment(order._id.toString());
     console.log(paymentLink);
     window.open(paymentLink);
-
   };
 
   return (
@@ -150,7 +149,7 @@ const Checkout = () => {
             <CardBody>
               <h2 className="text-lg font-semibold mb-4 flex items-center gap-2">
                 <ShoppingCart size={24} />
-                Order Summary
+                Xác nhận đơn hàng
               </h2>
               {/* Order Items */}
               {cartItems.map((item) => (
@@ -169,20 +168,20 @@ const Checkout = () => {
               ))}
               {/* Summary Totals */}
               <div className="flex justify-between mb-2">
-                <span>Subtotal</span>
-                <span>${subTotal.toFixed(2)}</span>
+                <span>Tổng tiền hàng</span>
+                <span>{subTotal.toFixed(2)} VNĐ</span>
               </div>
               <div className="flex justify-between mb-2">
-                <span>Discount</span>
-                <span>- ${totalDiscount.toFixed(2)}</span>
+                <span>Giảm giá</span>
+                <span>- {totalDiscount.toFixed(2)} VNĐ</span>
               </div>
               <div className="flex justify-between mb-2">
-                <span>Tax</span>
-                <span>${totalTax.toFixed(2)}</span>
+                <span>Thuế</span>
+                <span>{totalTax.toFixed(2)} VNĐ</span>
               </div>
               <div className="flex justify-between font-semibold text-lg">
-                <span>Total</span>
-                <span>${total.toFixed(2)}</span>
+                <span>Thành tiền</span>
+                <span>{total.toFixed(2)} VNĐ</span>
               </div>
               <Button
                 fullWidth
