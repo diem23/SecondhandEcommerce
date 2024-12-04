@@ -66,7 +66,10 @@ const FlyoutMenu = () => {
                 <li
                   className="p-2 hover:bg-gray-100"
                   onClick={() => {
-                    navigate("/ShopPage");
+                    navigate("/ShopPage", {
+                      state: {
+                        brand: 'Tất cả',
+                    }});
                     setIsOpen(!isOpen);
                   }}
                 >
@@ -74,7 +77,15 @@ const FlyoutMenu = () => {
                   Tất cả
                 </li>
                 {currentBrands.map((brand) => (
-                  <li key={brand} className="p-2 hover:bg-gray-100">
+                  <li key={brand} className="p-2 hover:bg-gray-100"
+                    onClick={() => {
+                      navigate("/ShopPage", {
+                        state: {
+                          brand,
+                      }});
+                      setIsOpen(!isOpen);
+                    }}
+                  >
                     {brand}
                   </li>
                 ))}
