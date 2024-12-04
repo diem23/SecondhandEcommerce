@@ -8,16 +8,20 @@ import { useHeaderUserContext } from "../context/HeaderContext";
 const CreateOrder = () => {
   const location = useLocation();
   const navigate = useNavigate();
-  const { setCart } = useHeaderUserContext()
+  const { setCart } = useHeaderUserContext();
   const { productData, previousUrl, ammountItem, useInsurance } =
     location.state;
   const [cartItems, setCartItems] = React.useState([
     { ...productData, toBuy: ammountItem },
   ]);
 
-  const totalItemsPrice = useMemo(() =>
-    cartItems.reduce((total, item) => total + (item.price * item.toBuy), 0).toFixed(2)
-  ,[cartItems])
+  const totalItemsPrice = useMemo(
+    () =>
+      cartItems
+        .reduce((total, item) => total + item.price * item.toBuy, 0)
+        .toLocaleString(),
+    [cartItems]
+  );
 
   const handleQuantityChange = (id, operation) => {
     setCartItems((prevItems) =>
@@ -26,13 +30,9 @@ const CreateOrder = () => {
         return item._id === id
           ? {
               ...item,
-              toBuy:
-                operation === "increase"
-                  ? item.toBuy + 1
-                  : item.toBuy - 1,
+              toBuy: operation === "increase" ? item.toBuy + 1 : item.toBuy - 1,
             }
-          : item
-      
+          : item;
       })
     );
   };
@@ -43,7 +43,7 @@ const CreateOrder = () => {
   };
 
   const handleAddToCart = async () => {
-    const {accessToken, cartId} = localStorage
+    const { accessToken, cartId } = localStorage;
     const cartData = {
       items: [
         {
@@ -69,6 +69,7 @@ const CreateOrder = () => {
         productName: item.productName,
         discount: 0,
         tax: 0,
+        postingCost: item.postingCost,
       })),
     };
     navigate("/checkout", { state: { cartItems: cartData.items } });
@@ -102,7 +103,7 @@ const CreateOrder = () => {
                       />
                       {item.productName}
                     </td>
-                    <td className="py-3">{item.price.toFixed(2)} VNĐ</td>
+                    <td className="py-3">{item.price.toLocaleString()} VNĐ</td>
                     <td className="py-3">
                       <div className="flex items-center border border-gray-300 rounded-lg">
                         <button
@@ -110,7 +111,7 @@ const CreateOrder = () => {
                           onClick={() =>
                             handleQuantityChange(item._id, "decrease")
                           }
-                          disabled={isNaN(item.toBuy) ||item.toBuy === 1}
+                          disabled={isNaN(item.toBuy) || item.toBuy === 1}
                         >
                           -
                         </button>
@@ -131,7 +132,8 @@ const CreateOrder = () => {
                       </div>
                     </td>
                     <td className="py-3">
-                      {(item.price * item.toBuy || item.price).toFixed(2)} VNĐ
+                      {(item.price * item.toBuy || item.price).toLocaleString()}{" "}
+                      VNĐ
                     </td>
                     <td
                       className="py-3 text-red-500 cursor-pointer hover:text-red-700"
@@ -196,17 +198,14 @@ const CreateOrder = () => {
             <div className="space-y-2">
               <div className="flex justify-between">
                 <span className="text-gray-600">Tổng tiền:</span>
-                <span>
-                  {totalItemsPrice}{" "}
-                  VNĐ
-                </span>
+                <span>{totalItemsPrice} VNĐ</span>
               </div>
               <div className="flex justify-between">
                 <span className="text-gray-600">Phí ship:</span>
                 <span>
                   {cartItems
                     .reduce((total, item) => total + item.postingCost, 0)
-                    .toFixed(2)}{" "}
+                    .toLocaleString()}{" "}
                   VNĐ
                 </span>
               </div>
@@ -219,7 +218,7 @@ const CreateOrder = () => {
                         total + item.price * item.toBuy + item.postingCost,
                       0
                     )
-                    .toFixed(2)}{" "}
+                    .toLocaleString()}{" "}
                   VNĐ
                 </span>
               </div>

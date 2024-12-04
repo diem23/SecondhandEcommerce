@@ -58,10 +58,26 @@ export default function CartDetail({ products }) {
     );
 
     setItems(cart.productItems);
+    window.location.reload(); //trick lỏ, nào siêng thì sửa
   };
 
   const handleViewFullCart = () => {
     navigate("/shoppingcart");
+  };
+
+  const handleCheckOut = () => {
+    const cartData = {
+      items: productItems.map((item) => ({
+        productId: item.productId,
+        quantity: item.quantity,
+        price: item.price,
+        productName: item.product.productName,
+        discount: 0,
+        tax: 0,
+        postingCost: item.product.postingCost,
+      })),
+    };
+    navigate("/checkout", { state: { cartItems: cartData.items } });
   };
 
   return (
@@ -97,6 +113,7 @@ export default function CartDetail({ products }) {
         <Button
           className="mt-6 flex items-center justify-center gap-3 bg-[#FA8232]"
           fullWidth
+          onClick={handleCheckOut}
         >
           Thanh toán ngay
           <ArrowRight size={17} />
