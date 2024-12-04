@@ -1,14 +1,14 @@
-import React, { useEffect } from "react";
-import { useLocation } from "react-router-dom";
-import { Button, Typography, Input } from "@material-tailwind/react";
+import { Button, Input, Typography } from "@material-tailwind/react";
 import { ArrowLeft, ArrowRight } from "@phosphor-icons/react";
-import { useNavigate } from "react-router-dom";
-import { createCart } from "../services/cartService";
-import { useMemo } from "react";
+import React, { useMemo } from "react";
+import { useLocation, useNavigate } from "react-router-dom";
+import { updateCarts } from "../services/cartService";
+import { useHeaderUserContext } from "../context/HeaderContext";
 
 const CreateOrder = () => {
   const location = useLocation();
   const navigate = useNavigate();
+  const { setCart } = useHeaderUserContext()
   const { productData, previousUrl, ammountItem, useInsurance } =
     location.state;
   const [cartItems, setCartItems] = React.useState([
@@ -43,6 +43,7 @@ const CreateOrder = () => {
   };
 
   const handleAddToCart = async () => {
+    const {accessToken, cartId} = localStorage
     const cartData = {
       items: [
         {
@@ -53,7 +54,8 @@ const CreateOrder = () => {
         },
       ],
     };
-    await createCart(cartData, localStorage.getItem("accessToken"));
+    const cart = await updateCarts(cartId, cartData, accessToken);
+    setCart(cart);
     navigate("/shoppingcart");
   };
 

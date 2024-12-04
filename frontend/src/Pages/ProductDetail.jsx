@@ -22,10 +22,12 @@ import {
   Hand,
 } from "@phosphor-icons/react";
 import { useNavigate } from "react-router-dom";
-import { createCart } from "../services/cartService";
+import { createCart, updateCarts } from "../services/cartService";
+import { useHeaderUserContext } from "../context/HeaderContext";
 
 const ProductDetail = () => {
   const navigate = useNavigate();
+  const { cart, setCart} = useHeaderUserContext()
   const [productData, setProductData] = useState([]);
   const [selectedImage, setSelectedImage] = React.useState(0);
   const [activeTab, setActiveTab] = React.useState("description");
@@ -38,8 +40,7 @@ const ProductDetail = () => {
       state: { productData, previousUrl: window.location.pathname, useInsurance: useInsurance, ammountItem: ammountItem },
     });
   };
-
-  const HandleAddToCart = () => {
+  const HandleAddToCart = async () => {
     const cartData = {
       items: [
         {
@@ -50,8 +51,9 @@ const ProductDetail = () => {
         },
       ],
     };
-    const accessToken = localStorage.getItem("accessToken");
-    createCart(cartData, accessToken);
+    const { accessToken, cartId } = localStorage;
+    const cart = await updateCarts(cartId, cartData, accessToken);
+    setCart(cart)
   };
 
   const tabData = [
