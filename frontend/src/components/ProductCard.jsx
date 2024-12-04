@@ -18,7 +18,9 @@ const ProductCard = ({ product }) => {
         <Typography variant="h6" className="font-semibold">
           {product.productName}
         </Typography>
-        <Typography className="text-gray-600">{product.price} VNĐ</Typography>
+        <Typography className="text-gray-600">
+          {product?.price?.toLocaleString()} VNĐ
+        </Typography>
         <div className="flex justify-between items-center mt-4">
           <Typography variant="small" className="text-yellow-500">
             {"⭐".repeat(product.rating)}

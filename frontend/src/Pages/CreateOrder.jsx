@@ -105,9 +105,9 @@ const CreateOrder = () => {
                     </td>
                     <td className="py-3">{item.price.toLocaleString()} VNĐ</td>
                     <td className="py-3">
-                      <div className="flex items-center border border-gray-300 rounded-lg">
+                      <div className="flex items-center  rounded-lg">
                         <button
-                          className="px-3 py-2 text-gray-600 hover:bg-gray-100"
+                          className="px-3 py-2 text-gray-600 border border-gray-300 hover:bg-gray-100"
                           onClick={() =>
                             handleQuantityChange(item._id, "decrease")
                           }
@@ -122,7 +122,7 @@ const CreateOrder = () => {
                           className="w-12 text-center border-l border-r border-gray-300 text-gray-800"
                         />
                         <button
-                          className="px-3 py-2 text-gray-600 hover:bg-gray-100"
+                          className="px-3 py-2 text-gray-600 border border-gray-300 hover:bg-gray-100"
                           onClick={() =>
                             handleQuantityChange(item._id, "increase")
                           }

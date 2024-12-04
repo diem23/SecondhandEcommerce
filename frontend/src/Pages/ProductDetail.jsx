@@ -256,15 +256,12 @@ const ProductDetail = () => {
           </div>
 
           {/* Title */}
-          <h2 className="mt-4 text-lg font-semibold text-gray-900">
+          <h2 className="mt-4 text-2xl font-semibold text-gray-900">
             {productData.productName}
           </h2>
 
           {/* Details */}
           <div className="mt-4 space-y-2 text-sm text-gray-600">
-            <p>
-              <strong>Mã sản phẩm:</strong> A264671
-            </p>
             <p>
               <strong>Hãng:</strong> {productData.brand}
             </p>
@@ -292,10 +289,10 @@ const ProductDetail = () => {
             <span className="text-2xl font-bold text-blue-600">
               {productData?.price?.toLocaleString()} VNĐ
             </span>
-            <span className="text-gray-400 line-through">40,000,000 VNĐ</span>
+            {/* <span className="text-gray-400 line-through">40,000,000 VNĐ</span>
             <span className="px-3 py-1 bg-yellow-100 text-yellow-600 text-sm rounded-lg">
               GIẢM 12.5%
-            </span>
+            </span> */}
           </div>
           <div className="mt-2 flex items-center">
             <Checkbox
