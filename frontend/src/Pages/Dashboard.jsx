@@ -1,12 +1,4 @@
-import React from "react";
-import {
-  Tabs,
-  TabsHeader,
-  TabsBody,
-  Tab,
-  TabPanel,
-  Typography,
-} from "@material-tailwind/react";
+import React, { useState } from "react";
 import {
   Stack,
   Storefront,
@@ -17,15 +9,22 @@ import {
   ClockClockwise,
   Gear,
   SignOut,
+  ArrowLeft,
+  ArrowRight,
+  UserCircle,
 } from "@phosphor-icons/react";
+import CreateProductForm from "../components/CreateProductForm";
 
 const Dashboard = () => {
-  const data = [
+  const [isOpen, setIsOpen] = useState(true);
+  const [activeMain, setActiveMain] = useState("dashboard");
+  const [activeAction, setActiveAction] = useState("primary"); // New state for action toggle
+  const primaryNavItems = [
     {
       label: "Dashboard",
       value: "dashboard",
       icon: Stack,
-      desc: `It really matters and then like it really doesn't matter.
+      content: `It really matters and then like it really doesn't matter.
           What matters is the people who are sparked by it. And the people 
           who are like offended by it, it doesn't matter.`,
     },
@@ -33,14 +32,14 @@ const Dashboard = () => {
       label: "Lịch sử giao dịch",
       value: "billhistory",
       icon: Storefront,
-      desc: `Because it's about motivating the doers. Because I'm here
+      content: `Because it's about motivating the doers. Because I'm here
           to follow my dreams and inspire other people to follow their dreams, too.`,
     },
     {
       label: "Theo dõi đơn hàng",
       value: "trackingdelivery",
       icon: MapPinLine,
-      desc: `We're not always in the position that we want to be at.
+      content: `We're not always in the position that we want to be at.
           We're constantly growing. We're constantly making mistakes. We're
           constantly trying to express ourselves and actualize our dreams.`,
     },
@@ -48,7 +47,7 @@ const Dashboard = () => {
       label: "Giỏ hàng",
       value: "cart",
       icon: ShoppingCartSimple,
-      desc: `We're not always in the position that we want to be at.
+      content: `We're not always in the position that we want to be at.
           We're constantly growing. We're constantly making mistakes. We're
           constantly trying to express ourselves and actualize our dreams.`,
     },
@@ -56,7 +55,7 @@ const Dashboard = () => {
       label: "Sản phẩm ưa thích",
       value: "favorite",
       icon: Heart,
-      desc: `We're not always in the position that we want to be at.
+      content: `We're not always in the position that we want to be at.
           We're constantly growing. We're constantly making mistakes. We're
           constantly trying to express ourselves and actualize our dreams.`,
     },
@@ -64,7 +63,7 @@ const Dashboard = () => {
       label: "Thông tin cá nhân",
       value: "profile",
       icon: Notebook,
-      desc: `We're not always in the position that we want to be at.
+      content: `We're not always in the position that we want to be at.
           We're constantly growing. We're constantly making mistakes. We're
           constantly trying to express ourselves and actualize our dreams.`,
     },
@@ -72,61 +71,145 @@ const Dashboard = () => {
       label: "Lịch sử tìm kiếm",
       value: "searchhistory",
       icon: ClockClockwise,
-      desc: `We're not always in the position that we want to be at.
+      content: `We're not always in the position that we want to be at.
           We're constantly growing. We're constantly making mistakes. We're
           constantly trying to express ourselves and actualize our dreams.`,
     },
     {
-      label: "Settings",
+      label: "Cài đặt tài khoản",
       value: "settings",
       icon: Gear,
-      desc: `We're not always in the position that we want to be at.
-          We're constantly growing. We're constantly making mistakes. We're
-          constantly trying to express ourselves and actualize our dreams.`,
-    },
-    {
-      label: "Đăng xuất",
-      value: "logout",
-      icon: SignOut,
-      desc: `We're not always in the position that we want to be at.
+      content: `We're not always in the position that we want to be at.
           We're constantly growing. We're constantly making mistakes. We're
           constantly trying to express ourselves and actualize our dreams.`,
     },
   ];
+
+  const secondaryNavItems = [
+    {
+      value: "sellingproduct",
+      label: "Đăng bán sản phẩm",
+      icon: ShoppingCartSimple,
+      content: <CreateProductForm />,
+    },
+    {
+      value: "manageproduct",
+      label: "Quản lý sản phẩm",
+      icon: Storefront,
+    },
+  ];
+
   return (
-    <div className="p-6">
-      <Tabs value="dashboard" orientation="vertical">
-        <TabsHeader
-          className="rounded-none border-b border-blue-gray-50 bg-transparent p-0 w-56 place-items-start"
-          indicatorProps={{
-            className: "bg-orange text-white shadow-none rounded-md",
-          }}
-        >
-          {data.map(({ label, value, icon }) => (
-            <Tab key={value} value={value} className="justify-start flex ">
-              <div className="flex flex-row items-start gap-2 ">
-                <Typography
-                  className="text-black flex items-center gap-2"
-                  indicatorProps={{
-                    className: "bg-orange text-black shadow-none rounded-none",
-                  }}
+    <div className="flex min-h-screen bg-gray-100">
+      <div
+        className={`${
+          isOpen ? "w-64" : "w-20"
+        } bg-white shadow-lg transition-all duration-300 ease-in-out relative flex flex-col justify-between`}
+      >
+        <div>
+          <button
+            onClick={() => setIsOpen(!isOpen)}
+            className="absolute -right-3 top-5 bg-white rounded-full p-1.5 shadow-md text-black hover:text-gray-800 focus:outline-none focus:ring-2 focus:ring-blue-500"
+            aria-label={isOpen ? "Collapse menu" : "Expand menu"}
+          >
+            {isOpen ? <ArrowLeft size={20} /> : <ArrowRight size={20} />}
+          </button>
+
+          <nav
+            className="pt-5 px-4"
+            role="navigation"
+            aria-label="Main navigation"
+          >
+            <div className="flex justify-center mb-3 space-x-2">
+              {/* <button
+                onClick={() => setActiveAction("primary")}
+                className={`px-4 py-2 rounded-lg text-sm ${
+                  activeAction === "primary"
+                    ? "bg-orange text-white"
+                    : "bg-gray-100 text-black"
+                }`}
+              >
+                {isOpen ? "Người dùng" : "U"}
+              </button> */}
+              {isOpen && (
+                <button
+                  onClick={() => setActiveAction("primary")}
+                  className={`px-4 py-2 rounded-lg text-sm ${
+                    activeAction === "primary"
+                      ? "bg-orange text-white"
+                      : "bg-gray-100 text-black"
+                  }`}
                 >
-                  {React.createElement(icon, { className: "w-5 h-5" })}
-                  {label}
-                </Typography>
-              </div>
-            </Tab>
-          ))}
-        </TabsHeader>
-        <TabsBody className="h-screen">
-          {data.map(({ value, desc }) => (
-            <TabPanel key={value} value={value} className="py-0">
-              {desc}
-            </TabPanel>
-          ))}
-        </TabsBody>
-      </Tabs>
+                  Người dùng
+                </button>
+              )}
+              {/* <button
+                onClick={() => setActiveAction("secondary")}
+                className={`px-4 py-2 rounded-lg text-sm ${
+                  activeAction === "secondary"
+                    ? "bg-orange text-white"
+                    : "bg-gray-100 text-black"
+                }`}
+              >
+                {isOpen ? "Mua bán" : "S"}
+              </button> */}
+              {isOpen && (
+                <button
+                  onClick={() => setActiveAction("secondary")}
+                  className={`px-4 py-2 rounded-lg text-sm ${
+                    activeAction === "secondary"
+                      ? "bg-orange text-white"
+                      : "bg-gray-100 text-black"
+                  }`}
+                >
+                  Mua bán
+                </button>
+              )}
+            </div>
+
+            {(activeAction === "primary"
+              ? primaryNavItems
+              : secondaryNavItems
+            ).map((item) => (
+              <button
+                key={item.value}
+                onClick={() => setActiveMain(item.value)}
+                className={`w-full flex items-center p-3 mb-2 rounded-lg transition-all duration-200  text-sm ${
+                  activeMain === item.value
+                    ? "bg-orange text-white"
+                    : "text-black hover:bg-blue-50 hover:text-blue-500"
+                }`}
+                aria-current={activeMain === item.value ? "page" : undefined}
+              >
+                <item.icon
+                  className={`${isOpen ? "mr-3" : "mx-auto"} text-xl`}
+                />
+                {isOpen && <span className="font-medium">{item.label}</span>}
+              </button>
+            ))}
+          </nav>
+        </div>
+
+        {/* Added Logout Button */}
+        <div className="px-4 pb-6">
+          <button
+            onClick={() => console.log("Logout clicked")}
+            className="w-full flex items-center p-3 rounded-lg transition-all duration-200 text-black hover:bg-red-50 hover:text-red-500"
+          >
+            <SignOut className={`${isOpen ? "mr-3" : "mx-auto"} text-xl`} />
+            {isOpen && <span className="font-medium  text-sm">Logout</span>}
+          </button>
+        </div>
+      </div>
+
+      <div className="flex-1">
+        <div>
+          {primaryNavItems.find((item) => item.value === activeMain)?.content}
+          {secondaryNavItems.find((item) => item.value === activeMain)?.content}
+        </div>
+      </div>
     </div>
   );
 };
+
 export default Dashboard;

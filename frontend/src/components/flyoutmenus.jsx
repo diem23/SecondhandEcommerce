@@ -14,6 +14,7 @@ const FlyoutMenu = () => {
         if (response.length > 0) {
           setActiveCategory(response[0].type);
           setCurrentBrands(response[0].brand);
+          localStorage.setItem("brands", JSON.stringify(response));
         }
       } catch (error) {
         console.error("Error fetching brands:", error);
@@ -68,8 +69,9 @@ const FlyoutMenu = () => {
                   onClick={() => {
                     navigate("/ShopPage", {
                       state: {
-                        brand: 'Tất cả',
-                    }});
+                        brand: "Tất cả",
+                      },
+                    });
                     setIsOpen(!isOpen);
                   }}
                 >
@@ -77,12 +79,15 @@ const FlyoutMenu = () => {
                   Tất cả
                 </li>
                 {currentBrands.map((brand) => (
-                  <li key={brand} className="p-2 hover:bg-gray-100"
+                  <li
+                    key={brand}
+                    className="p-2 hover:bg-gray-100"
                     onClick={() => {
                       navigate("/ShopPage", {
                         state: {
                           brand,
-                      }});
+                        },
+                      });
                       setIsOpen(!isOpen);
                     }}
                   >
