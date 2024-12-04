@@ -4,6 +4,7 @@ import { Button, Typography, Input } from "@material-tailwind/react";
 import { ArrowLeft, ArrowRight } from "@phosphor-icons/react";
 import { useNavigate } from "react-router-dom";
 import { createCart } from "../services/cartService";
+import { useMemo } from "react";
 
 const CreateOrder = () => {
   const location = useLocation();
@@ -14,21 +15,25 @@ const CreateOrder = () => {
     { ...productData, toBuy: ammountItem },
   ]);
 
+  const totalItemsPrice = useMemo(() =>
+    cartItems.reduce((total, item) => total + (item.price * item.toBuy), 0).toFixed(2)
+  ,[cartItems])
+
   const handleQuantityChange = (id, operation) => {
     setCartItems((prevItems) =>
-      prevItems.map((item) =>
-        item._id === id
+      prevItems.map((item) => {
+        if (!item.toBuy) return 1;
+        return item._id === id
           ? {
               ...item,
               toBuy:
                 operation === "increase"
                   ? item.toBuy + 1
-                  : item.toBuy > 1
-                  ? item.toBuy - 1
-                  : 1,
+                  : item.toBuy - 1,
             }
           : item
-      )
+      
+      })
     );
   };
 
@@ -103,12 +108,13 @@ const CreateOrder = () => {
                           onClick={() =>
                             handleQuantityChange(item._id, "decrease")
                           }
+                          disabled={isNaN(item.toBuy) ||item.toBuy === 1}
                         >
                           -
                         </button>
                         <input
                           type="text"
-                          value={item.toBuy}
+                          value={item.toBuy || 1}
                           readOnly
                           className="w-12 text-center border-l border-r border-gray-300 text-gray-800"
                         />
@@ -123,7 +129,7 @@ const CreateOrder = () => {
                       </div>
                     </td>
                     <td className="py-3">
-                      {(item.price * item.toBuy).toFixed(2)} VNĐ
+                      {(item.price * item.toBuy || item.price).toFixed(2)} VNĐ
                     </td>
                     <td
                       className="py-3 text-red-500 cursor-pointer hover:text-red-700"
@@ -189,9 +195,7 @@ const CreateOrder = () => {
               <div className="flex justify-between">
                 <span className="text-gray-600">Tổng tiền:</span>
                 <span>
-                  {cartItems
-                    .reduce((total, item) => total + item.price * item.toBuy, 0)
-                    .toFixed(2)}{" "}
+                  {totalItemsPrice}{" "}
                   VNĐ
                 </span>
               </div>

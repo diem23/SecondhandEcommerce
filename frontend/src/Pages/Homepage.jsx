@@ -23,7 +23,7 @@ const HomePage = ({ type }) => {
         if (accessToken) {
           const response = await getUserMe();
           const userData = response.data;
-          localStorage.setItem("user", userData);
+          localStorage.setItem("user", JSON.stringify(userData));
           setRole(response.data.role);
         }
       } catch (error) {

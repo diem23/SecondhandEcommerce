@@ -1,7 +1,7 @@
 import { backendURL } from "../utils/constants";
 import axios from "axios";
 
-export const createOrder = async (data, token) => {
+export const placeOrder = async (data, token) => {
     const url = `${backendURL}/orders`;
     try {
         const response = await axios.post(url, data, {
