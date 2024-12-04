@@ -7,8 +7,13 @@ import { useState } from "react";
 import ProductCard from "../components/ProductCard";
 import { getProducts } from "../services/productService";
 import CustomRangeSlider from "../components/CustomRangeSlider";
+import { useLocation, useNavigate } from "react-router-dom";
 
 const BreadcrumbsShopPage = () => {
+  const location = useLocation();
+
+  const { brand } = location.state || {}
+
   return (
     <Breadcrumbs className="bg-white ml-36">
       <a href="#" className="opacity-60 flex gap-1">
@@ -26,7 +31,7 @@ const BreadcrumbsShopPage = () => {
         <span>Thể loại</span>
       </a>
       <a href="#" style={{ color: "#2DA5F3" }}>
-        Thiết bị điện tử
+        {brand}
       </a>
     </Breadcrumbs>
   );

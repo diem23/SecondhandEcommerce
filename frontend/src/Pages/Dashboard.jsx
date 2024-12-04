@@ -99,11 +99,11 @@ const Dashboard = () => {
         <TabsHeader
           className="rounded-none border-b border-blue-gray-50 bg-transparent p-0 w-56 place-items-start"
           indicatorProps={{
-            className: "bg-orange text-white shadow-none rounded-none",
+            className: "bg-orange text-white shadow-none rounded-md",
           }}
         >
           {data.map(({ label, value, icon }) => (
-            <Tab key={value} value={value} className="place-items-start flex ">
+            <Tab key={value} value={value} className="justify-start flex ">
               <div className="flex flex-row items-start gap-2 ">
                 <Typography
                   className="text-black flex items-center gap-2"
