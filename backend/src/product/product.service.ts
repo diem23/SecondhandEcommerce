@@ -100,7 +100,7 @@ export class ProductService {
 
     async findOne(id: string) {
         try {
-            const product = await this.productModel.findById(id).exec();
+            const product = await this.productModel.findById(new Types.ObjectId(id)).exec();
             if (!product) {
                 throw new NotFoundException(`Product with ID ${id} not found`);
             }
@@ -192,7 +192,7 @@ export class ProductService {
                     $group: {
                         _id: '$type',
                         type: { $first: '$type' },
-                        image: { $first: '$image' },
+                        image: { $first: '$images' },
                         brand: { $addToSet: '$brand' },
                     },
                 },
