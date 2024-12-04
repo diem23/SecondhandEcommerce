@@ -9,7 +9,7 @@ import {
 import { Typography, Carousel } from "@material-tailwind/react";
 import ProductViewDialog from "../components/ProductViewDialog";
 import React, { useEffect } from "react";
-import { getAllBrand } from "../services/productService";
+import { getAllBrand, getProducts } from "../services/productService";
 
 const listItem = (brands) => {
   return (
@@ -72,17 +72,26 @@ const listItem = (brands) => {
 };
 
 const HomePageBody = () => {
-  const [open, setOpen] = React.useState(false);
-  const handleOpen = () => setOpen(!open);
+  const [openProductId, setOpenProductId] = React.useState(null);
+  const handleOpen = (productId) => {
+      setOpenProductId(openProductId === productId ? null : productId);
+  };
   const [brands, setBrands] = React.useState([]);
+  const [topProducts, setTopProducts] = React.useState([]);
   useEffect(() => {
     const getAllBrands = async () => {
-      try {
-        const response = await getAllBrand();
-        setBrands(response);
-      } catch (error) {
-        console.error("Error fetching brands:", error);
-      }
+      const [brands, data] = await Promise.all([
+        getAllBrand(),
+        getProducts({
+            page: 1,
+            limit: 10,
+            sort: { price: -1 },
+        }),
+      ]);
+      const { products } = data;
+      console.log(products);
+      setBrands(brands);
+      setTopProducts(products);
     };
     getAllBrands();
   }, []);
@@ -131,88 +140,73 @@ const HomePageBody = () => {
       <div className=" flex justify-center p-8 bg-white shadow ">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div>
-            <h3 className="text-lg font-semibold mb-4">🔥 BÁN CHẠY NHẤT</h3>
-            <ul className="space-y-4 max-w-72">
-              {[
-                {
-                  name: "Samsung Galaxy S21 5G",
-                  price: "1,500,000 VNĐ",
-                  image: "https://via.placeholder.com/150",
-                },
-                {
-                  name: "Galaxy 12 Mini Gaming Phone",
-                  price: "1,500,000 VNĐ",
-                  image: "https://via.placeholder.com/150",
-                },
-                {
-                  name: "Sony DSCHX8 Camera",
-                  price: "1,500,000 VNĐ",
-                  image: "https://via.placeholder.com/150",
-                },
-              ].map((product) => (
-                <li
-                  key={product.name}
-                  className="flex items-center space-x-4 border p-3"
-                  onClick={handleOpen}
-                >
-                  <img
-                    src={product.image}
-                    alt={product.name}
-                    className="w-16 h-16 rounded"
-                  />
-                  <div>
-                    <p className="text-sm font-medium break-words">
-                      {product.name}
-                    </p>
-                    <p className="text-sm text-blue-600">{product.price}</p>
-                  </div>
-                </li>
-              ))}
-            </ul>
+              <h3 className="text-lg font-semibold mb-4">
+                  🔥 BÁN CHẠY NHẤT
+              </h3>
+              <ul className="space-y-4 max-w-72">
+                {topProducts.slice(0, 1).map((product) => (
+                  <>
+                    <li
+                        key={product.productName}
+                        className="flex items-center space-x-4 border p-3"
+                        onClick={() => handleOpen(product._id)}
+                    >
+                      <img
+                        src={product.images?.[0]}
+                        alt={product.productName}
+                        className="w-16 h-16 rounded"
+                      />
+                      <div>
+                        <p className="text-sm font-medium break-words">
+                            {product.productName}
+                        </p>
+                        <p className="text-sm text-blue-600">
+                            {product.price}
+                        </p>
+                      </div>
+                    </li>
+                  </>
+                ))}
+              </ul>
           </div>
           <div>
-            <h3 className="text-lg font-semibold mb-4">🌟 SẢN PHẨM MỚI</h3>
+            <h3 className="text-lg font-semibold mb-4">
+                🌟 SẢN PHẨM MỚI
+            </h3>
             <ul className="space-y-4 max-w-72">
-              {[
-                {
-                  name: "TOZO T6 Wireless Earbuds",
-                  price: "1,500,000 VNĐ",
-                  image: "https://via.placeholder.com/150",
-                },
-                {
-                  name: "JBL Flip 4 Speaker",
-                  price: "1,500,000 VNĐ",
-                  image: "https://via.placeholder.com/150",
-                },
-                {
-                  name: "Wyze Cam Pan v2",
-                  price: "1,500,000 VNĐ",
-                  image: "https://via.placeholder.com/150",
-                },
-              ].map((product) => (
-                <li
-                  key={product.name}
-                  className="flex items-center space-x-4 border p-3"
-                >
-                  <img
-                    src={product.image}
-                    alt={product.name}
-                    className="w-16 h-16 rounded"
-                  />
-                  <div>
-                    <p className="text-sm font-medium break-words">
-                      {product.name}
-                    </p>
-                    <p className="text-sm text-blue-600">{product.price}</p>
-                  </div>
-                </li>
+              {topProducts.slice(1).map((product) => (
+                <>
+                  <li
+                    key={product.productName}
+                    className="flex items-center space-x-4 border p-3"
+                    onClick={() => handleOpen(product._id)}
+                  >
+                    <img
+                      src={product.images?.[0]}
+                      alt={product.productName}
+                      className="w-16 h-16 rounded"
+                    />
+                    <div>
+                        <p className="text-sm font-medium break-words">
+                            {product.productName}
+                        </p>
+                        <p className="text-sm text-blue-600">
+                            {product.price}
+                        </p>
+                    </div>
+                  </li>
+                </>
               ))}
             </ul>
           </div>
         </div>
       </div>
-      <ProductViewDialog open={open} handleOpen={handleOpen} />
-    </div>
+      <ProductViewDialog
+        productId={openProductId}
+        open={openProductId !== null}
+        handleOpen={() => handleOpen(openProductId)}
+      />
+  </div>
   );
 };
 

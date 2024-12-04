@@ -1,18 +1,16 @@
-import React from "react";
 import {
   Button,
-  Dialog,
-  DialogHeader,
-  DialogBody,
-  DialogFooter,
-  Select,
   Card,
+  Dialog,
   IconButton,
   Option,
+  Select
 } from "@material-tailwind/react";
 import { ArrowLeft, ArrowRight } from "@phosphor-icons/react";
+import React, { useEffect, useState } from "react";
+import { getProductById } from "../services/productService";
 
-export default function ProductViewDialog({ open, handleOpen }) {
+export default function ProductViewDialog({ productId, open, handleOpen }) {
   const datatest = [
     {
       productName: "Organic Shampoo",
@@ -37,8 +35,18 @@ export default function ProductViewDialog({ open, handleOpen }) {
       ],
     },
   ];
-  const product = datatest[0]; // Using the first product in the array
+  const [product, setProduct] = useState(datatest[0])
   const [selectedImage, setSelectedImage] = React.useState(0);
+
+  useEffect(() => {
+    const getProduct = async () => {
+      if (productId) {
+        const product = await getProductById(productId)
+        setProduct(product)
+      }
+    } 
+    getProduct()
+  }, [productId])
 
   const handlePrevImage = () => {
     setSelectedImage((prev) =>
