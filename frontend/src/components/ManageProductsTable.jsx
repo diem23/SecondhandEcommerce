@@ -1,15 +1,29 @@
 import React, { useState, useEffect } from "react";
 import { getProducts, deleteProduct } from "../services/productService";
 import { toast } from "react-toastify";
+import {
+  Button,
+  Dialog,
+  DialogHeader,
+  DialogBody,
+  DialogFooter,
+} from "@material-tailwind/react";
 import UpdateProductDialog from "./UpdateProductDialog";
 
 const ManageProductsTable = () => {
   const [productData, setProductData] = useState([]);
   const [open, setOpen] = React.useState(false);
   const [dialogData, setDialogData] = React.useState({});
+  const [deleteId, setDeleteId] = React.useState("");
   const handleOpen = (product) => {
     setDialogData(product);
     setOpen(!open);
+  };
+
+  const [confirmOpen, setConfirmOpen] = React.useState(false);
+  const handleConfirmOpen = (_id) => {
+    setDeleteId(_id);
+    setConfirmOpen(!confirmOpen);
   };
 
   useEffect(() => {
@@ -129,7 +143,7 @@ const ManageProductsTable = () => {
                     Xem đánh giá
                   </button>
                   <button
-                    onClick={() => handleDelete(product._id)}
+                    onClick={() => handleConfirmOpen(product._id)}
                     className="px-6 py-2 text-sm flex gap-2 rounded-lg items-center bg-[#EE5858] text-white  font-semibold hover:bg-[#EE5858]"
                   >
                     Ngưng bán
@@ -145,6 +159,31 @@ const ManageProductsTable = () => {
         open={open}
         handleOpen={handleOpen}
       />
+      <Dialog open={confirmOpen} handler={handleConfirmOpen}>
+        <DialogBody>
+          Bạn có chắc chắn muốn ngưng bán/xóa sản phẩm này không?
+        </DialogBody>
+        <DialogFooter>
+          <Button
+            variant="text"
+            color="red"
+            onClick={handleConfirmOpen}
+            className="mr-1"
+          >
+            <span>Cancel</span>
+          </Button>
+          <Button
+            variant="gradient"
+            color="orange"
+            onClick={() => {
+              handleDelete(deleteId);
+              handleConfirmOpen();
+            }}
+          >
+            <span>Confirm</span>
+          </Button>
+        </DialogFooter>
+      </Dialog>
     </div>
   );
 };
