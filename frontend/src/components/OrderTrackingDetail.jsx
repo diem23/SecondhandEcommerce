@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from "react";
-
 import {
   Package,
   Truck,
@@ -7,11 +6,17 @@ import {
   ShoppingBag,
   Circle,
   ArrowLeft,
+  ArrowRight,
 } from "@phosphor-icons/react";
 import { getOrderById } from "../services/orderService";
+import RatingDialog from "./RatingDialog";
 
 const OrderTrackingDetail = ({ orderData, setActiveSecondary }) => {
   const [orderDetail, setOrderDetail] = useState({});
+  const [open, setOpen] = React.useState(false);
+  const handleOpen = () => {
+    setOpen(!open);
+  };
   useEffect(() => {
     const fetchData = async () => {
       const token = localStorage.getItem("accessToken");
@@ -26,45 +31,32 @@ const OrderTrackingDetail = ({ orderData, setActiveSecondary }) => {
     fetchData();
   }, [orderData]);
 
-  const [orderDetails] = useState({
-    orderId: "ORD123456789",
-    price: 299.99,
-    createdDate: "2024-01-20",
-    currentStatus: "order_placed",
-    product: {
-      name: "Premium Wireless Headphones",
-      quantity: 1,
-      image: "https://images.unsplash.com/photo-1505740420928-5e560c06d30e",
-      color: "Midnight Black",
-      description: "High-quality wireless headphones with noise cancellation",
+  const activities = [
+    {
+      id: 1,
+      status: "Order Placed",
+      timestamp: "2024-01-20 09:00",
+      description: "Order has been placed successfully",
     },
-    activities: [
-      {
-        id: 1,
-        status: "Order Delivered",
-        timestamp: "2024-01-22 15:30",
-        description: "Package has been delivered",
-      },
-      {
-        id: 2,
-        status: "On The Road",
-        timestamp: "2024-01-22 10:15",
-        description: "Package is out for delivery",
-      },
-      {
-        id: 3,
-        status: "Packaging",
-        timestamp: "2024-01-21 14:20",
-        description: "Order is being packed",
-      },
-      {
-        id: 4,
-        status: "Order Placed",
-        timestamp: "2024-01-20 09:00",
-        description: "Order has been placed successfully",
-      },
-    ],
-  });
+    {
+      id: 2,
+      status: "Packaging",
+      timestamp: "2024-01-21 14:20",
+      description: "Order is being packed",
+    },
+    {
+      id: 3,
+      status: "On The Road",
+      timestamp: "2024-01-22 10:15",
+      description: "Package is out for delivery",
+    },
+    {
+      id: 4,
+      status: "Order Delivered",
+      timestamp: "2024-01-22 15:30",
+      description: "Package has been delivered",
+    },
+  ];
 
   const steps = [
     {
@@ -99,6 +91,16 @@ const OrderTrackingDetail = ({ orderData, setActiveSecondary }) => {
     if (stepIndex < currentIndex) return "completed";
     if (stepIndex === currentIndex) return "current";
     return "pending";
+  };
+  const getActivityStatus = (activityStatus) => {
+    const statusOrder = [
+      "Order Placed",
+      "Packaging",
+      "On The Road",
+      "Order Delivered",
+    ];
+    const currentIndex = statusOrder.indexOf(orderDetail.state);
+    return statusOrder.slice(0, currentIndex + 1).includes(activityStatus);
   };
 
   return (
@@ -208,49 +210,66 @@ const OrderTrackingDetail = ({ orderData, setActiveSecondary }) => {
             <h2 className="text-2xl font-bold text-gray-900 mb-4">
               Thông tin sản phẩm
             </h2>
-            <div className="flex items-start space-x-4">
-              <img
-                src={
-                  orderDetail?.listOfSingleOrder !== undefined
-                    ? orderDetail?.listOfSingleOrder[0]?.product?.images[0]
-                    : "https://images.unsplash.com/photo-1505740420928-5e560c06d30e"
-                }
-                alt={
-                  orderDetail?.listOfSingleOrder !== undefined
-                    ? orderDetail?.listOfSingleOrder[0]?.product?.productName
-                    : "Product"
-                }
-                className="w-24 h-24 object-cover rounded-lg"
-                onError={(e) => {
-                  e.target.src =
-                    "https://images.unsplash.com/photo-1505740420928-5e560c06d30e";
-                }}
-              />
-              <div>
-                <h3 className="font-medium text-gray-900">
-                  {orderDetail?.listOfSingleOrder !== undefined
-                    ? orderDetail?.listOfSingleOrder[0]?.product?.productName
-                    : "Product"}
-                </h3>
-                <p className="text-sm text-gray-500 mt-1">
-                  Số lượng:{" "}
-                  {orderDetail?.listOfSingleOrder !== undefined
-                    ? orderDetail?.listOfSingleOrder[0]?.quantity
-                    : "1"}
-                </p>
-                <p className="text-sm text-gray-500">
-                  Màu:{" "}
-                  {orderDetail?.listOfSingleOrder !== undefined
-                    ? orderDetail?.listOfSingleOrder[0]?.product?.color
-                    : "null"}
-                </p>
-                <p className="text-sm text-gray-500 mt-2">
-                  {orderDetail?.listOfSingleOrder !== undefined
-                    ? orderDetail?.listOfSingleOrder[0]?.product?.description
-                    : "null"}
-                </p>
-              </div>
-            </div>
+            {orderDetail?.listOfSingleOrder &&
+            orderDetail.listOfSingleOrder.length > 0 ? (
+              orderDetail.listOfSingleOrder.map((item, index) => (
+                <div className="grid grid-cols-3" key={index}>
+                  <div className="col-span-2 flex items-start space-x-4 mb-6">
+                    <img
+                      src={
+                        item?.product?.images[0] ||
+                        "https://images.unsplash.com/photo-1505740420928-5e560c06d30e"
+                      }
+                      alt={item?.product?.productName || "Product"}
+                      className="w-24 h-24 object-cover rounded-lg"
+                      onError={(e) => {
+                        e.target.src =
+                          "https://images.unsplash.com/photo-1505740420928-5e560c06d30e";
+                      }}
+                    />
+                    <div>
+                      <h3 className="font-medium text-gray-900">
+                        {item?.product?.productName || "Product"}
+                      </h3>
+                      <p className="text-sm text-gray-500 mt-1">
+                        Số lượng: {item?.quantity || "1"}
+                      </p>
+                      <p className="text-sm text-gray-500">
+                        Màu: {item?.product?.color || ""}
+                      </p>
+                      <p className="text-sm text-gray-500 mt-2">
+                        {item?.product?.description || ""}
+                      </p>
+                      <p className="text-sm text-gray-500 mt-2">
+                        Giá: {item?.product?.price?.toLocaleString()} VNĐ
+                      </p>
+                    </div>
+                  </div>
+                  {orderDetail.state === "Đã giao thành công" && (
+                    <div className="col-span-1">
+                      <button
+                        className="
+                        px-4 py-2 rounded-lg flex items-center space-x-2
+                        text-sm
+                      hover:text-yellow-600 transition-colors duration-300 hover:border-yellow-600
+                      hover:bg-yellow-100 border border-yellow-500 text-yellow-500
+                    "
+                        onClick={() => {
+                          handleOpen();
+                        }}
+                      >
+                        <span className="text-orange"> ⭐ Đánh giá ngay</span>
+                        <ArrowRight className="w-5 h-5 inline-block text-orange" />
+                      </button>
+                    </div>
+                  )}
+                </div>
+              ))
+            ) : (
+              <p className="text-gray-500">
+                Không có sản phẩm nào trong đơn hàng.
+              </p>
+            )}
           </div>
 
           {/* Order Activity Panel */}
@@ -259,29 +278,32 @@ const OrderTrackingDetail = ({ orderData, setActiveSecondary }) => {
               Chi tiết trạng thái đơn hàng
             </h2>
             <div className="space-y-4">
-              {orderDetails.activities.map((activity) => (
-                <div
-                  key={activity.id}
-                  className="flex items-start space-x-3 border-l-2 border-gray-200 pl-4"
-                >
-                  <Circle className="w-2 h-2 mt-2 text-blue-500" />
-                  <div>
-                    <p className="font-medium text-gray-900">
-                      {activity.status}
-                    </p>
-                    <p className="text-sm text-gray-500">
-                      {activity.timestamp}
-                    </p>
-                    <p className="text-sm text-gray-600 mt-1">
-                      {activity.description}
-                    </p>
+              {activities
+                .filter((activity) => getActivityStatus(activity.status))
+                .map((activity) => (
+                  <div
+                    key={activity.id}
+                    className="flex items-start space-x-3 border-l-2 border-gray-200 pl-4"
+                  >
+                    <Circle className="w-2 h-2 mt-2 text-blue-500" />
+                    <div>
+                      <p className="font-medium text-gray-900">
+                        {activity.status}
+                      </p>
+                      <p className="text-sm text-gray-500">
+                        {activity.timestamp}
+                      </p>
+                      <p className="text-sm text-gray-600 mt-1">
+                        {activity.description}
+                      </p>
+                    </div>
                   </div>
-                </div>
-              ))}
+                ))}
             </div>
           </div>
         </div>
       </div>
+      <RatingDialog open={open} handleOpen={handleOpen} />
     </div>
   );
 };
