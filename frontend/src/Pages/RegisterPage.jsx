@@ -14,8 +14,7 @@ import {
 import Header from "../components/Header";
 import Footer from "../components/Footer";
 import React from "react";
-import { register } from "../services/authService";
-
+import { login, register } from "../services/authService";
 const BreadcrumbsLogin = () => {
   return (
     <Breadcrumbs className="bg-white ml-36">
@@ -43,6 +42,7 @@ const BreadcrumbsLogin = () => {
 const RegisterPage = () => {
   const [activeTab, setActiveTab] = React.useState("register");
   const [stateValue, setStateValue] = React.useState({});
+  const [loginForm, setLoginForm] = React.useState({});
   const handleRegister = async (e) => {
     e.preventDefault();
     const data = {
@@ -55,6 +55,17 @@ const RegisterPage = () => {
       alert("Đăng ký thành công");
     } catch (error) {
       alert("Đăng ký thất bại");
+    }
+  };
+
+  const handleLogin = async () => {
+    try {
+      const response = await login(loginForm);
+      const accessToken = response.data.access_token;
+      localStorage.setItem("accessToken", accessToken);
+      window.location.reload();
+    } catch (error) {
+      console.log(error);
     }
   };
 
@@ -169,6 +180,10 @@ const RegisterPage = () => {
                 labelProps={{
                   className: "before:content-none after:content-none",
                 }}
+                value={loginForm.email}
+                onChange={(e) => {
+                  setLoginForm({ ...loginForm, email: e.target.value });
+                }}
               />
               <div className="flex justify-between items-center">
                 <Typography variant="h6" color="blue-gray" className="-mb-3">
@@ -186,12 +201,17 @@ const RegisterPage = () => {
                 labelProps={{
                   className: "before:content-none after:content-none",
                 }}
+                value={loginForm.password}
+                onChange={(e) => {
+                  setLoginForm({ ...loginForm, password: e.target.value });
+                }}
               />
             </div>
 
             <Button
               className="mt-10 flex items-center justify-center gap-3 bg-[#FA8232]"
               fullWidth
+              onClick={handleLogin}
             >
               Đăng nhập
               <ArrowRight size={17} />

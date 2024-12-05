@@ -198,24 +198,6 @@ export class OrderService {
                 },
             },
             {
-                $addFields: {
-                    totalPrice: {
-                        $sum: {
-                            $map: {
-                                input: '$listOfSingleOrder',
-                                as: 'item',
-                                in: {
-                                    $multiply: [
-                                        '$$item.quantity',
-                                        '$$item.product.price',
-                                    ],
-                                },
-                            },
-                        },
-                    },
-                },
-            },
-            {
                 $project: {
                     user: { password: 0, email: 0, ...unSelectedFields },
                     products: 0,
