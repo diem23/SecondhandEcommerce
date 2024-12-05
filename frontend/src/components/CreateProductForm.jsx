@@ -11,6 +11,7 @@ import { createProduct } from "../services/productService";
 
 const CreateProductForm = () => {
   const [formData, setFormData] = useState({});
+  const [files, setFiles] = useState([])
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -21,8 +22,9 @@ const CreateProductForm = () => {
 
   // Handle file input change
   const handleFileChange = (e) => {
-    const files = Array.from(e.target.files);
-    const imagePreviews = files.map((file) =>
+    const selectedFiles = Array.from(e.target.files); 
+    setFiles((prev) => [...prev, ...selectedFiles])
+    const imagePreviews = selectedFiles.map((file) =>
       Object.assign(file, { preview: URL.createObjectURL(file) })
     );
     setImages((prevImages) => [...prevImages, ...imagePreviews]);
@@ -30,6 +32,7 @@ const CreateProductForm = () => {
 
   // Remove an image from the preview
   const removeImage = (index) => {
+    setFiles((prev) => prev.filter((_, i) => i !== index));
     setImages((prevImages) => prevImages.filter((_, i) => i !== index));
   };
 
@@ -42,15 +45,35 @@ const CreateProductForm = () => {
     return options;
   };
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     const token = localStorage.getItem("accessToken");
-    const data = [
-      {
-        ...formData,
-      },
-    ];
-    // console.log(data);
-    createProduct(data[0], token);
+    let payload = new FormData();
+
+    formData.applyProfessionallySelling = formData.applyProfessionallySelling ? "true" : "false";
+    formData.applyStandOutSelling = formData.applyStandOutSelling ? "true" : "false";
+    
+    files.forEach((file) => {
+        payload.append("images", file);
+    });
+
+    for (let key in formData) { 
+      payload.append(key, formData[key]);
+    }
+
+    try {
+      // for (const pair of payload.entries()) {
+      //   console.log(`${pair[0]}:`, pair[1]);
+      // }
+  
+      await createProduct(payload, token);
+
+      setFiles([]);
+      setImages([]);
+  
+      console.log("Form successfully submitted and reset!");
+    } catch (error) {
+      console.error("Error submitting form:", error);
+    }
   };
 
   return (
@@ -66,13 +89,18 @@ const CreateProductForm = () => {
             {/* Image Upload Section */}
             <div className="col-span-3 ">
               <div className="border rounded-lg p-2 flex flex-col items-center">
-                <UploadSimple size={32} className="text-gray-500 mb-2" />
+                <label htmlFor="files">
+                  <UploadSimple size={32} className="text-gray-500 mb-2" />
+                </label>
                 <input
                   type="file"
                   multiple
                   accept="image/*"
                   onChange={handleFileChange}
                   className="mb-2 "
+                  id="files"
+                  name="files"
+                  hidden
                 />
               </div>
               <div className="mt-4 overflow-x-auto flex gap-4">
@@ -183,6 +211,7 @@ const CreateProductForm = () => {
               label="Kích thước"
               name="size"
               value={formData.size}
+              type="number"
               onChange={handleChange}
             />
             <Input

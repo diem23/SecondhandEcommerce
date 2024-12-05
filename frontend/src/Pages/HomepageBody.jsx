@@ -59,7 +59,7 @@ const listItem = (brands) => {
                     onClick={handleNavtoShopPage.bind(null, item.type)}
                   >
                     <img
-                      src={item.image || "https://via.placeholder.com/150"}
+                      src={item.image[0] || "https://via.placeholder.com/150"}
                       alt={item.type}
                       className="h-32 w-36 rounded-md object-cover transition-transform duration-200 hover:scale-105"
                     />

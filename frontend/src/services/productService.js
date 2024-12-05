@@ -7,12 +7,16 @@ export const createProduct = async (data, token) => {
     const response = await axios.post(url, data, {
       headers: {
         Authorization: `Bearer ${token}`,
-        "Content-Type": "multipart/form-data",
+        'Content-Type': 'multipart/form-data',
       },
     });
     return response.data;
   } catch (error) {
-    console.error("Error creating product:", error);
+    if (error.response) {
+      console.error("Server error response:", error.response.data);
+    } else {
+      console.error("Request error:", error.message);
+    }
     throw error;
   }
 };
