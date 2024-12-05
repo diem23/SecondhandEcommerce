@@ -16,6 +16,7 @@ import Checkout from "./CheckOut";
 import { HeaderUserProvider } from "../context/HeaderContext";
 import Success from "./Success";
 import ShowSearchProducts from "./ShowSearchProduct";
+import Contact from "./Contact";
 
 const HomePage = ({ type }) => {
   const [role, setRole] = useState("");
@@ -71,6 +72,8 @@ const HomePage = ({ type }) => {
         <Checkout />
       ) : type === "search" ? (
         <ShowSearchProducts />
+      ) : type === "contact" ? (
+        <Contact />
       ) : (
         <div>
           <h1>Not found</h1>
