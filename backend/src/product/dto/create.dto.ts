@@ -101,8 +101,6 @@ export class CreateProductDto {
         required: false,
     })
     @IsOptional()
-    @IsInt()
-    @Min(0)
     discount: number;
 
     @ApiProperty({
@@ -121,7 +119,6 @@ export class CreateProductDto {
         required: false,
     })
     @IsOptional()
-    @IsNumber()
     size: number;
 
     @ApiProperty({
@@ -130,7 +127,6 @@ export class CreateProductDto {
         required: false,
     })
     @IsOptional()
-    @IsInt()
     weight: number;
 
     @ApiProperty({
