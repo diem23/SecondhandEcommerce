@@ -8,7 +8,7 @@ import {
   ShoppingCartSimple,
   TwitterLogo,
   User,
-  YoutubeLogo
+  YoutubeLogo,
 } from "@phosphor-icons/react";
 
 import {
@@ -19,7 +19,7 @@ import {
   Popover,
   PopoverContent,
   PopoverHandler,
-  Typography
+  Typography,
 } from "@material-tailwind/react";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
@@ -27,6 +27,7 @@ import { getCarts } from "../services/cartService";
 import BottomHeader from "./BottomHeader";
 import CartDetail from "./CartDetail";
 import { useHeaderUserContext } from "../context/HeaderContext";
+import SearchBar from "./SearchBar";
 
 const UserButton = () => {
   const handleLogout = async () => {
@@ -231,18 +232,7 @@ const HeaderUser = () => {
         </div>
 
         {/* Search Bar */}
-        <div className="flex-grow mx-8">
-          <div className="relative">
-            <input
-              type="text"
-              placeholder="Tìm kiếm mặt hàng..."
-              className="w-full py-2 pl-4 pr-10  border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-400"
-            />
-            <div className="absolute right-2 top-1/2 transform -translate-y-1/2 text-black">
-              <MagnifyingGlass size={21} />
-            </div>
-          </div>
-        </div>
+        <SearchBar />
 
         {/* Action Icons */}
         <div className="flex space-x-6 items-center">

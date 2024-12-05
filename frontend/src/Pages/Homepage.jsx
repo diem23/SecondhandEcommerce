@@ -15,6 +15,7 @@ import ShoppingCart from "./ShoppingCart";
 import Checkout from "./CheckOut";
 import { HeaderUserProvider } from "../context/HeaderContext";
 import Success from "./Success";
+import ShowSearchProducts from "./ShowSearchProduct";
 
 const HomePage = ({ type }) => {
   const [role, setRole] = useState("");
@@ -35,8 +36,8 @@ const HomePage = ({ type }) => {
     };
     fetchData();
   }, [navigate, role]);
-  if(type === "success") {
-    return (<Success />);
+  if (type === "success") {
+    return <Success />;
   }
 
   return (
@@ -68,6 +69,8 @@ const HomePage = ({ type }) => {
         <ShoppingCart />
       ) : type === "checkout" ? (
         <Checkout />
+      ) : type === "search" ? (
+        <ShowSearchProducts />
       ) : (
         <div>
           <h1>Not found</h1>

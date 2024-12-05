@@ -20,6 +20,10 @@ const router = createBrowserRouter(
         <Route index={true} element={<HomePage type={"homepage"} />} />
         <Route path="/ShopPage" element={<HomePage type={"ShopPage"} />} />
         <Route
+          path="/ShopPage/:brand"
+          element={<HomePage type={"ShopPage"} />}
+        />
+        <Route
           path="/trackingdelivery"
           element={<HomePage type={"trackingdelivery"} />}
         />
@@ -42,6 +46,7 @@ const router = createBrowserRouter(
         />
         <Route path="/checkout" element={<HomePage type={"checkout"} />} />
         <Route path="/success" element={<HomePage type={"success"} />} />
+        <Route path="/search" element={<HomePage type={"search"} />} />
       </Route>
     </>
   )

@@ -10,8 +10,14 @@ import { Typography, Carousel } from "@material-tailwind/react";
 import ProductViewDialog from "../components/ProductViewDialog";
 import React, { useEffect } from "react";
 import { getAllBrand, getProducts } from "../services/productService";
+import { useNavigate } from "react-router-dom";
 
 const listItem = (brands) => {
+  const navigate = useNavigate();
+  const handleNavtoShopPage = (type) => {
+    navigate("/ShopPage", { state: { type: type } });
+  };
+
   return (
     <div className="relative mx-auto w-[90vw] p-8">
       <Typography
@@ -50,6 +56,7 @@ const listItem = (brands) => {
                   <div
                     key={subIndex}
                     className="flex flex-col items-center rounded-lg bg-white p-4 px-4 border transition-shadow duration-300 hover:shadow-lg  hover:scale-105"
+                    onClick={handleNavtoShopPage.bind(null, item.type)}
                   >
                     <img
                       src={item.image || "https://via.placeholder.com/150"}
@@ -84,15 +91,14 @@ const HomePageBody = () => {
       const [brands, topData, newData] = await Promise.all([
         getAllBrand(),
         getProducts({
-
-            page: 1,
-            limit: 10,
-            sort: { avgStar: -1 },
+          page: 1,
+          limit: 10,
+          sort: { avgStar: -1 },
         }),
         getProducts({
-            page: 1,
-            limit: 10,
-            sort: { createdAt: -1 },
+          page: 1,
+          limit: 10,
+          sort: { createdAt: -1 },
         }),
       ]);
       setBrands(brands);
@@ -143,37 +149,35 @@ const HomePageBody = () => {
       {listItem(brands)}
 
       {/* Products Section */}
-      <div className=" flex justify-center p-8 bg-white shadow ">
+      <div className=" flex justify-center pb-8 bg-white shadow ">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div>
-              <h3 className="text-lg font-semibold mb-4">
-                  🔥 BÁN CHẠY NHẤT
-              </h3>
-              <ul className="space-y-4 max-w-72">
-                {topProducts.map((product) => (
-                  <>
-                    <li
-                        key={product.productName}
-                        className="flex items-center space-x-4 border p-3"
-                        onClick={() => handleOpen(product._id)}
-                    >
-                      <img
-                        src={product.images?.[0]}
-                        alt={product.productName}
-                        className="w-16 h-16 rounded"
-                      />
-                      <div>
-                        <p className="text-sm font-medium break-words">
-                            {product.productName}
-                        </p>
-                        <p className="text-sm text-blue-600">
-                            {product.price}
-                        </p>
-                      </div>
-                    </li>
-                  </>
-                ))}
-              </ul>
+            <h3 className="text-lg font-semibold mb-4">🔥 BÁN CHẠY NHẤT</h3>
+            <ul className="space-y-4 max-w-72">
+              {topProducts.map((product) => (
+                <>
+                  <li
+                    key={product.productName}
+                    className="flex items-center space-x-4 border p-3"
+                    onClick={() => handleOpen(product._id)}
+                  >
+                    <img
+                      src={product.images?.[0]}
+                      alt={product.productName}
+                      className="w-16 h-16 rounded"
+                    />
+                    <div>
+                      <p className="text-sm font-medium break-words">
+                        {product.productName}
+                      </p>
+                      <p className="text-sm text-blue-600">
+                        {product.price.toLocaleString()} VNĐ
+                      </p>
+                    </div>
+                  </li>
+                </>
+              ))}
+            </ul>
           </div>
           <div>
             <h3 className="text-lg font-semibold mb-4">🌟 SẢN PHẨM MỚI</h3>
@@ -194,7 +198,9 @@ const HomePageBody = () => {
                       <p className="text-sm font-medium break-words">
                         {product.productName}
                       </p>
-                      <p className="text-sm text-blue-600">{product.price}</p>
+                      <p className="text-sm text-blue-600">
+                        {product.price.toLocaleString()} VNĐ
+                      </p>
                     </div>
                   </li>
                 </>
