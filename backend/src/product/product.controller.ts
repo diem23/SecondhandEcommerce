@@ -32,6 +32,7 @@ import { ProductQuery } from './dto/query.dto';
 import { UpdateProductDto } from './dto/update.dto';
 import { ProductService } from './product.service';
 import { match } from 'assert';
+import { Types } from 'mongoose';
 
 @ApiTags('Product')
 @Controller('products')
@@ -91,6 +92,10 @@ export class ProductController {
         const { matches = {}, page, limit, sort } = body;
 
         matches.isDeleted = false;
+
+        if (matches.userId) { 
+            matches.userId = { $eq: new Types.ObjectId(matches.userId) };
+        }
 
         return this.productService.findAll({
             matches,
