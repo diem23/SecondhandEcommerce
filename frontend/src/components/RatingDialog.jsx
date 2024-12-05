@@ -1,25 +1,28 @@
 import React, { useEffect, useState } from "react";
 import { Star } from "@phosphor-icons/react";
 import { Dialog } from "@material-tailwind/react";
+import { createReview } from "../services/reviewService";
 
-export default function RatingDialog({ open, handleOpen }) {
+export default function RatingDialog({ productId, open, handleOpen }) {
   const [rating, setRating] = useState(0);
   const [hover, setHover] = useState(0);
   const [review, setReview] = useState("");
-  const [submitted, setSubmitted] = useState(false);
 
   const handleSubmit = (e) => {
     e.preventDefault();
+    const user = JSON.parse(localStorage.getItem("user"));
     const newReview = {
-      name: "Current User",
-      rating: rating,
-      review: review,
-      date: new Date().toISOString().split("T")[0],
+      productId: "675050658f5282244db87c09",
+      userId: user._id,
+      numberOfStar: rating,
+      comment: review,
     };
-    setSubmitted(true);
+    const response = createReview(
+      newReview,
+      localStorage.getItem("accessToken")
+    );
     setRating(0);
     setReview("");
-    setTimeout(() => setSubmitted(false), 3000);
   };
 
   const RatingStars = ({ value, isInteractive = false }) => {
@@ -90,11 +93,6 @@ export default function RatingDialog({ open, handleOpen }) {
               Đánh giá
             </button>
           </form>
-          {submitted && (
-            <div className="mt-4 p-4 bg-green-100 text-green-700 rounded-lg">
-              Thank you for your review!
-            </div>
-          )}
         </div>
       </div>
     </Dialog>

@@ -60,7 +60,10 @@ const Checkout = () => {
   const handleSubmit = async () => {
     if (formData.paymentMethod === PaymentMethod.CASH) {
       const orderData = {
-        items: cartItems,
+        items: cartItems.map((item) => ({
+          ...item,
+          useInsurance: item.useInsurance || false,
+        })),
         paymentMethod: formData.paymentMethod,
         receivingAddress: formData.address || currentUser.location,
         receivingPhone: formData.phone || currentUser.phoneNumber,
@@ -76,7 +79,10 @@ const Checkout = () => {
       window.location.href = "/ordersuccess";
     } else {
       const orderData = {
-        items: cartItems,
+        items: cartItems.map((item) => ({
+          ...item,
+          useInsurance: item.useInsurance || false,
+        })),
         paymentMethod: formData.paymentMethod,
         receivingAddress: formData.address || currentUser.location,
         receivingPhone: formData.phone || currentUser.phoneNumber,
