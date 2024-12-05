@@ -48,6 +48,10 @@ const router = createBrowserRouter(
         <Route path="/success" element={<HomePage type={"success"} />} />
         <Route path="/search" element={<HomePage type={"search"} />} />
         <Route path="/contact" element={<HomePage type={"contact"} />} />
+        <Route
+          path="/ordersuccess"
+          element={<HomePage type={"ordersuccess"} />}
+        />
       </Route>
     </>
   )

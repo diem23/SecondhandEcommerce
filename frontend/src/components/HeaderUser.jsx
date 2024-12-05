@@ -242,9 +242,9 @@ const HeaderUser = () => {
             itemCount={cart.productItems?.length || 0}
             productData={cart}
           />
-          <a href="#" className="hover:text-gray-300">
+          {/* <a href="#" className="hover:text-gray-300">
             <Heart size={30} />
-          </a>
+          </a> */}
           <UserButton />
         </div>
       </div>

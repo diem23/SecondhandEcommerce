@@ -214,9 +214,9 @@ const Header = () => {
         {/* Action Icons */}
         <div className="flex space-x-6 items-center">
           <ShoppingCartButton itemCount={0} />
-          <a href="#" className="hover:text-gray-300">
+          {/* <a href="#" className="hover:text-gray-300">
             <Heart size={30} />
-          </a>
+          </a> */}
           <LoginButton />
         </div>
       </div>

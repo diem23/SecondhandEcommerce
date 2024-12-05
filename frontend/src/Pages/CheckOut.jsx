@@ -58,24 +58,42 @@ const Checkout = () => {
   };
 
   const handleSubmit = async () => {
-    const orderData = {
-      items: cartItems,
-      paymentMethod: formData.paymentMethod,
-      receivingAddress: formData.address || currentUser.location,
-      receivingPhone: formData.phone || currentUser.phoneNumber,
-      receiver: formData.name || currentUser.fullname,
-      deliveryDate: (() => {
-        const date = new Date();
-        date.setDate(date.getDate() + 7);
-        return date.toISOString();
-      })(),
-    };
-    const token = localStorage.getItem("accessToken");
+    if (formData.paymentMethod === PaymentMethod.CASH) {
+      const orderData = {
+        items: cartItems,
+        paymentMethod: formData.paymentMethod,
+        receivingAddress: formData.address || currentUser.location,
+        receivingPhone: formData.phone || currentUser.phoneNumber,
+        receiver: formData.name || currentUser.fullname,
+        deliveryDate: (() => {
+          const date = new Date();
+          date.setDate(date.getDate() + 7);
+          return date.toISOString();
+        })(),
+      };
+      const token = localStorage.getItem("accessToken");
+      const order = await placeOrder(orderData, token);
+      window.location.href = "/ordersuccess";
+    } else {
+      const orderData = {
+        items: cartItems,
+        paymentMethod: formData.paymentMethod,
+        receivingAddress: formData.address || currentUser.location,
+        receivingPhone: formData.phone || currentUser.phoneNumber,
+        receiver: formData.name || currentUser.fullname,
+        deliveryDate: (() => {
+          const date = new Date();
+          date.setDate(date.getDate() + 7);
+          return date.toISOString();
+        })(),
+      };
+      const token = localStorage.getItem("accessToken");
 
-    const order = await placeOrder(orderData, token);
+      const order = await placeOrder(orderData, token);
 
-    const paymentLink = await createQRCodePayment(order._id.toString());
-    window.location.href = paymentLink;
+      const paymentLink = await createQRCodePayment(order._id.toString());
+      window.location.href = paymentLink;
+    }
   };
 
   return (
@@ -194,10 +212,10 @@ const Checkout = () => {
               <Button
                 fullWidth
                 color="orange"
-                className="mt-4"
+                className="mt-4 text-sm"
                 onClick={handleSubmit}
               >
-                PLACE ORDER
+                Đặt hàng{" "}
               </Button>
             </CardBody>
           </Card>
