@@ -15,6 +15,8 @@ import Header from "../components/Header";
 import Footer from "../components/Footer";
 import React from "react";
 import { login, register } from "../services/authService";
+import { toast } from "react-toastify";
+import { useNavigate } from "react-router-dom";
 const BreadcrumbsLogin = () => {
   return (
     <Breadcrumbs className="bg-white ml-36">
@@ -43,6 +45,7 @@ const RegisterPage = () => {
   const [activeTab, setActiveTab] = React.useState("register");
   const [stateValue, setStateValue] = React.useState({});
   const [loginForm, setLoginForm] = React.useState({});
+  const navigate = useNavigate();
   const handleRegister = async (e) => {
     e.preventDefault();
     const data = {
@@ -52,9 +55,9 @@ const RegisterPage = () => {
     };
     try {
       await register(data);
-      alert("Đăng ký thành công");
+      toast.success("Đăng ký thành công");
     } catch (error) {
-      alert("Đăng ký thất bại");
+      toast.error("Đăng ký thất bại");
     }
   };
 
@@ -63,9 +66,11 @@ const RegisterPage = () => {
       const response = await login(loginForm);
       const accessToken = response.data.access_token;
       localStorage.setItem("accessToken", accessToken);
-      window.location.reload();
+      toast.success("Đăng nhập thành công");
+      navigate('/')
     } catch (error) {
       console.log(error);
+      toast.error("Đăng nhập thất bại");
     }
   };
 

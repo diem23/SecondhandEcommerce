@@ -33,6 +33,7 @@ import { useState, useEffect } from "react";
 import { login } from "../services/authService";
 import BottomHeader from "./BottomHeader";
 import SearchBar from "./SearchBar";
+import { toast } from "react-toastify";
 
 const LoginButton = () => {
   const [stateValue, setStateValue] = useState({});
@@ -43,15 +44,7 @@ const LoginButton = () => {
       const response = await login(stateValue);
       const accessToken = response.data.access_token;
       localStorage.setItem("accessToken", accessToken);
-      window.location.reload();
-    } catch (error) {
-      console.log(error);
-    }
-  };
-  const handleLogout = async () => {
-    try {
-      localStorage.removeItem("accessToken");
-      localStorage.removeItem("user");
+      toast.success("Đăng nhập thành công");
       window.location.reload();
     } catch (error) {
       console.log(error);
