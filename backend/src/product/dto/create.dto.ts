@@ -50,7 +50,6 @@ export class CreateProductDto {
         default: false,
     })
     @IsOptional()
-    @IsBoolean()
     applyStandOutSelling?: boolean;
 
     @ApiProperty({
@@ -59,7 +58,6 @@ export class CreateProductDto {
         default: false,
     })
     @IsOptional()
-    @IsBoolean()
     applyProfessionallySelling?: boolean;
 
     @ApiProperty({
