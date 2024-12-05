@@ -33,6 +33,7 @@ const CartItem = ({ product, quantity, price, image, onRemove }) => {
 };
 
 export default function CartDetail({ products }) {
+  console.log("products, ", products);
   const { productItems, _id } = products;
   const navigate = useNavigate();
 
@@ -95,7 +96,7 @@ export default function CartDetail({ products }) {
           return (
             <CartItem
               key={item.productId}
-              product={product.productName}
+              product={product?.productName}
               quantity={item.quantity}
               price={item.price}
               image={product.images[0]}

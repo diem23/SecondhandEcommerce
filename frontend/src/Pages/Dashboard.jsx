@@ -9,16 +9,24 @@ import {
   ShoppingCartSimple,
   SignOut,
   Stack,
-  Storefront
+  Storefront,
 } from "@phosphor-icons/react";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import CreateProductForm from "../components/CreateProductForm";
 import { ListOrder } from "../components/ListOrder";
+import ManageProductsTable from "../components/ManageProductsTable";
+import OrderTrackingDetail from "../components/OrderTrackingDetail";
 
 const Dashboard = () => {
   const [isOpen, setIsOpen] = useState(true);
   const [activeMain, setActiveMain] = useState("dashboard");
   const [activeAction, setActiveAction] = useState("primary"); // New state for action toggle
+  const [activeSecondary, setActiveSecondary] = useState({});
+  useEffect(() => {
+    if (activeSecondary) {
+      console.log(activeSecondary);
+    }
+  }, [activeSecondary]);
   const primaryNavItems = [
     {
       label: "Dashboard",
@@ -32,7 +40,15 @@ const Dashboard = () => {
       label: "Lịch sử giao dịch",
       value: "billhistory",
       icon: Storefront,
-      content: <ListOrder />,
+      content:
+        activeSecondary?.type === "orderDetail" ? (
+          <OrderTrackingDetail
+            orderData={activeSecondary}
+            setActiveSecondary={setActiveSecondary}
+          />
+        ) : (
+          <ListOrder setActiveSecondary={setActiveSecondary} />
+        ),
     },
     {
       label: "Theo dõi đơn hàng",
@@ -95,6 +111,7 @@ const Dashboard = () => {
       value: "manageproduct",
       label: "Quản lý sản phẩm",
       icon: Storefront,
+      content: <ManageProductsTable />,
     },
   ];
 
