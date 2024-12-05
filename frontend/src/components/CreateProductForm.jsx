@@ -8,6 +8,7 @@ import {
 } from "@material-tailwind/react";
 import { UploadSimple } from "@phosphor-icons/react";
 import { createProduct } from "../services/productService";
+import { toast } from "react-toastify";
 
 const CreateProductForm = () => {
   const [formData, setFormData] = useState({});
@@ -70,9 +71,10 @@ const CreateProductForm = () => {
       setFiles([]);
       setImages([]);
   
-      console.log("Form successfully submitted and reset!");
+      toast.success("Đã thêm sản phẩm mới thành công!");
     } catch (error) {
       console.error("Error submitting form:", error);
+      toast.error("Đã xảy ra lỗi khi thêm sản phẩm mới!");
     }
   };
 

@@ -28,12 +28,14 @@ import BottomHeader from "./BottomHeader";
 import CartDetail from "./CartDetail";
 import { useHeaderUserContext } from "../context/HeaderContext";
 import SearchBar from "./SearchBar";
+import { toast } from "react-toastify";
 
 const UserButton = () => {
   const handleLogout = async () => {
     try {
       localStorage.removeItem("accessToken");
       localStorage.removeItem("user");
+      toast.success("Đăng xuất thành công");
       window.location.reload();
     } catch (error) {
       console.log(error);
