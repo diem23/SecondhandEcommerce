@@ -110,7 +110,7 @@ const ShoppingCart = () => {
     <div className="p-6 bg-gray-50 min-h-screen">
       <div className="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-6">
         {/* Cart Items */}
-        <div className="col-span-2">
+        <div className="col-span-3">
           <div className=" bg-white rounded-lg shadow-md p-6">
             <h2 className="text-lg font-semibold mb-6">Giỏ hàng</h2>
             <table className="w-full text-left">
@@ -126,13 +126,13 @@ const ShoppingCart = () => {
               <tbody>
                 {cartItems?.map((item) => (
                   <tr key={item.productId} className="border-b">
-                    <td className="py-3">
+                    <td className="py-3 flex items-center">
                       <img
                         src={item.product.images[0]}
                         alt={item.product.productName}
                         className="inline-block w-12 h-12 rounded-lg mr-2"
                       />
-                      {item.product.productName}
+                      <span>{item.product.productName}</span>
                     </td>
 
                     <td className="py-3">
@@ -227,9 +227,11 @@ const ShoppingCart = () => {
             </div> */}
           </div>
         </div>
-
+        
+        <div></div>
+        <div></div>
         {/* Coupoun */}
-        <div className="flex flex-col gap-10">
+        <div className="flex flex-col-reverse gap-10">
           {/* Order Summary */}
           <div className="bg-white rounded-lg shadow-md p-6">
             <h2 className="text-lg font-semibold mb-4">Thông tin đơn</h2>

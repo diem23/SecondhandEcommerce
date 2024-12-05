@@ -32,7 +32,7 @@ export class Product {
         description: 'The brand of the product',
         example: 'Herbal Essences',
     })
-    @Prop({ required: true })
+    @Prop()
     brand: string;
 
     @ApiProperty({
