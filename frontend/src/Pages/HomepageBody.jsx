@@ -12,6 +12,7 @@ import React, { useEffect } from "react";
 import { getAllBrand, getProducts } from "../services/productService";
 import { useNavigate } from "react-router-dom";
 
+
 const listItem = (brands) => {
   const navigate = useNavigate();
   const handleNavtoShopPage = (type) => {

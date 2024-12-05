@@ -17,6 +17,7 @@ import { HeaderUserProvider } from "../context/HeaderContext";
 import Success from "./Success";
 import ShowSearchProducts from "./ShowSearchProduct";
 import Contact from "./Contact";
+import OrderSuccess from "./OrderSuccess";
 
 const HomePage = ({ type }) => {
   const [role, setRole] = useState("");
@@ -74,6 +75,8 @@ const HomePage = ({ type }) => {
         <ShowSearchProducts />
       ) : type === "contact" ? (
         <Contact />
+      ) : type === "ordersuccess" ? (
+        <OrderSuccess />
       ) : (
         <div>
           <h1>Not found</h1>

@@ -16,6 +16,7 @@ import CreateProductForm from "../components/CreateProductForm";
 import { ListOrder } from "../components/ListOrder";
 import ManageProductsTable from "../components/ManageProductsTable";
 import OrderTrackingDetail from "../components/OrderTrackingDetail";
+import ShoppingCart from "./ShoppingCart";
 
 const Dashboard = () => {
   const [isOpen, setIsOpen] = useState(true);
@@ -50,30 +51,14 @@ const Dashboard = () => {
           <ListOrder setActiveSecondary={setActiveSecondary} />
         ),
     },
-    {
-      label: "Theo dõi đơn hàng",
-      value: "trackingdelivery",
-      icon: MapPinLine,
-      content: `We're not always in the position that we want to be at.
-          We're constantly growing. We're constantly making mistakes. We're
-          constantly trying to express ourselves and actualize our dreams.`,
-    },
+
     {
       label: "Giỏ hàng",
       value: "cart",
       icon: ShoppingCartSimple,
-      content: `We're not always in the position that we want to be at.
-          We're constantly growing. We're constantly making mistakes. We're
-          constantly trying to express ourselves and actualize our dreams.`,
+      content: <ShoppingCart />,
     },
-    {
-      label: "Sản phẩm ưa thích",
-      value: "favorite",
-      icon: Heart,
-      content: `We're not always in the position that we want to be at.
-          We're constantly growing. We're constantly making mistakes. We're
-          constantly trying to express ourselves and actualize our dreams.`,
-    },
+
     {
       label: "Thông tin cá nhân",
       value: "profile",
@@ -82,14 +67,7 @@ const Dashboard = () => {
           We're constantly growing. We're constantly making mistakes. We're
           constantly trying to express ourselves and actualize our dreams.`,
     },
-    {
-      label: "Lịch sử tìm kiếm",
-      value: "searchhistory",
-      icon: ClockClockwise,
-      content: `We're not always in the position that we want to be at.
-          We're constantly growing. We're constantly making mistakes. We're
-          constantly trying to express ourselves and actualize our dreams.`,
-    },
+
     {
       label: "Cài đặt tài khoản",
       value: "settings",

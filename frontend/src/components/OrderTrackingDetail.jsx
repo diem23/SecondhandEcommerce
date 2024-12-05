@@ -26,8 +26,6 @@ const OrderTrackingDetail = ({ orderData, setActiveSecondary }) => {
     fetchData();
   }, [orderData]);
 
-  useEffect(() => {}, [orderDetail]);
-
   const [orderDetails] = useState({
     orderId: "ORD123456789",
     price: 299.99,
@@ -138,6 +136,24 @@ const OrderTrackingDetail = ({ orderData, setActiveSecondary }) => {
               </p>
             </div>
             <div>
+              <p className="text-sm text-gray-500">Địa chỉ</p>
+              <p className="font-medium">
+                {orderDetail?.receivingAddress?.toLocaleString()}
+              </p>
+            </div>
+            <div>
+              <p className="text-sm text-gray-500">Số điện thoại</p>
+              <p className="font-medium">
+                {orderDetail?.receivingPhone?.toLocaleString()}
+              </p>
+            </div>
+            <div>
+              <p className="text-sm text-gray-500">Phương thức thanh toán</p>
+              <p className="font-medium">
+                {orderDetail?.paymentMethod?.toLocaleString()}
+              </p>
+            </div>
+            <div>
               <p className="text-sm text-gray-500">Ngày đặt hàng</p>
               <p className="font-medium">
                 {new Date(orderDetail?.createdAt).toLocaleString()}
@@ -194,8 +210,16 @@ const OrderTrackingDetail = ({ orderData, setActiveSecondary }) => {
             </h2>
             <div className="flex items-start space-x-4">
               <img
-                src={orderDetails.product.image}
-                alt={orderDetails.product.name}
+                src={
+                  orderDetail?.listOfSingleOrder !== undefined
+                    ? orderDetail?.listOfSingleOrder[0]?.product?.images[0]
+                    : "https://images.unsplash.com/photo-1505740420928-5e560c06d30e"
+                }
+                alt={
+                  orderDetail?.listOfSingleOrder !== undefined
+                    ? orderDetail?.listOfSingleOrder[0]?.product?.productName
+                    : "Product"
+                }
                 className="w-24 h-24 object-cover rounded-lg"
                 onError={(e) => {
                   e.target.src =
@@ -204,16 +228,26 @@ const OrderTrackingDetail = ({ orderData, setActiveSecondary }) => {
               />
               <div>
                 <h3 className="font-medium text-gray-900">
-                  {orderDetails.product.name}
+                  {orderDetail?.listOfSingleOrder !== undefined
+                    ? orderDetail?.listOfSingleOrder[0]?.product?.productName
+                    : "Product"}
                 </h3>
                 <p className="text-sm text-gray-500 mt-1">
-                  Quantity: {orderDetails.product.quantity}
+                  Số lượng:{" "}
+                  {orderDetail?.listOfSingleOrder !== undefined
+                    ? orderDetail?.listOfSingleOrder[0]?.quantity
+                    : "1"}
                 </p>
                 <p className="text-sm text-gray-500">
-                  Color: {orderDetails.product.color}
+                  Màu:{" "}
+                  {orderDetail?.listOfSingleOrder !== undefined
+                    ? orderDetail?.listOfSingleOrder[0]?.product?.color
+                    : "null"}
                 </p>
                 <p className="text-sm text-gray-500 mt-2">
-                  {orderDetails.product.description}
+                  {orderDetail?.listOfSingleOrder !== undefined
+                    ? orderDetail?.listOfSingleOrder[0]?.product?.description
+                    : "null"}
                 </p>
               </div>
             </div>

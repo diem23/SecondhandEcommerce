@@ -108,9 +108,9 @@ const ShoppingCart = () => {
 
   return (
     <div className="p-6 bg-gray-50 min-h-screen">
-      <div className="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-6">
+      <div className="max-w-6xl mx-auto grid grid-cols-3 gap-6">
         {/* Cart Items */}
-        <div className="col-span-3">
+        <div className="col-span-2">
           <div className=" bg-white rounded-lg shadow-md p-6">
             <h2 className="text-lg font-semibold mb-6">Giỏ hàng</h2>
             <table className="w-full text-left">
@@ -227,10 +227,7 @@ const ShoppingCart = () => {
             </div> */}
           </div>
         </div>
-        
-        <div></div>
-        <div></div>
-        {/* Coupoun */}
+
         <div className="flex flex-col-reverse gap-10">
           {/* Order Summary */}
           <div className="bg-white rounded-lg shadow-md p-6">
@@ -276,7 +273,7 @@ const ShoppingCart = () => {
               <ArrowRight size={20} />
             </button>
           </div>
-          <div className="bg-white rounded-lg shadow-md p-6">
+          {/* <div className="bg-white rounded-lg shadow-md p-6">
             <h2 className="text-lg font-semibold mb-4">Mã giảm giá</h2>
 
             <Input
@@ -290,7 +287,7 @@ const ShoppingCart = () => {
             <button className="mt-4  flex items-center justify-center gap-2 bg-[#2DA5F3] text-white px-4 py-2  font-semibold hover:bg-blue-600">
               Áp dụng
             </button>
-          </div>
+          </div> */}
         </div>
       </div>
     </div>

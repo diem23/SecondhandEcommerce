@@ -1,48 +1,54 @@
-import React, { useState } from "react";
-// import { FiEdit2, FiTrash2 } from "react-icons/fi";
+import React, { useState, useEffect } from "react";
+import { getProducts, deleteProduct } from "../services/productService";
+import { toast } from "react-toastify";
+import UpdateProductDialog from "./UpdateProductDialog";
 
 const ManageProductsTable = () => {
-  const [products] = useState([
-    {
-      id: 1,
-      name: "Premium Wireless Headphones",
-      image: "https://images.unsplash.com/photo-1505740420928-5e560c06d30e",
-      price: 199.99,
-      soldQuantity: 150,
-      quantity: 50,
-    },
-    {
-      id: 2,
-      name: "Smart Watch Pro",
-      image: "https://images.unsplash.com/photo-1546868871-7041f2a55e12",
-      price: 299.99,
-      soldQuantity: 200,
-      quantity: 30,
-    },
-    {
-      id: 3,
-      name: "4K Ultra HD Camera",
-      image: "https://images.unsplash.com/photo-1516035069371-29a1b244cc32",
-      price: 799.99,
-      soldQuantity: 75,
-      quantity: 25,
-    },
-    {
-      id: 4,
-      name: "Gaming Laptop Elite",
-      image: "https://images.unsplash.com/photo-1593642632823-8f785ba67e45",
-      price: 1499.99,
-      soldQuantity: 50,
-      quantity: 15,
-    },
-  ]);
-
-  const handleEdit = (id) => {
-    console.log(`Editing product ${id}`);
+  const [productData, setProductData] = useState([]);
+  const [open, setOpen] = React.useState(false);
+  const [dialogData, setDialogData] = React.useState({});
+  const handleOpen = (product) => {
+    setDialogData(product);
+    setOpen(!open);
   };
+
+  useEffect(() => {
+    const fetchData = async () => {
+      const user = JSON.parse(localStorage.getItem("user"));
+      try {
+        const data = {
+          page: 1,
+          limit: 10,
+          sort: { price: -1 },
+          matches: {
+            userId: user._id,
+          },
+        };
+        const response = await getProducts(data);
+        setProductData(response.products);
+        console.log(response);
+      } catch (error) {
+        console.error(error);
+      }
+    };
+    fetchData();
+  }, []);
 
   const handleDelete = (id) => {
     console.log(`Deleting product ${id}`);
+    const user = JSON.parse(localStorage.getItem("user"));
+    deleteProduct(id, user.token)
+      .then(() => {
+        const updatedProducts = productData.filter(
+          (product) => product._id !== id
+        );
+        setProductData(updatedProducts);
+        toast.success("Xóa sản phẩm thành công");
+      })
+      .catch((error) => {
+        console.error(error);
+        toast.error("Xóa sản phẩm thất bại");
+      });
   };
 
   return (
@@ -67,15 +73,15 @@ const ManageProductsTable = () => {
             </tr>
           </thead>
           <tbody className="bg-white divide-y divide-gray-200">
-            {products.map((product) => (
+            {productData.map((product) => (
               <tr key={product.id} className="hover:bg-gray-50">
                 <td className="px-6 py-4 whitespace-nowrap">
                   <div className="flex items-center">
                     <div className="flex-shrink-0 h-12 w-12">
                       <img
                         className="h-12 w-12 rounded-md object-cover"
-                        src={product.image}
-                        alt={product.name}
+                        src={product.images[0]}
+                        alt={product.productName}
                         onError={(e) => {
                           e.target.src =
                             "https://images.unsplash.com/photo-1560393464-5c69a73c5770";
@@ -84,7 +90,7 @@ const ManageProductsTable = () => {
                     </div>
                     <div className="ml-4">
                       <div className="text-sm font-medium text-gray-900">
-                        {product.name}
+                        {product.productName}
                       </div>
                     </div>
                   </div>
@@ -114,7 +120,7 @@ const ManageProductsTable = () => {
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap text-sm font-medium flex gap-5">
                   <button
-                    onClick={() => handleEdit(product.id)}
+                    onClick={() => handleOpen(product)}
                     className="px-6 py-2 text-sm rounded-lg flex gap-2 items-center bg-orange text-white  font-semibold hover:bg-orange-600"
                   >
                     Chỉnh sửa
@@ -123,7 +129,7 @@ const ManageProductsTable = () => {
                     Xem đánh giá
                   </button>
                   <button
-                    onClick={() => handleDelete(product.id)}
+                    onClick={() => handleDelete(product._id)}
                     className="px-6 py-2 text-sm flex gap-2 rounded-lg items-center bg-[#EE5858] text-white  font-semibold hover:bg-[#EE5858]"
                   >
                     Ngưng bán
@@ -134,6 +140,11 @@ const ManageProductsTable = () => {
           </tbody>
         </table>
       </div>
+      <UpdateProductDialog
+        productData={dialogData}
+        open={open}
+        handleOpen={handleOpen}
+      />
     </div>
   );
 };
