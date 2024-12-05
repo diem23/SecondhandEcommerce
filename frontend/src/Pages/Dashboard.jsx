@@ -17,6 +17,7 @@ import { ListOrder } from "../components/ListOrder";
 import ManageProductsTable from "../components/ManageProductsTable";
 import OrderTrackingDetail from "../components/OrderTrackingDetail";
 import ShoppingCart from "./ShoppingCart";
+import AccountDetail from "./AccountDetail";
 
 const Dashboard = () => {
   const [isOpen, setIsOpen] = useState(true);
@@ -30,12 +31,10 @@ const Dashboard = () => {
   }, [activeSecondary]);
   const primaryNavItems = [
     {
-      label: "Dashboard",
+      label: "Thông tin tài khoản",
       value: "dashboard",
       icon: Stack,
-      content: `It really matters and then like it really doesn't matter.
-          What matters is the people who are sparked by it. And the people 
-          who are like offended by it, it doesn't matter.`,
+      content: <AccountDetail />,
     },
     {
       label: "Lịch sử giao dịch",
@@ -59,23 +58,23 @@ const Dashboard = () => {
       content: <ShoppingCart />,
     },
 
-    {
-      label: "Thông tin cá nhân",
-      value: "profile",
-      icon: Notebook,
-      content: `We're not always in the position that we want to be at.
-          We're constantly growing. We're constantly making mistakes. We're
-          constantly trying to express ourselves and actualize our dreams.`,
-    },
+    // {
+    //   label: "Thông tin cá nhân",
+    //   value: "profile",
+    //   icon: Notebook,
+    //   content: `We're not always in the position that we want to be at.
+    //       We're constantly growing. We're constantly making mistakes. We're
+    //       constantly trying to express ourselves and actualize our dreams.`,
+    // },
 
-    {
-      label: "Cài đặt tài khoản",
-      value: "settings",
-      icon: Gear,
-      content: `We're not always in the position that we want to be at.
-          We're constantly growing. We're constantly making mistakes. We're
-          constantly trying to express ourselves and actualize our dreams.`,
-    },
+    // {
+    //   label: "Cài đặt tài khoản",
+    //   value: "settings",
+    //   icon: Gear,
+    //   content: `We're not always in the position that we want to be at.
+    //       We're constantly growing. We're constantly making mistakes. We're
+    //       constantly trying to express ourselves and actualize our dreams.`,
+    // },
   ];
 
   const secondaryNavItems = [

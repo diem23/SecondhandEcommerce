@@ -20,6 +20,7 @@ import {
   Handshake,
   Headphones,
   CreditCard,
+  Star,
 } from "@phosphor-icons/react";
 import { useNavigate } from "react-router-dom";
 import { createCart, updateCarts } from "../services/cartService";
@@ -162,6 +163,28 @@ const ProductDetail = () => {
       prev < productData.images.length - 1 ? prev + 1 : 0
     );
   };
+  const RatingStars = ({ value, isInteractive = false }) => {
+    return (
+      <div className="flex">
+        {[...Array(5)].map((_, index) => {
+          const ratingValue = index + 1;
+          return (
+            <Star
+              key={index}
+              className={`h-6 w-6 ${isInteractive ? "cursor-pointer" : ""} ${
+                ratingValue <= (isInteractive ? hover || rating : value)
+                  ? "text-yellow-400"
+                  : "text-gray-300"
+              }`}
+              onMouseEnter={() => isInteractive && setHover(ratingValue)}
+              onMouseLeave={() => isInteractive && setHover(0)}
+              onClick={() => isInteractive && setRating(ratingValue)}
+            />
+          );
+        })}
+      </div>
+    );
+  };
 
   return (
     <div className="flex flex-col items-center justify-center">
@@ -176,7 +199,7 @@ const ProductDetail = () => {
             />
           </Card>
 
-          <div className="flex justify-center mt-4 space-x-2 items-center">
+          <div className="flex justify-center space-x-2 items-center">
             <IconButton
               variant="text"
               onClick={handlePrevImage}
@@ -207,14 +230,12 @@ const ProductDetail = () => {
 
         {/* Product Details */}
 
-        <div className="max-w p-6 bg-white rounded-lg ">
+        <div className="max-w px-6 pb-6 bg-white rounded-lg ">
           {/* Rating */}
-          <div className="flex items-center space-x-2">
-            <span className="text-yellow-500 text-xl">★ ★ ★ ★ ★</span>
-            <span className="text-gray-600 text-sm">4.7 điểm đánh giá</span>
-            <span className="text-gray-400 text-sm">
-              (21,671 lượt đánh giá)
-            </span>
+          <div className="">
+            <div className="flex items-center gap-4">
+              <RatingStars value={productData.avgStar} />
+            </div>
           </div>
 
           {/* Title */}

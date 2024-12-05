@@ -303,7 +303,11 @@ const OrderTrackingDetail = ({ orderData, setActiveSecondary }) => {
           </div>
         </div>
       </div>
-      <RatingDialog open={open} handleOpen={handleOpen} />
+      <RatingDialog
+        open={open}
+        handleOpen={handleOpen}
+        productId={orderData.data}
+      />
     </div>
   );
 };

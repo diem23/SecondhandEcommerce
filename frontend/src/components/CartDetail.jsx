@@ -35,6 +35,7 @@ const CartItem = ({ product, quantity, price, image, onRemove }) => {
 export default function CartDetail({ products }) {
   console.log("products, ", products);
   const { productItems, _id } = products;
+  localStorage.setItem("cartId", _id);
   const navigate = useNavigate();
 
   const total = useMemo(
