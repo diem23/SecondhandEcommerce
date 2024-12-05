@@ -243,9 +243,13 @@ export class OrderService {
             throw new NotFoundException(`Order with ID ${orderId} not found`);
         }
 
-        const updatedOrder = await this.getOrderById(orderId);
-
-        console.log(updatedOrder)
+        const updatedOrder = order.listOfSingleOrder.reduce(
+            (acc, item) => {
+                acc.totalPrice += item.price * item.quantity;
+                return acc;
+            },
+            { totalPrice: 0 },
+        );
 
         order.totalPrice = updatedOrder.totalPrice;
         await order.save();
