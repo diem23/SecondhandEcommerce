@@ -1,19 +1,19 @@
-import React, { useState } from "react";
 import {
-  Stack,
-  Storefront,
-  MapPinLine,
-  ShoppingCartSimple,
-  Heart,
-  Notebook,
-  ClockClockwise,
-  Gear,
-  SignOut,
   ArrowLeft,
   ArrowRight,
-  UserCircle,
+  ClockClockwise,
+  Gear,
+  Heart,
+  MapPinLine,
+  Notebook,
+  ShoppingCartSimple,
+  SignOut,
+  Stack,
+  Storefront
 } from "@phosphor-icons/react";
+import React, { useState } from "react";
 import CreateProductForm from "../components/CreateProductForm";
+import { ListOrder } from "../components/ListOrder";
 
 const Dashboard = () => {
   const [isOpen, setIsOpen] = useState(true);
@@ -32,8 +32,7 @@ const Dashboard = () => {
       label: "Lịch sử giao dịch",
       value: "billhistory",
       icon: Storefront,
-      content: `Because it's about motivating the doers. Because I'm here
-          to follow my dreams and inspire other people to follow their dreams, too.`,
+      content: <ListOrder />,
     },
     {
       label: "Theo dõi đơn hàng",
