@@ -43,7 +43,10 @@ const BottomHeader = () => {
             <Headphones size={21} />
             <span> CSKH</span>
           </button>
-          <button className="flex flex-row space-x-2 justify-between items-center px-4 py-2 text-black ">
+          <button
+            className="flex flex-row space-x-2 justify-between items-center px-4 py-2 text-black "
+            onClick={() => navigate("/contact")}
+          >
             <Info size={21} />
             <span> Về chúng tôi</span>
           </button>
