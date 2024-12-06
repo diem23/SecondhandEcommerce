@@ -164,7 +164,10 @@ const AdminOrderDetail = ({ orderData, setActiveSecondary }) => {
         { state: updateStatus },
         token
       );
-      setOrderDetail(response);
+      setOrderDetail({
+        ...orderDetail,
+        state: response.state,
+      });
     } catch (error) {
       console.error(error);
     }
