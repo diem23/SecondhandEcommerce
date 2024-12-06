@@ -1,87 +1,81 @@
 import {
   Button,
   Dialog,
-  DialogHeader,
   DialogBody,
   DialogFooter,
+  Input,
+  Option,
+  Select,
+  Textarea,
 } from "@material-tailwind/react";
-import { Input, Select, Option, Textarea } from "@material-tailwind/react";
-import { UploadSimple } from "@phosphor-icons/react";
-import { useState, useEffect } from "react";
+import { useEffect, useState } from "react";
+import { getProductById, updateProduct } from "../services/productService";
 
-export default function UpdateProductDialog({ productData, open, handleOpen }) {
-  const [formData, setFormData] = useState(productData);
+export default function UpdateProductDialog({ productId, open, handleOpen, refreshTable }) {
+  const [formData, setFormData] = useState({
+    productName: "",
+    brand: "",
+    type: "",
+    price: 0,
+    applyStandOutSelling: 0,
+    applyProfessionallySelling: 0,
+    quantity: 0,
+    state: "",
+    color: "",
+    size: 1,
+    weight: 0,
+    description: "",
+  });
+
   useEffect(() => {
-    setFormData(productData);
-  }, [productData]);
+    const getProduct = async () => {
+      if (!productId) return;
+
+      try {
+        const product = await getProductById(productId);
+        console.log(product);
+
+        setFormData({...formData, ...product});
+      } catch (error) {
+        console.error("Error fetching product:", error);
+      }
+    };
+
+    getProduct();
+  }, [productId]);
+
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
+
   const getTypes = () => {
-    const types = JSON.parse(localStorage.getItem("brands"));
-    const options = [];
-    types.forEach((type) => {
-      options.push(type.type);
-    });
-    return options;
+    const types = JSON.parse(localStorage.getItem("brands") || "[]");
+    return types.map((type) => type.type);
   };
+
+  const handleSubmit = async () => {
+    const accessToken = localStorage.getItem("accessToken");
+    await updateProduct(productId, formData, accessToken);
+    handleOpen();
+    refreshTable();
+  }
+
   return (
     <Dialog
       open={open}
       handler={handleOpen}
-      size={"lg"}
-      className="h-[600px] overflow-auto "
+      size="lg"
+      className="h-[600px] overflow-auto"
     >
       <DialogBody>
         <div className="flex justify-center">
-          {/* Main Content */}
           <main className="w-4/5 p-8">
-            {/* Product Information */}
-            <section className="bg-white  p-6 rounded-lg shadow-md mb-8">
+            <section className="bg-white p-6 rounded-lg shadow-md mb-8">
               <h2 className="text-xl font-bold mb-6">
                 Thông tin cơ bản về sản phẩm
               </h2>
               <div className="grid grid-cols-8 gap-10">
-                {/* Image Upload Section */}
-                {/* <div className="col-span-3 ">
-                <div className="border rounded-lg p-2 flex flex-col items-center">
-                  <label htmlFor="files">
-                    <UploadSimple size={32} className="text-gray-500 mb-2" />
-                  </label>
-                  <input
-                    type="file"
-                    multiple
-                    accept="image/*"
-                    onChange={handleFileChange}
-                    className="mb-2 "
-                    id="files"
-                    name="files"
-                    hidden
-                  />
-                </div>
-                <div className="mt-4 overflow-x-auto flex gap-4">
-                  {images.map((image, index) => (
-                    <div
-                      key={index}
-                      className="relative w-24 h-24 flex-shrink-0 border rounded-md"
-                    >
-                      <img
-                        src={image.preview}
-                        alt={`Upload Preview ${index}`}
-                        className="w-full h-full object-cover rounded-md"
-                      />
-                      <button
-                        type="button"
-                        onClick={() => removeImage(index)}
-                        className="absolute top-1 right-1 bg-red-500 text-white text-sm rounded-full w-6 h-6 flex items-center justify-center"
-                      >
-                        ×
-                      </button>
-                    </div>
-                  ))}
-                </div>
-              </div> */}
                 <div className="col-span-8 grid grid-cols-1 md:grid-cols-2 gap-6">
                   <Input
                     label="Tên sản phẩm"
@@ -98,9 +92,9 @@ export default function UpdateProductDialog({ productData, open, handleOpen }) {
                   <Select
                     label="Thể loại"
                     value={formData.type}
-                    onChange={(value) => {
-                      setFormData({ ...formData, type: value });
-                    }}
+                    onChange={(value) =>
+                      setFormData((prev) => ({ ...prev, type: value }))
+                    }
                   >
                     {getTypes().map((type) => (
                       <Option key={type} value={type}>
@@ -112,13 +106,17 @@ export default function UpdateProductDialog({ productData, open, handleOpen }) {
                     label="Giá bán khuyến nghị (VNĐ)"
                     name="price"
                     value={formData.price}
+                    type="number"
                     onChange={handleChange}
                   />
                   <Select
                     label="Áp dụng bán nổi bật?"
                     value={formData.applyStandOutSelling}
                     onChange={(value) =>
-                      setFormData({ ...formData, applyStandOutSelling: value })
+                      setFormData((prev) => ({
+                        ...prev,
+                        applyStandOutSelling: value,
+                      }))
                     }
                   >
                     <Option value={1}>Có</Option>
@@ -128,20 +126,20 @@ export default function UpdateProductDialog({ productData, open, handleOpen }) {
                     label="Áp dụng bán chuyên nghiệp?"
                     value={formData.applyProfessionallySelling}
                     onChange={(value) =>
-                      setFormData({
-                        ...formData,
+                      setFormData((prev) => ({
+                        ...prev,
                         applyProfessionallySelling: value,
-                      })
+                      }))
                     }
                   >
                     <Option value={1}>Có</Option>
                     <Option value={0}>Không</Option>
                   </Select>
-
                   <Input
                     label="Số lượng hiện có"
                     name="quantity"
                     value={formData.quantity}
+                    type="number"
                     onChange={handleChange}
                   />
                   <Input
@@ -167,6 +165,7 @@ export default function UpdateProductDialog({ productData, open, handleOpen }) {
                     label="Khối lượng"
                     name="weight"
                     value={formData.weight}
+                    type="number"
                     onChange={handleChange}
                   />
                 </div>
@@ -188,7 +187,7 @@ export default function UpdateProductDialog({ productData, open, handleOpen }) {
         <Button color="yellow" ripple="light" onClick={handleOpen}>
           Hủy
         </Button>
-        <Button color="orange" ripple="light" onClick={handleOpen}>
+        <Button color="orange" ripple="light" onClick={handleSubmit}>
           Lưu
         </Button>
       </DialogFooter>
