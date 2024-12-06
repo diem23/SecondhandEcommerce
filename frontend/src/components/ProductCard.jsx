@@ -10,7 +10,7 @@ const ProductCard = ({ product }) => {
       onClick={() => navigate(`/productdetail/${product._id}`)}
     >
       <img
-        src={product.images}
+        src={product.images?.[0]}
         alt={product.productName}
         className="h-40 w-full object-cover rounded-t-md"
       />

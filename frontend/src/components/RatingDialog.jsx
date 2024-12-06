@@ -1,6 +1,6 @@
-import React, { useEffect, useState } from "react";
-import { Star } from "@phosphor-icons/react";
 import { Dialog } from "@material-tailwind/react";
+import { Star } from "@phosphor-icons/react";
+import React, { useState } from "react";
 import { createReview } from "../services/reviewService";
 
 export default function RatingDialog({ productId, open, handleOpen }) {
@@ -8,21 +8,25 @@ export default function RatingDialog({ productId, open, handleOpen }) {
   const [hover, setHover] = useState(0);
   const [review, setReview] = useState("");
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     const user = JSON.parse(localStorage.getItem("user"));
     const newReview = {
-      productId: "675050658f5282244db87c09",
+      productId,
       userId: user._id,
       numberOfStar: rating,
       comment: review,
     };
-    const response = createReview(
+    console.log(newReview);
+    const response = await createReview(
       newReview,
       localStorage.getItem("accessToken")
     );
+    console.log(response);
     setRating(0);
     setReview("");
+
+    handleOpen(productId);
   };
 
   const RatingStars = ({ value, isInteractive = false }) => {

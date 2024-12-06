@@ -13,9 +13,9 @@ import RatingDialog from "./RatingDialog";
 
 const OrderTrackingDetail = ({ orderData, setActiveSecondary }) => {
   const [orderDetail, setOrderDetail] = useState({});
-  const [open, setOpen] = React.useState(false);
-  const handleOpen = () => {
-    setOpen(!open);
+  const [openProductId, setOpenProductId] = React.useState(null);
+  const handleOpen = (productId) => {
+    setOpenProductId(openProductId === productId ? null : productId);
   };
   useEffect(() => {
     const fetchData = async () => {
@@ -102,6 +102,8 @@ const OrderTrackingDetail = ({ orderData, setActiveSecondary }) => {
     const currentIndex = statusOrder.indexOf(orderDetail.state);
     return statusOrder.slice(0, currentIndex + 1).includes(activityStatus);
   };
+
+  console.log(orderDetail);
 
   return (
     <div className="min-h-screen bg-gray-50 py-8 px-4 sm:px-6 lg:px-8">
@@ -255,7 +257,7 @@ const OrderTrackingDetail = ({ orderData, setActiveSecondary }) => {
                       hover:bg-yellow-100 border border-yellow-500 text-yellow-500
                     "
                         onClick={() => {
-                          handleOpen();
+                          handleOpen(item.productId);
                         }}
                       >
                         <span className="text-orange"> ⭐ Đánh giá ngay</span>
@@ -304,9 +306,9 @@ const OrderTrackingDetail = ({ orderData, setActiveSecondary }) => {
         </div>
       </div>
       <RatingDialog
-        open={open}
-        handleOpen={handleOpen}
-        productId={orderData.data}
+        productId={openProductId}
+        open={openProductId !== null}
+        handleOpen={() => handleOpen(openProductId)}
       />
     </div>
   );

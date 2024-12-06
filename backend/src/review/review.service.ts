@@ -40,7 +40,9 @@ export class ReviewService {
 
             const { avgRating } = await this.calculateAverageRating(productId);
             
-            await this.productService.update(productId, { avgStar: avgRating });
+            product.avgStar = avgRating
+
+            await product.save();
 
             return {
                 message: reviewMess.CREATED,
