@@ -8,6 +8,9 @@ import {
   DialogFooter,
 } from "@material-tailwind/react";
 import UpdateProductDialog from "./UpdateProductDialog";
+import { Star } from "@phosphor-icons/react";
+import { CaretLeft, CaretRight } from "@phosphor-icons/react";
+import { getProductReviews } from "../services/reviewService";
 
 const ManageProductsTable = () => {
   const [productData, setProductData] = useState([]);
@@ -21,6 +24,13 @@ const ManageProductsTable = () => {
   const handleConfirmOpen = (_id) => {
     setDeleteId(_id);
     setConfirmOpen(!confirmOpen);
+  };
+
+  const [reviewOpen, setReviewOpen] = React.useState(false);
+  const [reviewId, setReviewId] = React.useState("");
+  const handleReviewOpen = (productId) => {
+    setReviewId(productId);
+    setReviewOpen(!reviewOpen);
   };
 
   const fetchData = async () => {
@@ -61,6 +71,105 @@ const ManageProductsTable = () => {
         console.error(error);
         toast.error("Xóa sản phẩm thất bại");
       });
+  };
+
+  const ProductReviewDialog = () => {
+    const [reviews, setReviews] = useState([]);
+
+    useEffect(() => {
+      const fetchData = async () => {
+        try {
+          const response = await getProductReviews(reviewId);
+          console.log(response);
+          setReviews(response);
+        } catch (error) {
+          console.error(error);
+        }
+      };
+      fetchData();
+    }, []);
+
+    const reviewsPerPage = 5;
+    const [currentReviewPage, setCurrentReviewPage] = useState(1);
+    const getPaginatedData = (data) => {
+      const startIndex = (currentReviewPage - 1) * reviewsPerPage;
+      const endIndex = startIndex + reviewsPerPage;
+      return data.slice(startIndex, endIndex);
+    };
+
+    const totalPages = (data) => Math.ceil(data.length / reviewsPerPage);
+
+    const renderPagination = (data) => (
+      <div className="flex items-center justify-end space-x-2 mt-4">
+        <button
+          onClick={() => setCurrentReviewPage((prev) => Math.max(prev - 1, 1))}
+          disabled={currentReviewPage === 1}
+          className="p-2 rounded-md hover:bg-gray-100 disabled:opacity-50"
+        >
+          <CaretLeft />
+        </button>
+        <span className="text-sm text-gray-500">
+          Page {currentReviewPage} of {totalPages(data)}
+        </span>
+        <button
+          onClick={() =>
+            setCurrentReviewPage((prev) => Math.min(prev + 1, totalPages(data)))
+          }
+          disabled={currentReviewPage === totalPages(data)}
+          className="p-2 rounded-md hover:bg-gray-100 disabled:opacity-50"
+        >
+          <CaretRight />
+        </button>
+      </div>
+    );
+
+    return (
+      <Dialog open={reviewOpen} handler={handleReviewOpen}>
+        <DialogBody>
+          <div>
+            <h3 className="text-xl font-semibold mb-4">
+              Đánh giá của khách hàng
+            </h3>
+            <div className="space-y-4">
+              {reviews.length === 0 ? (
+                <p>Không có đánh giá nào</p>
+              ) : (
+                getPaginatedData(reviews).map((review) => (
+                  <div
+                    key={review._id}
+                    className="border-b border-gray-200 pb-4"
+                  >
+                    <div className="flex items-center mb-2">
+                      <span className="font-semibold mr-2">
+                        {review.user.fullname}
+                      </span>
+                      <div className="flex">
+                        {[...Array(5)].map((_, index) => (
+                          <Star
+                            key={index}
+                            className={`w-4 h-4 ${
+                              index < review.numberOfStar
+                                ? "text-yellow-400"
+                                : "text-gray-300"
+                            }`}
+                            weight="fill"
+                          />
+                        ))}
+                      </div>
+                      <span className="text-gray-500 text-sm ml-2">
+                        {new Date(review.createdAt).toLocaleDateString()}
+                      </span>
+                    </div>
+                    <p className="text-gray-700">{review.comment}</p>
+                  </div>
+                ))
+              )}
+            </div>
+            {renderPagination(reviews)}
+          </div>
+        </DialogBody>
+      </Dialog>
+    );
   };
 
   return (
@@ -137,7 +246,10 @@ const ManageProductsTable = () => {
                   >
                     Chỉnh sửa
                   </button>
-                  <button className="px-6 py-2 text-sm rounded-lg flex gap-2 items-center bg-orange text-white  font-semibold hover:bg-orange-600">
+                  <button
+                    onClick={() => handleReviewOpen(product._id)}
+                    className="px-6 py-2 text-sm rounded-lg flex gap-2 items-center bg-orange text-white  font-semibold hover:bg-orange-600"
+                  >
                     Xem đánh giá
                   </button>
                   <button
@@ -183,6 +295,7 @@ const ManageProductsTable = () => {
           </Button>
         </DialogFooter>
       </Dialog>
+      <ProductReviewDialog />
     </div>
   );
 };
