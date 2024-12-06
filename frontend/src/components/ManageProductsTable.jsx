@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { getProducts, deleteProduct } from "../services/productService";
+import { getProducts, deleteProduct, getProductById } from "../services/productService";
 import { toast } from "react-toastify";
 import {
   Button,
@@ -12,12 +12,17 @@ import UpdateProductDialog from "./UpdateProductDialog";
 
 const ManageProductsTable = () => {
   const [productData, setProductData] = useState([]);
-  const [open, setOpen] = React.useState(false);
+  const [openProductId, setOpenProductId] = React.useState(null);
   const [dialogData, setDialogData] = React.useState({});
   const [deleteId, setDeleteId] = React.useState("");
-  const handleOpen = (product) => {
-    setDialogData(product);
-    setOpen(!open);
+  const handleOpen = async (productId) => {
+    // console.log(productId, openProductId);
+    // if (!productId) {
+    //   return;
+    // }
+    // const product = await getProductById(productId);
+    // setDialogData(product);
+    setOpenProductId(openProductId === productId ? null : productId);
   };
 
   const [confirmOpen, setConfirmOpen] = React.useState(false);
@@ -26,25 +31,26 @@ const ManageProductsTable = () => {
     setConfirmOpen(!confirmOpen);
   };
 
+  const fetchData = async () => {
+    const user = JSON.parse(localStorage.getItem("user"));
+    try {
+      const data = {
+        page: 1,
+        limit: 10,
+        sort: { price: -1 },
+        matches: {
+          userId: user._id,
+        },
+      };
+      const response = await getProducts(data);
+      setProductData(response.products);
+      console.log(response);
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
   useEffect(() => {
-    const fetchData = async () => {
-      const user = JSON.parse(localStorage.getItem("user"));
-      try {
-        const data = {
-          page: 1,
-          limit: 10,
-          sort: { price: -1 },
-          matches: {
-            userId: user._id,
-          },
-        };
-        const response = await getProducts(data);
-        setProductData(response.products);
-        console.log(response);
-      } catch (error) {
-        console.error(error);
-      }
-    };
     fetchData();
   }, []);
 
@@ -134,7 +140,7 @@ const ManageProductsTable = () => {
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap text-sm font-medium flex gap-5">
                   <button
-                    onClick={() => handleOpen(product)}
+                    onClick={() => handleOpen(product._id)}
                     className="px-6 py-2 text-sm rounded-lg flex gap-2 items-center bg-orange text-white  font-semibold hover:bg-orange-600"
                   >
                     Chỉnh sửa
@@ -155,9 +161,10 @@ const ManageProductsTable = () => {
         </table>
       </div>
       <UpdateProductDialog
-        productData={dialogData}
-        open={open}
-        handleOpen={handleOpen}
+        productId={openProductId}
+        open={openProductId !== null}
+        handleOpen={() => handleOpen(openProductId)}
+        refreshTable={fetchData}
       />
       <Dialog open={confirmOpen} handler={handleConfirmOpen}>
         <DialogBody>

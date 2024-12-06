@@ -58,8 +58,8 @@ export const getProducts = async (data) => {
   }
 };
 
-export const updateProducts = async (data, token) => {
-  const url = `${backendURL}/products`;
+export const updateProduct = async (id, data, token) => {
+  const url = `${backendURL}/products/${id}`;
   try {
     const response = await axios.put(url, data, {
       headers: {
