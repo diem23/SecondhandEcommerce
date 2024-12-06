@@ -14,6 +14,7 @@ import AdminProductList from "./AdminProductList";
 import AdminUserList from "./AdminUserList";
 import AdminOrderList from "./AdminOrderList";
 import { getProducts } from "../../services/productService";
+import AdminOrderDetail from "./AdminOrderDetail";
 const AdminDashboard = () => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
   const [isProfileDropdownOpen, setIsProfileDropdownOpen] = useState(false);
@@ -23,6 +24,14 @@ const AdminDashboard = () => {
   const toggleSidebar = () => setIsSidebarOpen(!isSidebarOpen);
   const toggleProfileDropdown = () =>
     setIsProfileDropdownOpen(!isProfileDropdownOpen);
+
+  const [activeSecondary, setActiveSecondary] = useState({});
+
+  useEffect(() => {
+    if (activeSecondary) {
+      console.log(activeSecondary);
+    }
+  }, [activeSecondary]);
 
   const stats = [
     {
@@ -46,17 +55,6 @@ const AdminDashboard = () => {
       icon: <Chat className="text-yellow-500" />,
     },
   ];
-
-  // const recentActivity = [
-  //   { user: "John Doe", action: "Created new post", time: "2 minutes ago" },
-  //   { user: "Jane Smith", action: "Updated profile", time: "5 minutes ago" },
-  //   { user: "Mike Johnson", action: "Deleted comment", time: "10 minutes ago" },
-  //   {
-  //     user: "Sarah Williams",
-  //     action: "Added new product",
-  //     time: "15 minutes ago",
-  //   },
-  // ];
 
   useEffect(() => {
     const fetchData = async () => {
@@ -83,7 +81,14 @@ const AdminDashboard = () => {
       case "products":
         return <AdminProductList products={productData} />;
       case "orders":
-        return <AdminOrderList />;
+        return activeSecondary?.type === "orderDetail" ? (
+          <AdminOrderDetail
+            orderData={activeSecondary}
+            setActiveSecondary={setActiveSecondary}
+          />
+        ) : (
+          <AdminOrderList setActiveSecondary={setActiveSecondary} />
+        );
       default:
         return (
           <>
@@ -101,26 +106,6 @@ const AdminDashboard = () => {
                 </div>
               ))}
             </div>
-
-            {/* <div className="bg-white rounded-lg shadow-md p-6">
-              <h2 className="text-lg font-semibold mb-4">Recent Activity</h2>
-              <div className="space-y-4">
-                {recentActivity.map((activity, index) => (
-                  <div
-                    key={index}
-                    className="flex items-center justify-between border-b pb-4 last:border-b-0 last:pb-0"
-                  >
-                    <div>
-                      <p className="font-medium">{activity.user}</p>
-                      <p className="text-gray-500 text-sm">{activity.action}</p>
-                    </div>
-                    <span className="text-gray-400 text-sm">
-                      {activity.time}
-                    </span>
-                  </div>
-                ))}
-              </div>
-            </div> */}
           </>
         );
     }
@@ -196,8 +181,6 @@ const AdminDashboard = () => {
           </button>
         </nav>
       </aside>
-
-      {/* Main Content */}
 
       <main
         className={`pt-16 ${

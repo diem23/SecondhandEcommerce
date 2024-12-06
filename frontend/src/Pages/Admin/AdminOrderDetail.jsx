@@ -1,24 +1,39 @@
 import React, { useEffect, useState } from "react";
 import {
-  Package,
-  Truck,
-  CheckCircle,
-  ShoppingBag,
-  Circle,
   ArrowLeft,
-  ArrowRight,
+  Circle,
+  CheckCircle,
+  Package,
+  ShoppingBag,
+  Truck,
   CaretLeft,
   CaretRight,
+  PencilSimple,
 } from "@phosphor-icons/react";
-import { getOrderById } from "../services/orderService";
-import RatingDialog from "./RatingDialog";
+import { getOrderById } from "../../services/orderService";
+import {
+  Button,
+  Dialog,
+  DialogBody,
+  DialogFooter,
+  Radio,
+  Card,
+  List,
+  ListItem,
+  ListItemPrefix,
+  Typography,
+} from "@material-tailwind/react";
+import { updateOrderStatus } from "../../services/orderService";
 
-const OrderTrackingDetail = ({ orderData, setActiveSecondary }) => {
+const AdminOrderDetail = ({ orderData, setActiveSecondary }) => {
   const [orderDetail, setOrderDetail] = useState({});
-  const [openProductId, setOpenProductId] = React.useState(null);
-  const handleOpen = (productId) => {
-    setOpenProductId(openProductId === productId ? null : productId);
+
+  const [openModal, setOpenModal] = useState(false);
+
+  const handleOpenModal = () => {
+    setOpenModal(!openModal);
   };
+
   useEffect(() => {
     const fetchData = async () => {
       const token = localStorage.getItem("accessToken");
@@ -76,14 +91,14 @@ const OrderTrackingDetail = ({ orderData, setActiveSecondary }) => {
       status: "Đã giao thành công",
     },
   ];
+  const statusOrder = [
+    "Đơn hàng đã được đặt",
+    "Đóng gói sản phẩm",
+    "Đang trên đường giao",
+    "Đã giao thành công",
+  ];
 
   const getStepStatus = (stepStatus) => {
-    const statusOrder = [
-      "Đơn hàng đã được đặt",
-      "Đóng gói sản phẩm",
-      "Đang trên đường giao",
-      "Đã giao thành công",
-    ];
     const currentIndex = statusOrder.indexOf(orderDetail.state);
 
     const stepIndex = statusOrder.indexOf(stepStatus);
@@ -139,6 +154,23 @@ const OrderTrackingDetail = ({ orderData, setActiveSecondary }) => {
       </button>
     </div>
   );
+  const [updateStatus, setUpdateStatus] = useState("");
+
+  const handleUpdateStatus = async () => {
+    const token = localStorage.getItem("accessToken");
+    try {
+      const response = await updateOrderStatus(
+        orderData.data,
+        { state: updateStatus },
+        token
+      );
+      setOrderDetail(response);
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  useEffect(() => {}, [orderDetail]);
 
   return (
     <div className="min-h-screen bg-gray-50 py-8 px-4 sm:px-6 lg:px-8">
@@ -188,22 +220,26 @@ const OrderTrackingDetail = ({ orderData, setActiveSecondary }) => {
             </div>
             <div>
               <p className="text-sm text-gray-500">Phương thức thanh toán</p>
-              <p className="font-medium">
-                {orderDetail?.paymentMethod?.toLocaleString()}
+              <p
+              // className="flex items-center gap-2"
+              >
+                <p className="font-medium">
+                  {orderDetail?.paymentMethod?.toLocaleString()}
+                </p>
+                {orderDetail?.paymentMethod === "Chuyển khoản ngân hàng" && (
+                  <span
+                    className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${
+                      orderDetail.paymentState
+                        ? "bg-green-100 text-green-800"
+                        : "bg-red-100 text-red-800"
+                    }`}
+                  >
+                    {orderDetail.paymentState
+                      ? "ĐÃ THANH TOÁN"
+                      : "CHƯA THANH TOÁN"}
+                  </span>
+                )}
               </p>
-              {orderDetail?.paymentMethod === "Chuyển khoản ngân hàng" && (
-                <span
-                  className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${
-                    orderDetail.paymentState
-                      ? "bg-green-100 text-green-800"
-                      : "bg-red-100 text-red-800"
-                  }`}
-                >
-                  {orderDetail.paymentState
-                    ? "ĐÃ THANH TOÁN"
-                    : "CHƯA THANH TOÁN"}
-                </span>
-              )}
             </div>
             <div>
               <p className="text-sm text-gray-500">Ngày đặt hàng</p>
@@ -216,9 +252,22 @@ const OrderTrackingDetail = ({ orderData, setActiveSecondary }) => {
 
         {/* Order Status Stepper */}
         <div className="bg-white rounded-lg shadow-md p-6 mb-8">
-          <h2 className="text-2xl font-bold text-gray-900 mb-6">
-            Trạng thái đơn hàng
-          </h2>
+          <div className="flex justify-between">
+            <h2 className="text-2xl font-bold text-gray-900 mb-6">
+              Trạng thái đơn hàng
+            </h2>
+            <div className="relative group">
+              <button
+                className="p-2 text-blue-600 hover:bg-blue-100 rounded-full"
+                onClick={handleOpenModal}
+              >
+                <PencilSimple className="w-8 h-8" />
+              </button>
+              <span className="absolute left-1/2 -translate-x-1/2 bottom-full mb-2 px-2 py-1 text-xs text-white bg-gray-800 rounded opacity-0 group-hover:opacity-100 transition-opacity">
+                Cập nhập trạng thái
+              </span>
+            </div>
+          </div>
           <div className="flex flex-col md:flex-row justify-between items-start md:items-center relative">
             {steps.map((step, index) => (
               <div key={step.id} className="flex flex-1 items-center">
@@ -296,24 +345,6 @@ const OrderTrackingDetail = ({ orderData, setActiveSecondary }) => {
                         </p>
                       </div>
                     </div>
-                    {orderDetail.state === "Đã giao thành công" && (
-                      <div className="col-span-1">
-                        <button
-                          className="
-                        px-4 py-2 rounded-lg flex items-center space-x-2
-                        text-sm
-                      hover:text-yellow-600 transition-colors duration-300 hover:border-yellow-600
-                      hover:bg-yellow-100 border border-yellow-500 text-yellow-500
-                    "
-                          onClick={() => {
-                            handleOpen(item.productId);
-                          }}
-                        >
-                          <span className="text-orange"> ⭐ Đánh giá ngay</span>
-                          <ArrowRight className="w-5 h-5 inline-block text-orange" />
-                        </button>
-                      </div>
-                    )}
                   </div>
                 )
               )
@@ -356,13 +387,143 @@ const OrderTrackingDetail = ({ orderData, setActiveSecondary }) => {
           </div>
         </div>
       </div>
-      <RatingDialog
-        productId={openProductId}
-        open={openProductId !== null}
-        handleOpen={() => handleOpen(openProductId)}
-      />
+      <Dialog open={openModal} handler={handleOpenModal} size="lg">
+        <DialogBody>
+          <Card className="w-full shadow-none ">
+            <List className="flex-row">
+              <ListItem className="p-0">
+                <label
+                  htmlFor="horizontal-list-react"
+                  className="flex w-full cursor-pointer items-center px-2 py-2"
+                >
+                  <ListItemPrefix className="mr-3">
+                    <Radio
+                      defaultChecked={orderDetail.state === statusOrder[0]}
+                      name="horizontal-list"
+                      id="horizontal-list-react"
+                      ripple={false}
+                      className="hover:before:opacity-0"
+                      containerProps={{
+                        className: "p-0",
+                      }}
+                      value={statusOrder[0]}
+                      onChange={(e) => setUpdateStatus(e.target.value)}
+                    />
+                  </ListItemPrefix>
+                  <Typography
+                    color="blue-gray"
+                    className="font-medium text-blue-gray-400"
+                  >
+                    {statusOrder[0]}
+                  </Typography>
+                </label>
+              </ListItem>
+              <ListItem className="p-0">
+                <label
+                  htmlFor="horizontal-list-vue"
+                  className="flex w-full cursor-pointer items-center px-3 py-2"
+                >
+                  <ListItemPrefix className="mr-3">
+                    <Radio
+                      defaultChecked={orderDetail.state === statusOrder[1]}
+                      name="horizontal-list"
+                      id="horizontal-list-vue"
+                      ripple={false}
+                      className="hover:before:opacity-0"
+                      containerProps={{
+                        className: "p-0",
+                      }}
+                      value={statusOrder[1]}
+                      onChange={(e) => setUpdateStatus(e.target.value)}
+                    />
+                  </ListItemPrefix>
+                  <Typography
+                    color="blue-gray"
+                    className="font-medium text-blue-gray-400"
+                  >
+                    {statusOrder[1]}
+                  </Typography>
+                </label>
+              </ListItem>
+              <ListItem className="p-0">
+                <label
+                  htmlFor="horizontal-list-svelte"
+                  className="flex w-full cursor-pointer items-center px-3 py-2"
+                >
+                  <ListItemPrefix className="mr-3">
+                    <Radio
+                      defaultChecked={orderDetail.state === statusOrder[2]}
+                      name="horizontal-list"
+                      id="horizontal-list-svelte"
+                      ripple={false}
+                      className="hover:before:opacity-0"
+                      containerProps={{
+                        className: "p-0",
+                      }}
+                      value={statusOrder[2]}
+                      onChange={(e) => setUpdateStatus(e.target.value)}
+                    />
+                  </ListItemPrefix>
+                  <Typography
+                    color="blue-gray"
+                    className="font-medium text-blue-gray-400"
+                  >
+                    {statusOrder[2]}
+                  </Typography>
+                </label>
+              </ListItem>
+              <ListItem className="p-0">
+                <label
+                  htmlFor="horizontal-list-miumiu"
+                  className="flex w-full cursor-pointer items-center px-3 py-2"
+                >
+                  <ListItemPrefix className="mr-3">
+                    <Radio
+                      defaultChecked={orderDetail.state === statusOrder[3]}
+                      name="horizontal-list"
+                      id="horizontal-list-miumiu"
+                      ripple={false}
+                      className="hover:before:opacity-0"
+                      containerProps={{
+                        className: "p-0",
+                      }}
+                      value={statusOrder[3]}
+                      onChange={(e) => setUpdateStatus(e.target.value)}
+                    />
+                  </ListItemPrefix>
+                  <Typography
+                    color="blue-gray"
+                    className="font-medium text-blue-gray-400"
+                  >
+                    {statusOrder[3]}
+                  </Typography>
+                </label>
+              </ListItem>
+            </List>
+          </Card>
+        </DialogBody>
+        <DialogFooter>
+          <Button
+            variant="text"
+            color="red"
+            onClick={handleOpenModal}
+            className="mr-1"
+          >
+            <span>Cancel</span>
+          </Button>
+          <Button
+            variant="gradient"
+            color="orange"
+            onClick={() => {
+              handleUpdateStatus();
+              handleOpenModal();
+            }}
+          >
+            <span>Confirm</span>
+          </Button>
+        </DialogFooter>
+      </Dialog>
     </div>
   );
 };
-
-export default OrderTrackingDetail;
+export default AdminOrderDetail;
