@@ -61,7 +61,7 @@ export class OrderController {
     @ApiBody({ description: 'Order state'})
     @ApiResponse({ status: 200, description: 'Order state updated.' })
     @Post(':id/state')
-    async updateOrderState(@Param('id') id: string, status: OrderState) {
-        return this.orderService.updateOrderStatus(id, status);
+    async updateOrderState(@Param('id') id: string, @Body() body: { state: OrderState }) {
+        return this.orderService.updateOrderStatus(id, body.state);
     }
 }
