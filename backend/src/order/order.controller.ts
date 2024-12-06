@@ -12,6 +12,7 @@ import { CurrentUser } from 'src/users/decorator';
 import { OrderDto } from './dto/order.dto';
 import { OrderService } from './order.service';
 import { TCurrentUser } from 'src/types';
+import { OrderState } from 'src/schema';
 
 @ApiTags('orders')
 @ApiBearerAuth()
@@ -53,5 +54,14 @@ export class OrderController {
     @Get(':id')
     async getOrderById(@Param('id') id: string) {
         return this.orderService.getOrderById(id);
+    }
+
+    @ApiOperation({ summary: 'Update order state' })
+    @ApiParam({ name: 'id', description: 'Order ID' })
+    @ApiBody({ description: 'Order state'})
+    @ApiResponse({ status: 200, description: 'Order state updated.' })
+    @Post(':id/state')
+    async updateOrderState(@Param('id') id: string, status: OrderState) {
+        return this.orderService.updateOrderStatus(id, status);
     }
 }
