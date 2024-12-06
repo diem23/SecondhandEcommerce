@@ -27,6 +27,7 @@ import { createCart, updateCarts } from "../services/cartService";
 import { useHeaderUserContext } from "../context/HeaderContext";
 import { toast } from "react-toastify";
 import ProductRating from "../components/ProductRating";
+import { getProductReviews } from "../services/reviewService";
 
 const ProductDetail = () => {
   const navigate = useNavigate();
@@ -36,6 +37,23 @@ const ProductDetail = () => {
   const [activeTab, setActiveTab] = React.useState("description");
   const [ammountItem, setAmmountItem] = React.useState(1);
   const [useInsurance, setUseInsurance] = React.useState(false);
+
+  const [reviews, setReviews] = useState([]);
+  useEffect(() => {
+    const getProductInfo = async () => {
+      const url = window.location.href;
+      const productId = url.split("/").pop();
+      try {
+        const response = await getProductById(productId);
+        setProductData(response);
+        const response2 = await getProductReviews(productId);
+        setReviews(response2);
+      } catch (error) {
+        console.error("Error fetching product:", error);
+      }
+    };
+    getProductInfo();
+  }, []);
 
   const HandleDirectBuy = () => {
     window.scrollTo(0, 0);
@@ -140,22 +158,9 @@ const ProductDetail = () => {
     {
       label: "Đánh giá",
       value: "reviews",
-      content: <ProductRating />,
+      content: <ProductRating reviews={reviews} />,
     },
   ];
-  useEffect(() => {
-    const getProductInfo = async () => {
-      const url = window.location.href;
-      const productId = url.split("/").pop();
-      try {
-        const response = await getProductById(productId);
-        setProductData(response);
-      } catch (error) {
-        console.error("Error fetching product:", error);
-      }
-    };
-    getProductInfo();
-  }, []);
 
   const handlePrevImage = () => {
     setSelectedImage((prev) =>
@@ -175,6 +180,7 @@ const ProductDetail = () => {
           return (
             <Star
               key={index}
+              weight="fill"
               className={`h-6 w-6 ${isInteractive ? "cursor-pointer" : ""} ${
                 ratingValue <= (isInteractive ? hover || rating : value)
                   ? "text-yellow-400"

@@ -36,7 +36,7 @@ const UserButton = () => {
       localStorage.removeItem("accessToken");
       localStorage.removeItem("user");
       toast.success("Đăng xuất thành công");
-      window.location.reload();
+      window.location.href = "/";
     } catch (error) {
       console.log(error);
     }

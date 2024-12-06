@@ -16,3 +16,14 @@ export const createReview = async (data, token) => {
     throw error;
   }
 };
+
+export const getProductReviews = async (productId) => {
+  const url = `${backendURL}/reviews/product/${productId}`;
+  try {
+    const response = await axios.get(url);
+    return response.data;
+  } catch (error) {
+    console.error("Error fetching product reviews:", error);
+    throw error;
+  }
+};

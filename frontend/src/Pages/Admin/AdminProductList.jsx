@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { getProducts, deleteProduct } from "../services/productService";
+import { getProducts, deleteProduct } from "../../services/productService";
 import { toast } from "react-toastify";
 import {
   Button,
@@ -7,17 +7,33 @@ import {
   DialogBody,
   DialogFooter,
 } from "@material-tailwind/react";
-import UpdateProductDialog from "./UpdateProductDialog";
-import { Star } from "@phosphor-icons/react";
+import UpdateProductDialog from "../../components/UpdateProductDialog";
 import { CaretLeft, CaretRight } from "@phosphor-icons/react";
-import { getProductReviews } from "../services/reviewService";
+import { getProductReviews } from "../../services/reviewService";
+import { Star } from "@phosphor-icons/react";
 
-const ManageProductsTable = () => {
-  const [productData, setProductData] = useState([]);
+const AdminProductList = ({ products }) => {
+  const [productData, setProductData] = useState(products);
   const [openProductId, setOpenProductId] = React.useState(null);
   const [deleteId, setDeleteId] = React.useState("");
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 5;
   const handleOpen = async (productId) => {
     setOpenProductId(openProductId === productId ? null : productId);
+  };
+  const fetchData = async () => {
+    try {
+      const data = {
+        page: 1,
+        limit: 10,
+        sort: { price: -1 },
+        matches: {},
+      };
+      const response = await getProducts(data);
+      setProductData(response.products);
+    } catch (error) {
+      console.error(error);
+    }
   };
 
   const [confirmOpen, setConfirmOpen] = React.useState(false);
@@ -32,29 +48,6 @@ const ManageProductsTable = () => {
     setReviewId(productId);
     setReviewOpen(!reviewOpen);
   };
-
-  const fetchData = async () => {
-    const user = JSON.parse(localStorage.getItem("user"));
-    try {
-      const data = {
-        page: 1,
-        limit: 10,
-        sort: { price: -1 },
-        matches: {
-          userId: user._id,
-        },
-      };
-      const response = await getProducts(data);
-      setProductData(response.products);
-      console.log(response);
-    } catch (error) {
-      console.error(error);
-    }
-  };
-
-  useEffect(() => {
-    fetchData();
-  }, []);
 
   const handleDelete = (id) => {
     console.log(`Deleting product ${id}`);
@@ -72,6 +65,38 @@ const ManageProductsTable = () => {
         toast.error("Xóa sản phẩm thất bại");
       });
   };
+
+  const getPaginatedData = (data) => {
+    const startIndex = (currentPage - 1) * itemsPerPage;
+    const endIndex = startIndex + itemsPerPage;
+    return data.slice(startIndex, endIndex);
+  };
+
+  const totalPages = (data) => Math.ceil(data.length / itemsPerPage);
+
+  const renderPagination = (data) => (
+    <div className="flex items-center justify-end space-x-2 mt-4">
+      <button
+        onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
+        disabled={currentPage === 1}
+        className="p-2 rounded-md hover:bg-gray-100 disabled:opacity-50"
+      >
+        <CaretLeft />
+      </button>
+      <span className="text-sm text-gray-500">
+        Page {currentPage} of {totalPages(data)}
+      </span>
+      <button
+        onClick={() =>
+          setCurrentPage((prev) => Math.min(prev + 1, totalPages(data)))
+        }
+        disabled={currentPage === totalPages(data)}
+        className="p-2 rounded-md hover:bg-gray-100 disabled:opacity-50"
+      >
+        <CaretRight />
+      </button>
+    </div>
+  );
 
   const ProductReviewDialog = () => {
     const [reviews, setReviews] = useState([]);
@@ -194,7 +219,7 @@ const ManageProductsTable = () => {
             </tr>
           </thead>
           <tbody className="bg-white divide-y divide-gray-200">
-            {productData.map((product) => (
+            {getPaginatedData(productData).map((product) => (
               <tr key={product.id} className="hover:bg-gray-50">
                 <td className="px-6 py-4 whitespace-nowrap">
                   <div className="flex items-center">
@@ -263,6 +288,7 @@ const ManageProductsTable = () => {
             ))}
           </tbody>
         </table>
+        {renderPagination(productData)}
       </div>
       <UpdateProductDialog
         productId={openProductId}
@@ -300,4 +326,4 @@ const ManageProductsTable = () => {
   );
 };
 
-export default ManageProductsTable;
+export default AdminProductList;

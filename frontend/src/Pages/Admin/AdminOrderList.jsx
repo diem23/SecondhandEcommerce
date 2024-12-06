@@ -1,8 +1,9 @@
-import { useEffect, useState } from "react";
-import { getAllOrders } from "../services/orderService";
-import { ArrowRight } from "@phosphor-icons/react";
+import React, { useEffect, useState } from "react";
+import { CaretLeft, CaretRight } from "@phosphor-icons/react";
+import { getProducts, deleteProduct } from "../../services/productService";
+import { getAllOrders } from "../../services/orderService";
 
-export const ListOrder = ({ setActiveSecondary }) => {
+const AdminOrderList = () => {
   const [orders, setOrders] = useState([]);
   useEffect(() => {
     const fetchData = async () => {
@@ -73,7 +74,7 @@ export const ListOrder = ({ setActiveSecondary }) => {
                   {item.totalPrice.toLocaleString()} VNĐ
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap text-sm font-medium flex gap-5">
-                  <button
+                  {/* <button
                     className="px-6 py-2 text-sm rounded-lg flex gap-2 items-center  text-blue-300  font-semibold focus:outline-none focus:ring-2 focus:ring-orange-500 hover:text-orange"
                     onClick={() =>
                       setActiveSecondary({
@@ -84,7 +85,7 @@ export const ListOrder = ({ setActiveSecondary }) => {
                   >
                     Xem chi tiết
                     <ArrowRight size={18} />
-                  </button>
+                  </button> */}
                 </td>
               </tr>
             ))}
@@ -94,3 +95,4 @@ export const ListOrder = ({ setActiveSecondary }) => {
     </div>
   );
 };
+export default AdminOrderList;
