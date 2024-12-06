@@ -1,15 +1,14 @@
 import React, { useEffect, useState } from "react";
-import { CaretLeft, CaretRight } from "@phosphor-icons/react";
-import { getProducts, deleteProduct } from "../../services/productService";
-import { getAllOrders } from "../../services/orderService";
+import { CaretLeft, CaretRight, ArrowRight } from "@phosphor-icons/react";
+import { getAllOrdersForAdmin } from "../../services/orderService";
 
-const AdminOrderList = () => {
+const AdminOrderList = ({ setActiveSecondary }) => {
   const [orders, setOrders] = useState([]);
   useEffect(() => {
     const fetchData = async () => {
       const token = localStorage.getItem("accessToken");
       try {
-        const response = await getAllOrders(token);
+        const response = await getAllOrdersForAdmin(token);
         const orders = response.sort(
           (a, b) => new Date(b.createdAt) - new Date(a.createdAt)
         );
@@ -20,6 +19,40 @@ const AdminOrderList = () => {
     };
     fetchData();
   }, []);
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 5;
+
+  const getPaginatedData = (data) => {
+    const startIndex = (currentPage - 1) * itemsPerPage;
+    const endIndex = startIndex + itemsPerPage;
+    return data.slice(startIndex, endIndex);
+  };
+
+  const totalPages = (data) => Math.ceil(data.length / itemsPerPage);
+
+  const renderPagination = (data) => (
+    <div className="flex items-center justify-end space-x-2 mt-4">
+      <button
+        onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
+        disabled={currentPage === 1}
+        className="p-2 rounded-md hover:bg-gray-100 disabled:opacity-50"
+      >
+        <CaretLeft />
+      </button>
+      <span className="text-sm text-gray-500">
+        Page {currentPage} of {totalPages(data)}
+      </span>
+      <button
+        onClick={() =>
+          setCurrentPage((prev) => Math.min(prev + 1, totalPages(data)))
+        }
+        disabled={currentPage === totalPages(data)}
+        className="p-2 rounded-md hover:bg-gray-100 disabled:opacity-50"
+      >
+        <CaretRight />
+      </button>
+    </div>
+  );
 
   return (
     <div className="container mx-auto p-6">
@@ -43,7 +76,7 @@ const AdminOrderList = () => {
             </tr>
           </thead>
           <tbody className="bg-white divide-y divide-gray-200">
-            {orders.map((item) => (
+            {getPaginatedData(orders).map((item) => (
               <tr key={item._id} className="hover:bg-gray-50">
                 <td className="px-6 py-4 whitespace-nowrap">
                   <div className="flex items-center">
@@ -74,7 +107,7 @@ const AdminOrderList = () => {
                   {item.totalPrice.toLocaleString()} VNĐ
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap text-sm font-medium flex gap-5">
-                  {/* <button
+                  <button
                     className="px-6 py-2 text-sm rounded-lg flex gap-2 items-center  text-blue-300  font-semibold focus:outline-none focus:ring-2 focus:ring-orange-500 hover:text-orange"
                     onClick={() =>
                       setActiveSecondary({
@@ -85,12 +118,13 @@ const AdminOrderList = () => {
                   >
                     Xem chi tiết
                     <ArrowRight size={18} />
-                  </button> */}
+                  </button>
                 </td>
               </tr>
             ))}
           </tbody>
         </table>
+        {renderPagination(orders)}
       </div>
     </div>
   );
