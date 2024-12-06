@@ -58,6 +58,91 @@ export class OrderService {
         return updatedOrder;
     }
 
+    async getAllOrders() {
+        const orders = await this.orderModel.aggregate<OrderDocument>([
+            {
+                $match: {
+                    isDeleted: false,
+                },
+            },
+            {
+                $lookup: {
+                    from: 'users',
+                    localField: 'userId',
+                    foreignField: '_id',
+                    as: 'user',
+                },
+            },
+            {
+                $lookup: {
+                    from: 'products',
+                    localField: 'listOfSingleOrder.productId',
+                    foreignField: '_id',
+                    as: 'products',
+                },
+            },
+            {
+                $addFields: {
+                    listOfSingleOrder: {
+                        $map: {
+                            input: '$listOfSingleOrder',
+                            as: 'item',
+                            in: {
+                                productId: '$$item.productId',
+                                quantity: '$$item.quantity',
+                                price: '$$item.price',
+                                product: {
+                                    $arrayElemAt: [
+                                        {
+                                            $filter: {
+                                                input: '$products',
+                                                as: 'product',
+                                                cond: {
+                                                    $eq: [
+                                                        '$$product._id',
+                                                        '$$item.productId',
+                                                    ],
+                                                },
+                                            },
+                                        },
+                                        0,
+                                    ],
+                                },
+                            },
+                        },
+                    },
+                },
+            },
+            {
+                $addFields: {
+                    totalPrice: {
+                        $sum: {
+                            $map: {
+                                input: '$listOfSingleOrder',
+                                as: 'item',
+                                in: {
+                                    $multiply: [
+                                        '$$item.quantity',
+                                        '$$item.product.price',
+                                    ],
+                                },
+                            },
+                        },
+                    },
+                },
+            },
+            {
+                $project: {
+                    user: { password: 0, email: 0, ...unSelectedFields },
+                    products: 0,
+                },
+            },
+            { $unwind: { path: '$user', preserveNullAndEmptyArrays: true } },
+        ]);
+
+        return orders;
+    }
+
     // Get all orders for a specific user
     async getOrders(userId: string) {
         const orders = await this.orderModel.aggregate<OrderDocument>([

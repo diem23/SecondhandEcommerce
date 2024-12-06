@@ -33,6 +33,13 @@ export class OrderController {
 
     @ApiOperation({ summary: 'Get all orders' })
     @ApiResponse({ status: 200, description: 'Retrieved all orders.' })
+    @Get('all')
+    async getAllOrders() {
+        return this.orderService.getAllOrders();
+    }
+
+    @ApiOperation({ summary: 'Get all orders' })
+    @ApiResponse({ status: 200, description: 'Retrieved all orders.' })
     @UseGuards(JwtGuard)
     @Get()
     async getOrders(@CurrentUser() user: TCurrentUser) {
