@@ -26,6 +26,7 @@ import { useNavigate } from "react-router-dom";
 import { createCart, updateCarts } from "../services/cartService";
 import { useHeaderUserContext } from "../context/HeaderContext";
 import { toast } from "react-toastify";
+import ProductRating from "../components/ProductRating";
 
 const ProductDetail = () => {
   const navigate = useNavigate();
@@ -78,10 +79,13 @@ const ProductDetail = () => {
           <div className="col-span-2">
             <h1 className="text-lg font-semibold">Mô tả</h1>
             <p className="text-gray-500 text-base">
-              We’ve trained a model called ChatGPT which interacts in a
-              conversational way. The dialogue format makes it possible for
-              ChatGPT to answer followup questions, admit its mistakes,
-              challenge incorrect premises, and reject inappropriate requests.
+              Vợt cầu lông đen Thunder Axforce 10 được thừa hưởng thiết kế nổi
+              trội với vật liệu cấu tạo từ Super Carbon siêu cao của đàn anh
+              Aaxforce 20 - Axforce 50 thuộc phân khúc tầm trung có điểm cân
+              bằng ở mức 295 +-3mm, thiết kế cho lối chơi công thủ toàn diện,
+              hơi thiên công giúp người chơi có những cú đập có thêm độ cắm và
+              uy lực. Đũa vợt cứng ở mức trung bình, không quá khó để người chơi
+              có thể làm quen và kiểm soát.
             </p>
           </div>
           <div className="col-span-1 ">
@@ -136,7 +140,7 @@ const ProductDetail = () => {
     {
       label: "Đánh giá",
       value: "reviews",
-      content: "",
+      content: <ProductRating />,
     },
   ];
   useEffect(() => {
