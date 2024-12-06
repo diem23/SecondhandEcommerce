@@ -22,3 +22,13 @@ export const getUserMe = async () => {
   });
 };
 
+export const getAllUsers = async () => {
+  const accessToken = localStorage.getItem("accessToken");
+
+  return await axios.get(`${API_URL}/users`, {
+    headers: {
+      Authorization: `Bearer ${accessToken}`,
+      "Content-Type": "application/json",
+    },
+  });
+};

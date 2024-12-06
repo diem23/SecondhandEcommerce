@@ -124,6 +124,7 @@ export default function ProductViewDialog({ productId, open, handleOpen }) {
           return (
             <Star
               key={index}
+              weight="fill"
               className={`h-6 w-6 ${isInteractive ? "cursor-pointer" : ""} ${
                 ratingValue <= (isInteractive ? hover || rating : value)
                   ? "text-yellow-400"

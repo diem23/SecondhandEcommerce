@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { getProducts, deleteProduct } from "../services/productService";
+import { getProducts, deleteProduct } from "../../services/productService";
 import { toast } from "react-toastify";
 import {
   Button,
@@ -7,14 +7,33 @@ import {
   DialogBody,
   DialogFooter,
 } from "@material-tailwind/react";
-import UpdateProductDialog from "./UpdateProductDialog";
+import UpdateProductDialog from "../../components/UpdateProductDialog";
+import { CaretLeft, CaretRight } from "@phosphor-icons/react";
+import { getProductReviews } from "../../services/reviewService";
+import { Star } from "@phosphor-icons/react";
 
-const ManageProductsTable = () => {
-  const [productData, setProductData] = useState([]);
+const AdminProductList = ({ products }) => {
+  const [productData, setProductData] = useState(products);
   const [openProductId, setOpenProductId] = React.useState(null);
   const [deleteId, setDeleteId] = React.useState("");
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 5;
   const handleOpen = async (productId) => {
     setOpenProductId(openProductId === productId ? null : productId);
+  };
+  const fetchData = async () => {
+    try {
+      const data = {
+        page: 1,
+        limit: 10,
+        sort: { price: -1 },
+        matches: {},
+      };
+      const response = await getProducts(data);
+      setProductData(response.products);
+    } catch (error) {
+      console.error(error);
+    }
   };
 
   const [confirmOpen, setConfirmOpen] = React.useState(false);
@@ -23,28 +42,12 @@ const ManageProductsTable = () => {
     setConfirmOpen(!confirmOpen);
   };
 
-  const fetchData = async () => {
-    const user = JSON.parse(localStorage.getItem("user"));
-    try {
-      const data = {
-        page: 1,
-        limit: 10,
-        sort: { price: -1 },
-        matches: {
-          userId: user._id,
-        },
-      };
-      const response = await getProducts(data);
-      setProductData(response.products);
-      console.log(response);
-    } catch (error) {
-      console.error(error);
-    }
+  const [reviewOpen, setReviewOpen] = React.useState(false);
+  const [reviewId, setReviewId] = React.useState("");
+  const handleReviewOpen = (productId) => {
+    setReviewId(productId);
+    setReviewOpen(!reviewOpen);
   };
-
-  useEffect(() => {
-    fetchData();
-  }, []);
 
   const handleDelete = (id) => {
     console.log(`Deleting product ${id}`);
@@ -61,6 +64,137 @@ const ManageProductsTable = () => {
         console.error(error);
         toast.error("Xóa sản phẩm thất bại");
       });
+  };
+
+  const getPaginatedData = (data) => {
+    const startIndex = (currentPage - 1) * itemsPerPage;
+    const endIndex = startIndex + itemsPerPage;
+    return data.slice(startIndex, endIndex);
+  };
+
+  const totalPages = (data) => Math.ceil(data.length / itemsPerPage);
+
+  const renderPagination = (data) => (
+    <div className="flex items-center justify-end space-x-2 mt-4">
+      <button
+        onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
+        disabled={currentPage === 1}
+        className="p-2 rounded-md hover:bg-gray-100 disabled:opacity-50"
+      >
+        <CaretLeft />
+      </button>
+      <span className="text-sm text-gray-500">
+        Page {currentPage} of {totalPages(data)}
+      </span>
+      <button
+        onClick={() =>
+          setCurrentPage((prev) => Math.min(prev + 1, totalPages(data)))
+        }
+        disabled={currentPage === totalPages(data)}
+        className="p-2 rounded-md hover:bg-gray-100 disabled:opacity-50"
+      >
+        <CaretRight />
+      </button>
+    </div>
+  );
+
+  const ProductReviewDialog = () => {
+    const [reviews, setReviews] = useState([]);
+
+    useEffect(() => {
+      const fetchData = async () => {
+        try {
+          const response = await getProductReviews(reviewId);
+          console.log(response);
+          setReviews(response);
+        } catch (error) {
+          console.error(error);
+        }
+      };
+      fetchData();
+    }, []);
+
+    const reviewsPerPage = 5;
+    const [currentReviewPage, setCurrentReviewPage] = useState(1);
+    const getPaginatedData = (data) => {
+      const startIndex = (currentReviewPage - 1) * reviewsPerPage;
+      const endIndex = startIndex + reviewsPerPage;
+      return data.slice(startIndex, endIndex);
+    };
+
+    const totalPages = (data) => Math.ceil(data.length / reviewsPerPage);
+
+    const renderPagination = (data) => (
+      <div className="flex items-center justify-end space-x-2 mt-4">
+        <button
+          onClick={() => setCurrentReviewPage((prev) => Math.max(prev - 1, 1))}
+          disabled={currentReviewPage === 1}
+          className="p-2 rounded-md hover:bg-gray-100 disabled:opacity-50"
+        >
+          <CaretLeft />
+        </button>
+        <span className="text-sm text-gray-500">
+          Page {currentReviewPage} of {totalPages(data)}
+        </span>
+        <button
+          onClick={() =>
+            setCurrentReviewPage((prev) => Math.min(prev + 1, totalPages(data)))
+          }
+          disabled={currentReviewPage === totalPages(data)}
+          className="p-2 rounded-md hover:bg-gray-100 disabled:opacity-50"
+        >
+          <CaretRight />
+        </button>
+      </div>
+    );
+
+    return (
+      <Dialog open={reviewOpen} handler={handleReviewOpen}>
+        <DialogBody>
+          <div>
+            <h3 className="text-xl font-semibold mb-4">
+              Đánh giá của khách hàng
+            </h3>
+            <div className="space-y-4">
+              {reviews.length === 0 ? (
+                <p>Không có đánh giá nào</p>
+              ) : (
+                getPaginatedData(reviews).map((review) => (
+                  <div
+                    key={review._id}
+                    className="border-b border-gray-200 pb-4"
+                  >
+                    <div className="flex items-center mb-2">
+                      <span className="font-semibold mr-2">
+                        {review.user.fullname}
+                      </span>
+                      <div className="flex">
+                        {[...Array(5)].map((_, index) => (
+                          <Star
+                            key={index}
+                            className={`w-4 h-4 ${
+                              index < review.numberOfStar
+                                ? "text-yellow-400"
+                                : "text-gray-300"
+                            }`}
+                            weight="fill"
+                          />
+                        ))}
+                      </div>
+                      <span className="text-gray-500 text-sm ml-2">
+                        {new Date(review.createdAt).toLocaleDateString()}
+                      </span>
+                    </div>
+                    <p className="text-gray-700">{review.comment}</p>
+                  </div>
+                ))
+              )}
+            </div>
+            {renderPagination(reviews)}
+          </div>
+        </DialogBody>
+      </Dialog>
+    );
   };
 
   return (
@@ -85,7 +219,7 @@ const ManageProductsTable = () => {
             </tr>
           </thead>
           <tbody className="bg-white divide-y divide-gray-200">
-            {productData.map((product) => (
+            {getPaginatedData(productData).map((product) => (
               <tr key={product.id} className="hover:bg-gray-50">
                 <td className="px-6 py-4 whitespace-nowrap">
                   <div className="flex items-center">
@@ -137,7 +271,10 @@ const ManageProductsTable = () => {
                   >
                     Chỉnh sửa
                   </button>
-                  <button className="px-6 py-2 text-sm rounded-lg flex gap-2 items-center bg-orange text-white  font-semibold hover:bg-orange-600">
+                  <button
+                    onClick={() => handleReviewOpen(product._id)}
+                    className="px-6 py-2 text-sm rounded-lg flex gap-2 items-center bg-orange text-white  font-semibold hover:bg-orange-600"
+                  >
                     Xem đánh giá
                   </button>
                   <button
@@ -151,6 +288,7 @@ const ManageProductsTable = () => {
             ))}
           </tbody>
         </table>
+        {renderPagination(productData)}
       </div>
       <UpdateProductDialog
         productId={openProductId}
@@ -183,8 +321,9 @@ const ManageProductsTable = () => {
           </Button>
         </DialogFooter>
       </Dialog>
+      <ProductReviewDialog />
     </div>
   );
 };
 
-export default ManageProductsTable;
+export default AdminProductList;

@@ -11,11 +11,13 @@ import {
   RouterProvider,
 } from "react-router-dom";
 import RegisterPage from "./Pages/RegisterPage.jsx";
+import AdminDashboard from "./Pages/Admin/AdminDashboard.jsx";
 
 const router = createBrowserRouter(
   createRoutesFromElements(
     <>
       <Route path="/register" element={<RegisterPage />} />
+      <Route path="/admin" element={<AdminDashboard />} />
       <Route path="/" element={<App />}>
         <Route index={true} element={<HomePage type={"homepage"} />} />
         <Route path="/ShopPage" element={<HomePage type={"ShopPage"} />} />
